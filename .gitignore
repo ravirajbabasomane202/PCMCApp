@@ -1,0 +1,13 @@
+# Ignore TempFiles folder
+TempFiles/
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore Google client secret file
+client_secret_507479079811-8sl4tn7g7nc9d872d4aje3n3bm9q4mn1.apps.googleusercontent.com.json
+
+# Ignore environment variables file
+.env
+
+google-services.json

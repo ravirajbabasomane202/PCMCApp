@@ -1,0 +1,32 @@
+# Activate Virtual Environment
+#venv\Scripts\activate
+
+#flutter run -d chrome --web-port=5500
+
+#emulator -avd Pixel_6a
+
+                #create admin user
+# flask shell
+
+# from app.models import User, Role
+# from app import db
+# admin = User(name='Admin User', email='admin@example.com', role=Role.ADMIN)
+# admin.set_password('securepassword')  # Replace with a strong password
+# db.session.add(admin)
+# db.session.commit()
+# exit()  # Exit the shell
+
+
+        #upgared flask-migrate
+#flask db migrate -m "Added escalation_level column to Grievance"
+#flask db upgrade
+
+
+
+
+flask db init
+flask db migrate -m "Initial migration"
+flask db upgrade
+python addData.py
+python addData_Subject.py
+python addConfig.py
