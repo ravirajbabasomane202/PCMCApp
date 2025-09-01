@@ -58,6 +58,7 @@ def create_app():
     from .routes.admin_routes import admin_bp
     from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
+    from .routes.settings_routes import settings_bp
     app.register_blueprint(public_bp)
     app.register_blueprint(notification_bp, url_prefix='/notifications')
 
@@ -65,5 +66,5 @@ def create_app():
     app.register_blueprint(grievance_bp, url_prefix='/grievances')
     app.register_blueprint(user_bp, url_prefix='/users')
     app.register_blueprint(admin_bp, url_prefix='/admins')
-
+    app.register_blueprint(settings_bp, url_prefix='/settings')
     return app

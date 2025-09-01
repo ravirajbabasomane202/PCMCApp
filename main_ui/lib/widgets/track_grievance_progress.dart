@@ -65,14 +65,14 @@ class TrackGrievanceProgress extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: isActive
                                   ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface.withOpacity(0.2),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.2),
                             ),
                             child: Icon(
                               stage['icon'] as IconData,
                               size: 20,
                               color: isActive
                                   ? theme.colorScheme.onPrimary
-                                  : theme.colorScheme.onSurface.withOpacity(0.4),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.4),
                             ),
                           ),
                         ),
@@ -82,7 +82,7 @@ class TrackGrievanceProgress extends StatelessWidget {
                             height: 40,
                             color: isActive
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.2),
+                                : theme.colorScheme.onSurface.withValues (alpha:0.2),
                           ),
                       ],
                     ),
@@ -97,14 +97,14 @@ class TrackGrievanceProgress extends StatelessWidget {
                               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                               color: isActive
                                   ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.5),
                             ),
                           ),
                           if (isActive)
                             Text(
                               _getStageDetails(index, status, grievance),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface.withValues (alpha:0.7),
                               ),
                             ),
                           const SizedBox(height: 8),

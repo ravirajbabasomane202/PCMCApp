@@ -45,7 +45,7 @@ class GrievanceCard extends StatelessWidget {
                       Text(
                         grievance.priority ?? 'N/A',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues (alpha: 0.7),
                         ),
                       ),
                     ],
@@ -56,7 +56,7 @@ class GrievanceCard extends StatelessWidget {
               Text(
                 grievance.description ?? 'No description provided',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues (alpha: 0.7),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -67,7 +67,7 @@ class GrievanceCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today_rounded,
                     size: 16,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues (alpha:0.5),
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -75,7 +75,7 @@ class GrievanceCard extends StatelessWidget {
                         ? _formatDate(grievance.createdAt!)
                         : 'Unknown date',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues (alpha:0.5),
                     ),
                   ),
                 ],

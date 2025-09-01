@@ -121,7 +121,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final locale = ref.watch(localeProvider);
+    final locale = ref.watch(localeNotifierProvider);
 
     return MaterialApp(
       title: 'Grievance System',
@@ -161,13 +161,12 @@ import 'screens/auth/login_callback.dart';
 import 'screens/citizen/submit_grievance.dart';
 import 'screens/citizen/track_grievance.dart';
 import 'screens/citizen/grievance_detail.dart';
-
 import 'screens/member_head/view_grievances.dart';
 import 'screens/member_head/assign_grievance.dart';
 import 'screens/member_head/reject_grievance.dart';
-import 'screens/employer/assigned_list.dart';
-import 'screens/employer/update_status.dart';
-import 'screens/employer/upload_workproof.dart';
+import 'screens/field_staff/assigned_list.dart';
+import 'screens/field_staff/update_status.dart';
+import 'screens/field_staff/upload_workproof.dart';
 import 'screens/admin/dashboard.dart';
 import 'screens/admin/manage_users.dart';
 import 'screens/admin/manage_subjects.dart';
@@ -184,9 +183,6 @@ import 'screens/admin/reports_screen.dart';
 import 'screens/common/notifications_screen.dart';
 import 'screens/auth/otp_verification_screen.dart';
 
-
-
-
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
   '/login/callback': (context) => const LoginCallbackScreen(),
@@ -200,8 +196,6 @@ Map<String, WidgetBuilder> appRoutes = {
     }
     return GrievanceDetail(id: args);
   },
-
-  
   '/member_head/view': (context) => const ViewGrievances(),
   '/member_head/assign': (context) => const AssignGrievance(),
   '/member_head/reject': (context) => const RejectGrievance(),
@@ -226,6 +220,7 @@ Map<String, WidgetBuilder> appRoutes = {
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
   '/employer/home': (context) => const AssignedList(),
+  '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
@@ -233,7 +228,6 @@ Map<String, WidgetBuilder> appRoutes = {
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
 };
-
 
 === Folder: l10n ===
 
@@ -981,6 +975,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Logout Failed'**
   String get logoutFailed;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App Version'**
+  String get appVersion;
+
+  /// No description provided for @about.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @faqs.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQs'**
+  String get faqs;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @viewPrivacyPolicyprivacySecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'View Privacy Policy / Privacy & Security'**
+  String get viewPrivacyPolicyprivacySecurity;
+
+  /// No description provided for @enableNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get enableNotifications;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @privacySecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & Security'**
+  String get privacySecurity;
+
+  /// No description provided for @viewPrivacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'View Privacy Policy'**
+  String get viewPrivacyPolicy;
 }
 
 class _AppLocalizationsDelegate
@@ -1353,6 +1419,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get logoutFailed => 'Logout Failed';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get appVersion => 'App Version';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get faqs => 'FAQs';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get viewPrivacyPolicyprivacySecurity =>
+      'View Privacy Policy / Privacy & Security';
+
+  @override
+  String get enableNotifications => 'Enable Notifications';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get privacySecurity => 'Privacy & Security';
+
+  @override
+  String get viewPrivacyPolicy => 'View Privacy Policy';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -1689,6 +1792,43 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get logoutFailed => 'लॉगआउट विफल रहा';
+
+  @override
+  String get notifications => 'सूचनाएँ';
+
+  @override
+  String get save => 'सहेजें';
+
+  @override
+  String get appVersion => 'ऐप संस्करण';
+
+  @override
+  String get about => 'के बारे में';
+
+  @override
+  String get contactSupport => 'सहायता से संपर्क करें';
+
+  @override
+  String get faqs => 'अक्सर पूछे जाने वाले प्रश्न';
+
+  @override
+  String get helpSupport => 'मदद और समर्थन';
+
+  @override
+  String get viewPrivacyPolicyprivacySecurity =>
+      'गोपनीयता नीति / गोपनीयता और सुरक्षा देखें';
+
+  @override
+  String get enableNotifications => 'सूचनाएं सक्षम करें';
+
+  @override
+  String get account => 'खाता';
+
+  @override
+  String get privacySecurity => 'गोपनीयता और सुरक्षा';
+
+  @override
+  String get viewPrivacyPolicy => 'गोपनीयता नीति देखें';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2026,6 +2166,43 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get logoutFailed => 'लॉगआउट अयशस्वी';
+
+  @override
+  String get notifications => 'सूचना';
+
+  @override
+  String get save => 'जतन करा';
+
+  @override
+  String get appVersion => 'अ‍ॅप आवृत्ती';
+
+  @override
+  String get about => 'बद्दल';
+
+  @override
+  String get contactSupport => 'समर्थनाशी संपर्क करा';
+
+  @override
+  String get faqs => 'वारंवार विचारले जाणारे प्रश्न';
+
+  @override
+  String get helpSupport => 'मदत व समर्थन';
+
+  @override
+  String get viewPrivacyPolicyprivacySecurity =>
+      'गोपनीयता धोरण / गोपनीयता आणि सुरक्षा पहा';
+
+  @override
+  String get enableNotifications => 'सूचना सक्षम करा';
+
+  @override
+  String get account => 'खाते';
+
+  @override
+  String get privacySecurity => 'गोपनीयता आणि सुरक्षा';
+
+  @override
+  String get viewPrivacyPolicy => 'गोपनीयता धोरण पहा';
 }
 
 
@@ -2837,8 +3014,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
 
-final localeProvider = StateProvider<Locale>((ref) => const Locale('en'));
-
+// Define a StateNotifier to manage locale state
 class LocaleNotifier extends StateNotifier<Locale> {
   LocaleNotifier() : super(const Locale('en')) {
     _loadLocale();
@@ -2857,6 +3033,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
+// Define the locale provider
 final localeNotifierProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) => LocaleNotifier());
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\master_data_provider.dart ---
 // lib/providers/master_data_provider.dart
@@ -2872,14 +3049,54 @@ final areasProvider = FutureProvider<List<MasterArea>>((ref) async {
   return MasterDataService.getAreas();
 });
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\user_provider.dart ---
-// lib/providers/user_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/services/api_service.dart';
 
-// Provider for the current authenticated user
-final userProvider = StateProvider<User?>((ref) => null);
+// Notifier for the current authenticated user
+class UserNotifier extends StateNotifier<User?> {
+  UserNotifier(this.ref) : super(null) {
+    fetchCurrentUser();
+  }
+
+  final Ref ref;
+
+  Future<void> fetchCurrentUser() async {
+    try {
+      final user = await AuthService.getCurrentUser();
+      state = user;
+    } catch (e) {
+      print('Error fetching current user: $e');
+      state = null;
+    }
+  }
+
+  Future<void> refreshUser() async {
+    await fetchCurrentUser();
+  }
+
+  Future<void> updateUser() async {
+    try {
+      final response = await ApiService.get('/user'); // Fetch updated user data
+      if (response != null && response.data != null) {
+        state = User.fromJson(response.data); // Update state with new user data
+      }
+    } catch (e) {
+      print('Failed to update user: $e');
+      throw e; // Let UI handle errors
+    }
+  }
+
+  void setUser(User? user) {
+    state = user;
+  }
+}
+
+// Define the user provider
+final userNotifierProvider = StateNotifierProvider<UserNotifier, User?>((ref) {
+  return UserNotifier(ref);
+});
 
 // Provider for managing a list of users (for admin)
 final usersProvider = StateNotifierProvider<UsersNotifier, List<User>>((ref) {
@@ -2921,11 +3138,9 @@ class UsersNotifier extends StateNotifier<List<User>> {
     try {
       await ApiService.updateUser(userId, userData);
       await fetchUsers(); // Refresh the user list
-      // If the updated user is the current user, refresh userProvider
-      if (ref.read(userProvider)?.id == userId) {
-        final updatedUser = await AuthService.getCurrentUser();
-        ref.read(userProvider.notifier).state = updatedUser;
-
+      // If the updated user is the current user, refresh userNotifierProvider
+      if (ref.read(userNotifierProvider)?.id == userId) {
+        await ref.read(userNotifierProvider.notifier).refreshUser();
       }
     } catch (e) {
       print('Error updating user: $e');
@@ -2938,9 +3153,9 @@ class UsersNotifier extends StateNotifier<List<User>> {
     try {
       await ApiService.deleteUser(userId);
       await fetchUsers(); // Refresh the user list
-      // If the deleted user is the current user, clear userProvider
-      if (ref.read(userProvider)?.id == userId) {
-        ref.read(userProvider.notifier).state = null;
+      // If the deleted user is the current user, clear userNotifierProvider
+      if (ref.read(userNotifierProvider)?.id == userId) {
+        ref.read(userNotifierProvider.notifier).setUser(null);
       }
     } catch (e) {
       print('Error deleting user: $e');
@@ -2949,40 +3164,13 @@ class UsersNotifier extends StateNotifier<List<User>> {
   }
 }
 
-// Notifier for the current authenticated user (unchanged)
-class UserNotifier extends StateNotifier<User?> {
-  UserNotifier(this.ref) : super(null) {
-    fetchCurrentUser();
-  }
-
-  final Ref ref;
-
-  Future<void> fetchCurrentUser() async {
-    try {
-      final user = await AuthService.getCurrentUser();
-      state = user;
-    } catch (e) {
-      print('Error fetching current user: $e');
-      state = null;
-    }
-  }
-
-  Future<void> refreshUser() async {
-    await fetchCurrentUser();
-  }
-}
-
-final userNotifierProvider = StateNotifierProvider<UserNotifier, User?>((ref) {
-  return UserNotifier(ref);
-});
-
 === Folder: screens ===
 
 
 === Folder: screens\admin ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\all_users_history.dart ---
-import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:main_ui/services/api_service.dart'; // Import your API service
 import 'package:main_ui/models/user_model.dart'; // Adjust imports as needed
@@ -3144,7 +3332,7 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
                     vertical: 12,
                   ),
                   leading: CircleAvatar(
-                    backgroundColor: theme.primaryColor.withOpacity(0.15),
+                    backgroundColor: theme.primaryColor.withValues (alpha:0.15),
                     child: const Icon(Icons.info, color: Colors.black87),
                   ),
                   title: Text(
@@ -3558,12 +3746,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
-import 'package:main_ui/models/report_model.dart';
+
 import 'package:main_ui/providers/admin_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:io' as io;
-import 'package:pdf/widgets.dart' as pw;
+
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/models/kpi_model.dart';
 import 'package:main_ui/providers/auth_provider.dart';
@@ -4114,7 +4302,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/api_service.dart';
-import '../../services/auth_service.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
@@ -5151,7 +5339,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 _isLogin 
                   ? 'Welcome back! Please sign in to continue'
                   : 'Create an account to get started',
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
               ),
               const SizedBox(height: 40),
               
@@ -5205,6 +5393,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _isLoading ? null : _submit,
                       isLoading: _isLoading,
                       fullWidth: true,
+                      backgroundColor: const Color(0xFF151a2f),
                     ),
                     const SizedBox(height: 16),
                     
@@ -5223,6 +5412,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _formKey.currentState?.reset();
                             });
                           },
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF151a2f),
+                          ),
                           child: Text(_isLogin ? l10n.register : l10n.login),
                         ),
                       ],
@@ -5237,7 +5429,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: Text(
                             'OR',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -5264,6 +5456,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: theme.dividerTheme.color!),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+
                       ),
                     ),
                   ],
@@ -6390,7 +6584,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   Text(
                     banner['subtitle'],
                     style: TextStyle(
-                      color: theme.colorScheme.onPrimaryContainer.withOpacity(
+                      color: theme.colorScheme.onPrimaryContainer.withValues ( alpha: 
                         0.8,
                       ),
                     ),
@@ -6543,7 +6737,7 @@ class ProfileScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.1),
+                        color: theme.colorScheme.primary.withValues (alpha:  0.1),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
@@ -6632,55 +6826,208 @@ class ProfileScreen extends ConsumerWidget {
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\settings_screen.dart ---
 import 'package:flutter/material.dart';
-import 'package:main_ui/l10n/app_localizations.dart'; // adjust based on your project structure
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/providers/locale_provider.dart';
+import 'package:main_ui/providers/user_provider.dart';
+import 'package:main_ui/services/auth_service.dart';
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/utils/validators.dart';
+import 'package:main_ui/widgets/custom_button.dart';
+import 'package:main_ui/widgets/loading_indicator.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _notificationsEnabled = true; // Default; fetch from backend
+  bool _isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    setState(() => _isLoading = true);
+    try {
+      final response = await ApiService.get('/settings'); // New backend route
+      if (response != null) {
+        setState(() {
+          _notificationsEnabled = response.data['notifications_enabled'] ?? true;
+          final user = ref.read(userNotifierProvider);
+          _nameController.text = user?.name ?? '';
+          _emailController.text = user?.email ?? '';
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load settings: $e')));
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    try {
+      await ApiService.post('/settings', {
+        'notifications_enabled': _notificationsEnabled,
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'password': _passwordController.text.isNotEmpty ? _passwordController.text : null,
+      });
+      await ref.read(userNotifierProvider.notifier).updateUser(); // Refresh user
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Settings saved!')));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save: $e')));
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context)!;
+    final locale = ref.watch(localeNotifierProvider);
+
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.settings)),
-      body: Column(
-        children: [
-          SwitchListTile(
-            title: Text(l10n.darkMode),
-            value: Theme.of(context).brightness == Brightness.dark,
-            onChanged: (val) {
-              // Toggle theme
-            },
-          ),
-          ListTile(
-            title: Text(l10n.language),
-            trailing: DropdownButton<String>(
-              value: Localizations.localeOf(context).languageCode,
-              items: const [
-                DropdownMenuItem(value: 'en', child: Text('English')),
-                DropdownMenuItem(value: 'mr', child: Text('मराठी')),
-                DropdownMenuItem(value: 'hi', child: Text('हिन्दी')),
-              ],
-              onChanged: (value) {
-                // Update locale (requires app restart or dynamic rebuild)
-              },
+      appBar: AppBar(title: Text(localizations.settings)),
+      body: _isLoading
+          ? const LoadingIndicator()
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Account Section
+                    Text(localizations.account, style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: InputDecoration(labelText: localizations.name),
+                      validator: validateRequired,
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _emailController,
+                      decoration: InputDecoration(labelText: localizations.email),
+                      validator: validateEmail,
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(labelText: '${localizations.password} (optional)'),
+                      obscureText: true,
+                      validator: (value) => value!.isNotEmpty ? validateRequired(value) : null,
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Notifications
+                    Text(localizations.notifications, style: Theme.of(context).textTheme.titleLarge),
+                    SwitchListTile(
+                      title: Text(localizations.enableNotifications ?? 'Enable Notifications'),
+                      value: _notificationsEnabled,
+                      onChanged: (value) => setState(() => _notificationsEnabled = value),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Language
+                    Text(localizations.language, style: Theme.of(context).textTheme.titleLarge),
+                    DropdownButton<Locale>(
+                      value: locale,
+                      items: const [
+                        DropdownMenuItem(value: Locale('en'), child: Text('English')),
+                        DropdownMenuItem(value: Locale('mr'), child: Text('Marathi')),
+                        DropdownMenuItem(value: Locale('hi'), child: Text('Hindi')),
+                      ],
+                      onChanged: (value) => ref.read(localeNotifierProvider.notifier).setLocale(value!),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Privacy & Security
+                    Text(localizations.privacySecurity ?? 'Privacy & Security', style: Theme.of(context).textTheme.titleLarge),
+                    ListTile(
+                      title: Text(localizations.viewPrivacyPolicy ?? 'View Privacy Policy'),
+                      onTap: () => Navigator.pushNamed(context, '/privacy'), // Add route if needed
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Help & Support
+                    Text(localizations.helpSupport ?? 'Help & Support', style: Theme.of(context).textTheme.titleLarge),
+                    ListTile(
+                      title: Text(localizations.faqs ?? 'FAQs'),
+                      onTap: () => Navigator.pushNamed(context, '/faqs'), // Add route if needed
+                    ),
+                    ListTile(
+                      title: Text(localizations.contactSupport ?? 'Contact Support'),
+                      onTap: () => Navigator.pushNamed(context, '/support'), // Add route if needed
+                    ),
+                    const SizedBox(height: 24),
+
+                    // About
+                    Text(localizations.about ?? 'About', style: Theme.of(context).textTheme.titleLarge),
+                    ListTile(
+                      title: Text(localizations.appVersion ?? 'App Version: 1.0.0'),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Save & Logout
+                    CustomButton(text: localizations.save ?? 'Save', onPressed: _saveSettings),
+                    const SizedBox(height: 8),
+                    CustomButton(
+                      text: localizations.logout ?? 'Logout',
+                      backgroundColor: Colors.red,
+                      onPressed: () async {
+                        await AuthService.logout();
+                        ref.read(userNotifierProvider.notifier).setUser(null);
+                        Navigator.pushReplacementNamed(context, '/login');
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
-      ),
     );
   }
 }
 
-=== Folder: screens\employer ===
+=== Folder: screens\field_staff ===
 
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\assigned_list.dart ---
-// lib/screens/employer/assigned_list.dart
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\assigned_list.dart ---
+// lib/screens/field_staff/assigned_list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart'; // Assume this exists
+import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/providers/user_provider.dart';
+
+// Define a provider for fetching assigned grievances
+final assignedGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
+  final user = ref.watch(userNotifierProvider);
+  if (user == null || user.role != 'field_staff') {
+    return [];
+  }
+  final response = await ApiService.get('/grievances/assigned/${user.id}');
+  return (response.data as List)
+      .map((json) => Grievance.fromJson(json))
+      .toList();
+});
 
 class AssignedList extends ConsumerWidget {
   const AssignedList({super.key});
@@ -6688,51 +7035,116 @@ class AssignedList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    // Static dummy data (replace with API later)
-    final List<Grievance> dummyAssigned = [
-      Grievance(
-  id: 1,
-  complaintId: 'C001',
-  title: 'Road Potholes',
-  description: 'Assigned to you',
-  status: 'in_progress',
-  priority: 'high',
-  createdAt: DateTime.now().subtract(const Duration(days: 1)),
-  updatedAt: DateTime.now(),
-  escalationLevel: 1,
-)
-,
-      // Add more dummies
-    ];
+    final grievancesAsync = ref.watch(assignedGrievancesProvider);
+    final theme = Theme.of(context);
+
+    // State for the priority filter slider
+    final priorityLevels = ['low', 'medium', 'high', 'urgent'];
+    final ValueNotifier<double> priorityFilter = ValueNotifier<double>(0);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () => Navigator.pushNamed(context, '/notifications'),
+          ),
+        ],
       ),
-      body: dummyAssigned.isEmpty
-          ? EmptyState(
-              icon: Icons.assignment_turned_in,
-              title: l10n.noAssigned,
-              message: l10n.noAssignedMessage ?? 'No assigned grievances yet.',
-            )
-          : ListView.builder(
-              itemCount: dummyAssigned.length,
-              itemBuilder: (context, index) {
-                final grievance = dummyAssigned[index];
-                return GrievanceCard(grievance: grievance);
-              },
+      drawer: const CustomNavigationDrawer(), // Add navigation drawer
+      body: Column(
+        children: [
+          // Slider for filtering by priority
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.filterByPriority,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                ValueListenableBuilder<double>(
+                  valueListenable: priorityFilter,
+                  builder: (context, value, child) {
+                    return Slider(
+                      value: value,
+                      min: 0,
+                      max: priorityLevels.length - 1,
+                      divisions: priorityLevels.length - 1,
+                      label: priorityLevels[value.toInt()],
+                      onChanged: (newValue) {
+                        priorityFilter.value = newValue;
+                      },
+                      activeColor: theme.colorScheme.primary,
+                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
+                    );
+                  },
+                ),
+              ],
             ),
+          ),
+          // Grievance list
+          Expanded(
+            child: grievancesAsync.when(
+              data: (grievances) {
+                // Filter grievances based on priority slider
+                final filteredGrievances = grievances.where((grievance) {
+                  final priorityIndex = priorityLevels.indexOf(grievance.priority?.toLowerCase() ?? 'medium');
+                  return priorityIndex >= priorityFilter.value.toInt();
+                }).toList();
+
+                if (filteredGrievances.isEmpty) {
+                  return EmptyState(
+                    icon: Icons.assignment_turned_in,
+                    title: l10n.noAssigned,
+                    message: l10n.noAssignedMessage ?? 'No assigned grievances yet.',
+                    actionButton: TextButton(
+                      onPressed: () => ref.refresh(assignedGrievancesProvider),
+                      child: Text(l10n.retry),
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => ref.refresh(assignedGrievancesProvider.future),
+                  child: ListView.builder(
+                    itemCount: filteredGrievances.length,
+                    itemBuilder: (context, index) {
+                      final grievance = filteredGrievances[index];
+                      return GrievanceCard(grievance: grievance);
+                    },
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => EmptyState(
+                icon: Icons.error_outline,
+                title: l10n.error,
+                message: l10n.failedToLoadGrievance,
+                actionButton: TextButton(
+                  onPressed: () => ref.refresh(assignedGrievancesProvider),
+                  child: Text(l10n.retry),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to update status (add routes later)
           Navigator.pushNamed(context, '/employer/update');
         },
         child: const Icon(Icons.update),
+        tooltip: l10n.updateStatus,
       ),
     );
   }
 }
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\update_status.dart ---
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\update_status.dart ---
 // lib/screens/employer/update_status.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6782,7 +7194,7 @@ class UpdateStatus extends ConsumerWidget {
     );
   }
 }
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\upload_workproof.dart ---
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\upload_workproof.dart ---
 // lib/screens/employer/upload_workproof.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6936,73 +7348,139 @@ class RejectGrievance extends ConsumerWidget {
 // lib/screens/member_head/view_grievances.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart'; // Assume this exists
+import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 import 'package:main_ui/widgets/custom_button.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/providers/user_provider.dart';
+
+// Define a provider for fetching grievances for member_head
+final memberHeadGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
+  final user = ref.watch(userNotifierProvider);
+  if (user == null || user.role != 'member_head') {
+    return [];
+  }
+  final apiService = await ApiService.get('/grievances/department/${user.departmentId}');
+  return (apiService.data as List)
+      .map((json) => Grievance.fromJson(json))
+      .toList();
+});
+
 class ViewGrievances extends ConsumerWidget {
   const ViewGrievances({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    // Static dummy data (replace with API later)
-    final List<Grievance> dummyGrievances = [
-      Grievance(
-         id: 1,
-    complaintId: 'C001',
-    title: 'Road Potholes',
-    description: 'Potholes on main road',
-    status: 'new',
-    priority: 'high',
-    createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    updatedAt: DateTime.now(),
-    escalationLevel: 1,
-      ),
-      Grievance(
-        id: 2,
-    complaintId: 'C002',
-    title: 'Garbage Collection',
-    description: 'Garbage not collected',
-    status: 'in_progress',
-    priority: 'medium',
-    createdAt: DateTime.now().subtract(const Duration(days: 2)),
-    updatedAt: DateTime.now(),
-    escalationLevel: 0,
-      ),
-      // Add more dummies as needed
-    ];
+    final grievancesAsync = ref.watch(memberHeadGrievancesProvider);
+    final theme = Theme.of(context);
+
+    // State for the priority filter slider
+    final priorityLevels = ['low', 'medium', 'high', 'urgent'];
+    final ValueNotifier<double> priorityFilter = ValueNotifier<double>(0);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.viewgrievanceetails ?? 'View Grievances'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () => Navigator.pushNamed(context, '/notifications'),
+            tooltip: l10n.notifications,
+          ),
+        ],
       ),
-      body: dummyGrievances.isEmpty
-          ? EmptyState(
-              icon: Icons.list_alt,
-              title: l10n.noGrievances,
-              message: l10n.noGrievancesMessage,
-              actionButton: CustomButton(
-                text: l10n.retry,
-                onPressed: () {
-                  // Add API refresh later
-                },
-              ),
-            )
-          : ListView.builder(
-              itemCount: dummyGrievances.length,
-              itemBuilder: (context, index) {
-                final grievance = dummyGrievances[index];
-                return GrievanceCard(grievance: grievance);
-              },
+      drawer: const CustomNavigationDrawer(), // Add navigation drawer for profile, settings, logout
+      body: Column(
+        children: [
+          // Slider for filtering by priority
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.filterByPriority,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                ValueListenableBuilder<double>(
+                  valueListenable: priorityFilter,
+                  builder: (context, value, child) {
+                    return Slider(
+                      value: value,
+                      min: 0,
+                      max: priorityLevels.length - 1,
+                      divisions: priorityLevels.length - 1,
+                      label: priorityLevels[value.toInt()],
+                      onChanged: (newValue) {
+                        priorityFilter.value = newValue;
+                      },
+                      activeColor: theme.colorScheme.primary,
+                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
+                    );
+                  },
+                ),
+              ],
             ),
+          ),
+          // Grievance list
+          Expanded(
+            child: grievancesAsync.when(
+              data: (grievances) {
+                // Filter grievances based on priority slider
+                final filteredGrievances = grievances.where((grievance) {
+                  final priorityIndex = priorityLevels.indexOf(grievance.priority?.toLowerCase() ?? 'medium');
+                  return priorityIndex >= priorityFilter.value.toInt();
+                }).toList();
+
+                if (filteredGrievances.isEmpty) {
+                  return EmptyState(
+                    icon: Icons.list_alt,
+                    title: l10n.noGrievances,
+                    message: l10n.noGrievancesMessage,
+                    actionButton: CustomButton(
+                      text: l10n.retry,
+                      onPressed: () => ref.refresh(memberHeadGrievancesProvider),
+                    ),
+                  );
+                }
+
+                return RefreshIndicator(
+                  onRefresh: () => ref.refresh(memberHeadGrievancesProvider.future),
+                  child: ListView.builder(
+                    itemCount: filteredGrievances.length,
+                    itemBuilder: (context, index) {
+                      final grievance = filteredGrievances[index];
+                      return GrievanceCard(grievance: grievance);
+                    },
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => EmptyState(
+                icon: Icons.error_outline,
+                title: l10n.error,
+                message: l10n.failedToLoadGrievance,
+                actionButton: CustomButton(
+                  text: l10n.retry,
+                  onPressed: () => ref.refresh(memberHeadGrievancesProvider),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to assign or reject (add routes later)
           Navigator.pushNamed(context, '/member_head/assign');
         },
         child: const Icon(Icons.assignment),
+        tooltip: l10n.assignGrievance,
       ),
     );
   }
@@ -7225,7 +7703,8 @@ class ApiService {
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -7284,7 +7763,7 @@ class AuthService {
   /// Initiates Google Sign-In flow using backend OAuth
   static Future<void> googleLogin() async {
     try {
-      final result = await FlutterWebAuth.authenticate(
+      final result = await FlutterWebAuth2.authenticate(
         url: '$_baseUrl/auth/google',
         callbackUrlScheme: 'com.example.mainUi', // Update with your app's scheme
       );
@@ -8463,7 +8942,7 @@ class _EmptyStateState extends State<EmptyState>
                     widget.icon,
                     size: isSmallScreen ? 48 : 64,
                     color: widget.iconColor ??
-                        theme.colorScheme.onSurface.withOpacity(0.4),
+                        theme.colorScheme.onSurface.withValues (alpha: 0.4),
                     semanticLabel: 'Empty state icon',
                   ),
                   const SizedBox(height: 16),
@@ -8483,7 +8962,7 @@ class _EmptyStateState extends State<EmptyState>
                     style: widget.messageStyle ??
                         theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.7),
+                                  .withValues (alpha: 0.7),
                               height: 1.5,
                             ),
                     textAlign: TextAlign.center,
@@ -8604,7 +9083,7 @@ class GrievanceCard extends StatelessWidget {
                       Text(
                         grievance.priority ?? 'N/A',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues (alpha: 0.7),
                         ),
                       ),
                     ],
@@ -8615,7 +9094,7 @@ class GrievanceCard extends StatelessWidget {
               Text(
                 grievance.description ?? 'No description provided',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  color: theme.colorScheme.onSurface.withValues (alpha: 0.7),
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -8626,7 +9105,7 @@ class GrievanceCard extends StatelessWidget {
                   Icon(
                     Icons.calendar_today_rounded,
                     size: 16,
-                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    color: theme.colorScheme.onSurface.withValues (alpha:0.5),
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -8634,7 +9113,7 @@ class GrievanceCard extends StatelessWidget {
                         ? _formatDate(grievance.createdAt!)
                         : 'Unknown date',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues (alpha:0.5),
                     ),
                   ),
                 ],
@@ -8691,7 +9170,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = AppLocalizations.of(context)!;
-    final user = ref.watch(userProvider); // Uses userProvider (User?)
+    final user = ref.watch(userNotifierProvider); // Uses userProvider (User?)
 
     return Drawer(
       child: ListView(
@@ -8742,7 +9221,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
             onTap: () async {
               try {
                 await AuthService.logout();
-                ref.read(userProvider.notifier).state = null; // Clear user state
+                ref.read(userNotifierProvider.notifier).setUser(null);// Clear user state
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/login');
               } catch (e) {
@@ -8764,7 +9243,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
       case 'MEMBER_HEAD':
         return '/member_head/home';
       case 'FIELD_STAFF':
-        return '/employer/home';
+        return '/field_staff/home';
       case 'ADMIN':
         return '/admin/home';
       default:
@@ -8842,9 +9321,9 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues (alpha:0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3), width: 1),
+        border: Border.all(color: color.withValues (alpha:0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -8936,14 +9415,14 @@ class TrackGrievanceProgress extends StatelessWidget {
                               shape: BoxShape.circle,
                               color: isActive
                                   ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurface.withOpacity(0.2),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.2),
                             ),
                             child: Icon(
                               stage['icon'] as IconData,
                               size: 20,
                               color: isActive
                                   ? theme.colorScheme.onPrimary
-                                  : theme.colorScheme.onSurface.withOpacity(0.4),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.4),
                             ),
                           ),
                         ),
@@ -8953,7 +9432,7 @@ class TrackGrievanceProgress extends StatelessWidget {
                             height: 40,
                             color: isActive
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.2),
+                                : theme.colorScheme.onSurface.withValues (alpha:0.2),
                           ),
                       ],
                     ),
@@ -8968,14 +9447,14 @@ class TrackGrievanceProgress extends StatelessWidget {
                               fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                               color: isActive
                                   ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                                  : theme.colorScheme.onSurface.withValues (alpha:0.5),
                             ),
                           ),
                           if (isActive)
                             Text(
                               _getStageDetails(index, status, grievance),
                               style: theme.textTheme.bodySmall?.copyWith(
-                                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                                color: theme.colorScheme.onSurface.withValues (alpha:0.7),
                               ),
                             ),
                           const SizedBox(height: 8),

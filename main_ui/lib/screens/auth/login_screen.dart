@@ -74,7 +74,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 _isLogin 
                   ? 'Welcome back! Please sign in to continue'
                   : 'Create an account to get started',
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
               ),
               const SizedBox(height: 40),
               
@@ -128,6 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       onPressed: _isLoading ? null : _submit,
                       isLoading: _isLoading,
                       fullWidth: true,
+                      backgroundColor: const Color(0xFF151a2f),
                     ),
                     const SizedBox(height: 16),
                     
@@ -146,6 +147,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _formKey.currentState?.reset();
                             });
                           },
+                          style: TextButton.styleFrom(
+                            foregroundColor: const Color(0xFF151a2f),
+                          ),
                           child: Text(_isLogin ? l10n.register : l10n.login),
                         ),
                       ],
@@ -160,7 +164,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: Text(
                             'OR',
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                           ),
                         ),
@@ -187,6 +191,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: BorderSide(color: theme.dividerTheme.color!),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+
                       ),
                     ),
                   ],

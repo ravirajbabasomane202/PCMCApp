@@ -12,7 +12,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = AppLocalizations.of(context)!;
-    final user = ref.watch(userProvider); // Uses userProvider (User?)
+    final user = ref.watch(userNotifierProvider); // Uses userProvider (User?)
 
     return Drawer(
       child: ListView(
@@ -63,7 +63,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
             onTap: () async {
               try {
                 await AuthService.logout();
-                ref.read(userProvider.notifier).state = null; // Clear user state
+                ref.read(userNotifierProvider.notifier).setUser(null);// Clear user state
                 Navigator.pop(context);
                 Navigator.pushReplacementNamed(context, '/login');
               } catch (e) {

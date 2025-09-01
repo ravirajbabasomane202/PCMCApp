@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_web_auth/flutter_web_auth.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -60,7 +61,7 @@ class AuthService {
   /// Initiates Google Sign-In flow using backend OAuth
   static Future<void> googleLogin() async {
     try {
-      final result = await FlutterWebAuth.authenticate(
+      final result = await FlutterWebAuth2.authenticate(
         url: '$_baseUrl/auth/google',
         callbackUrlScheme: 'com.example.mainUi', // Update with your app's scheme
       );

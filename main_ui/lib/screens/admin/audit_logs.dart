@@ -87,7 +87,7 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
                     vertical: 12,
                   ),
                   leading: CircleAvatar(
-                    backgroundColor: theme.primaryColor.withOpacity(0.15),
+                    backgroundColor: theme.primaryColor.withValues (alpha:0.15),
                     child: const Icon(Icons.info, color: Colors.black87),
                   ),
                   title: Text(

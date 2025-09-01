@@ -329,7 +329,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   Text(
                     banner['subtitle'],
                     style: TextStyle(
-                      color: theme.colorScheme.onPrimaryContainer.withOpacity(
+                      color: theme.colorScheme.onPrimaryContainer.withValues ( alpha: 
                         0.8,
                       ),
                     ),

@@ -75,7 +75,7 @@ class _EmptyStateState extends State<EmptyState>
                     widget.icon,
                     size: isSmallScreen ? 48 : 64,
                     color: widget.iconColor ??
-                        theme.colorScheme.onSurface.withOpacity(0.4),
+                        theme.colorScheme.onSurface.withValues (alpha: 0.4),
                     semanticLabel: 'Empty state icon',
                   ),
                   const SizedBox(height: 16),
@@ -95,7 +95,7 @@ class _EmptyStateState extends State<EmptyState>
                     style: widget.messageStyle ??
                         theme.textTheme.bodyLarge?.copyWith(
                               color: theme.colorScheme.onSurface
-                                  .withOpacity(0.7),
+                                  .withValues (alpha: 0.7),
                               height: 1.5,
                             ),
                     textAlign: TextAlign.center,

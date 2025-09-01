@@ -152,6 +152,16 @@ if __name__ == "__main__":
     with app.app_context():
         insert_master_subjects()
 
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\create_databse.py ---
+from app import create_app, db  # adjust if your app factory is named differently
+
+app = create_app()
+
+with app.app_context():
+    db.drop_all()
+    db.create_all()
+    print("Database reset and tables created successfully!")
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\run.py ---
 # run.py
 
@@ -161,6 +171,92 @@ app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\seedData.py ---
+# seed_data.py
+
+from datetime import datetime, timedelta, timezone
+from app import create_app, db
+from app.models import (
+    User, Role, Grievance, GrievanceStatus, Priority,
+    MasterSubjects, MasterAreas, MasterCategories
+)
+
+# Create Flask app context
+app = create_app()
+
+with app.app_context():
+    # Drop & recreate (⚠️ optional – remove drop_all if you want to keep data)
+    # db.drop_all()
+    # db.create_all()
+
+    # --- Master Data ---
+    roads = MasterCategories(name="Roads", description="Road-related issues")
+    sanitation = MasterCategories(name="Sanitation", description="Garbage, sewage, etc.")
+    db.session.add_all([roads, sanitation])
+    db.session.commit()
+
+    subject_potholes = MasterSubjects(name="Potholes", description="Report potholes on roads", category=roads)
+    subject_garbage = MasterSubjects(name="Garbage", description="Uncollected garbage", category=sanitation)
+    db.session.add_all([subject_potholes, subject_garbage])
+    db.session.commit()
+
+    area_central = MasterAreas(name="Central Ward", description="Main city area")
+    area_north = MasterAreas(name="North Ward", description="Northern side of the city")
+    db.session.add_all([area_central, area_north])
+    db.session.commit()
+
+    # --- Users ---
+    # admin = User(name="Admin User", email="admin@test.com", role=Role.ADMIN, department_id=area_central.id)
+    # admin.set_password("admin123")
+
+    # citizen = User(name="John Citizen", email="citizen@test.com", role=Role.CITIZEN, department_id=area_north.id)
+    # citizen.set_password("citizen123")
+
+    # staff = User(name="Field Staff", email="staff@test.com", role=Role.FIELD_STAFF, department_id=area_central.id)
+    # staff.set_password("staff123")
+
+    # db.session.add_all([admin, citizen, staff])
+    # db.session.commit()
+
+    # --- Grievances ---
+    grievance1 = Grievance(
+        citizen_id=1,
+        subject_id=subject_potholes.id,
+        area_id=area_central.id,
+        title="Big pothole near market",
+        description="A large pothole causing traffic jams.",
+        ward_number="12",
+        status=GrievanceStatus.NEW,
+        priority=Priority.HIGH,
+        latitude=18.5204,
+        longitude=73.8567,
+        address="Market Road, Central Ward",
+        escalation_level=0
+    )
+
+    grievance2 = Grievance(
+        citizen_id=1,
+        subject_id=subject_garbage.id,
+        area_id=area_north.id,
+        title="Garbage not collected",
+        description="Garbage has been piling up for 3 days.",
+        ward_number="7",
+        status=GrievanceStatus.IN_PROGRESS,
+        priority=Priority.MEDIUM,
+        assigned_to=3,
+        assigned_by=4,
+        latitude=18.5304,
+        longitude=73.8667,
+        address="Street 21, North Ward",
+        escalation_level=1,
+        created_at=datetime.now(timezone.utc) - timedelta(days=2)
+    )
+
+    db.session.add_all([grievance1, grievance2])
+    db.session.commit()
+
+    print("✅ Sample data inserted successfully!")
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\testusers.py ---
 # create_users.py
 from app import create_app, db
@@ -317,18 +413,17 @@ oauth = OAuth()
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\models.py ---
 # app/models.py
 
-from datetime import datetime,timezone  
+from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from enum import Enum
 import uuid
 
 
-
 class Role(Enum):
     CITIZEN = 'citizen'
     MEMBER_HEAD = 'member_head'
-    FIELD_STAFF  = 'field_staff'
+    FIELD_STAFF = 'field_staff'
     ADMIN = 'admin'
 
 class GrievanceStatus(Enum):
@@ -349,12 +444,18 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=True)
-    phone_number = db.Column(db.String(15), unique=True, nullable=True) 
+    phone_number = db.Column(db.String(15), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=True)
     role = db.Column(db.Enum(Role), nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('master_areas.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    # New fields for enhanced user profile
+    address = db.Column(db.String(256), nullable=True)  # For user address in settings
+    profile_picture = db.Column(db.String(256), nullable=True)  # Path to profile picture
+    last_login = db.Column(db.DateTime, nullable=True)  # Track last login for security
+    two_factor_enabled = db.Column(db.Boolean, default=False)  # For 2FA in settings
+    is_active = db.Column(db.Boolean, default=True)  # For account status (e.g., disable user)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -364,15 +465,13 @@ class User(db.Model):
 
 class Grievance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    complaint_id = db.Column(db.String(50), unique=True, nullable=False, default=lambda: str(uuid.uuid4())[:8]) 
+    complaint_id = db.Column(db.String(50), unique=True, nullable=False, default=lambda: str(uuid.uuid4())[:8])
     citizen_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('master_subjects.id'), nullable=False)
     area_id = db.Column(db.Integer, db.ForeignKey('master_areas.id'), nullable=False)
     title = db.Column(db.String(256), nullable=False)
     description = db.Column(db.Text, nullable=False)
     ward_number = db.Column(db.String(50), nullable=True)
-
-
     status = db.Column(db.Enum(GrievanceStatus), default=GrievanceStatus.NEW, nullable=False)
     priority = db.Column(db.Enum(Priority), default=Priority.MEDIUM, nullable=True)
     assigned_to = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
@@ -384,16 +483,19 @@ class Grievance(db.Model):
     latitude = db.Column(db.Float, nullable=True)
     longitude = db.Column(db.Float, nullable=True)
     address = db.Column(db.String(256), nullable=True)
-
-    escalation_level = db.Column(db.Integer, default=0)  # For escalation tracking
+    escalation_level = db.Column(db.Integer, default=0)
     feedback_rating = db.Column(db.Integer, nullable=True)  # 1-5 star rating
     feedback_text = db.Column(db.Text, nullable=True)
+    # New field for categorization
+    category_id = db.Column(db.Integer, db.ForeignKey('master_categories.id'), nullable=True)  # For grouping subjects
 
     # Relationships
     citizen = db.relationship('User', backref=db.backref('submitted_grievances', lazy=True), foreign_keys=[citizen_id])
     assignee = db.relationship('User', backref=db.backref('assigned_grievances', lazy=True), foreign_keys=[assigned_to])
+    assigner = db.relationship('User', backref=db.backref('assigned_by_grievances', lazy=True), foreign_keys=[assigned_by])
     subject = db.relationship('MasterSubjects')
     area = db.relationship('MasterAreas')
+    category = db.relationship('MasterCategories')
     attachments = db.relationship('GrievanceAttachment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
     comments = db.relationship('GrievanceComment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
 
@@ -402,7 +504,7 @@ class GrievanceAttachment(db.Model):
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
     file_type = db.Column(db.String(10), nullable=False)  # e.g., 'pdf', 'jpeg'
-    
+    file_size = db.Column(db.Integer, nullable=True)  # New: Store file size for validation
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class GrievanceComment(db.Model):
@@ -411,6 +513,8 @@ class GrievanceComment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comment_text = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    # New field for comment visibility
+    is_public = db.Column(db.Boolean, default=True)  # Public or internal (e.g., for staff only)
 
     # Relationship to User
     user = db.relationship('User', backref='comments')
@@ -420,57 +524,97 @@ class Workproof(db.Model):
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
+    file_type = db.Column(db.String(10), nullable=True)  # New: Store file type
+    file_size = db.Column(db.Integer, nullable=True)  # New: Store file size
     notes = db.Column(db.Text, nullable=True)
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Relationship
+    uploader = db.relationship('User', backref='workproofs')
 
 class MasterSubjects(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    # New field for categorization
+    category_id = db.Column(db.Integer, db.ForeignKey('master_categories.id'), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable subjects
+
+    # Relationship
+    category = db.relationship('MasterCategories', backref='subjects')
 
 class MasterAreas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable areas
+
+class MasterCategories(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), nullable=False)  # e.g., 'Roads', 'Sanitation'
+    description = db.Column(db.Text, nullable=True)
+    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable categories
 
 class AuditLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.Text, nullable=False)
+    action_type = db.Column(db.String(50), nullable=True)  # New: e.g., 'create', 'update', 'delete'
     performed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=True)
+    details = db.Column(db.Text, nullable=True)  # New: Additional context (e.g., JSON of changes)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    # Relationship
+    performer = db.relationship('User', backref='audit_logs')
 
 class OtpToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone_number = db.Column(db.String(15), nullable=False)
     otp = db.Column(db.String(6), nullable=False)
     expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, default=False)  # New: Track if OTP was used
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class NotificationToken(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     fcm_token = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable token
 
-# Add to your models.py
+    # Relationship
+    user = db.relationship('User', backref='notification_tokens')
+
 class MasterConfig(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(128), unique=True, nullable=False)
     value = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    description = db.Column(db.Text, nullable=True)  # New: Describe config purpose
 
-# app/models.py
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), nullable=False)
     message = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(50), default="general")  # general / emergency
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at = db.Column(db.DateTime, nullable=True)  # New: Expiration for announcements
+    target_role = db.Column(db.Enum(Role), nullable=True)  # New: Target specific roles
+    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable announcements
 
+class UserPreference(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    notifications_enabled = db.Column(db.Boolean, default=True)  # Notification preference
+    language = db.Column(db.String(10), default='en')  # Language (e.g., 'en', 'mr', 'hi')
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+    # Relationship
+    user = db.relationship('User', backref='preferences')
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\schemas.py ---
-# app/schemas.py
-
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from marshmallow_enum import EnumField
 from .models import Role, GrievanceStatus, Priority
@@ -479,11 +623,17 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Email(required=True)
-    password = fields.Str( load_only=True, validate=validate.Length(min=6), allow_none=True)  # Added password field
+    password = fields.Str(load_only=True, validate=validate.Length(min=6), allow_none=True)
     role = EnumField(Role, by_value=True, required=True)
     department_id = fields.Int(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
+    # New fields from updated User model
+    address = fields.Str(allow_none=True)
+    profile_picture = fields.Str(allow_none=True)
+    last_login = fields.DateTime(dump_only=True)
+    two_factor_enabled = fields.Boolean(dump_only=True)
+    is_active = fields.Boolean(dump_only=True)
 
     @validates('name')
     def validate_name(self, value):
@@ -493,44 +643,45 @@ class UserSchema(Schema):
 class GrievanceSchema(Schema):
     id = fields.Int(dump_only=True)
     complaint_id = fields.Str(dump_only=True)
-    title = fields.Str(required=True) # Used for both loading and dumping
-    description = fields.Str(required=True) # Used for both loading and dumping
-
+    title = fields.Str(required=True)
+    description = fields.Str(required=True)
     # --- Fields for LOADING data (API input from user) ---
     subject_id = fields.Int(required=True, load_only=True)
     area_id = fields.Int(required=True, load_only=True)
-
-    # 🔹 Add location fields
+    # New field
+    category_id = fields.Int(allow_none=True, load_only=True)
+    # Location fields
     latitude = fields.Float(allow_none=True)
     longitude = fields.Float(allow_none=True)
     address = fields.Str(allow_none=True)
-
     # --- Fields for DUMPING data (API output) ---
     status = EnumField(GrievanceStatus, by_value=True, dump_only=True)
-    priority = EnumField(Priority, by_value=True, allow_none=True,dump_default=Priority.MEDIUM.value)
+    priority = EnumField(Priority, by_value=True, allow_none=True, dump_default=Priority.MEDIUM.value)
     rejection_reason = fields.Str(allow_none=True, dump_only=True)
     resolved_at = fields.DateTime(allow_none=True, dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
-
     # Nested objects for richer API output
     citizen = fields.Nested(UserSchema(only=("id", "name")), dump_only=True, dump_default={'id': 0, 'name': 'Unknown User'})
     subject = fields.Nested('MasterSubjectsSchema', dump_only=True)
     area = fields.Nested('MasterAreasSchema', dump_only=True)
+    category = fields.Nested('MasterCategoriesSchema', dump_only=True)  # New nested field
     assignee = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)
+    assigner = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New: for assigned_by
     attachments = fields.Nested('GrievanceAttachmentSchema', many=True, dump_only=True)
     comments = fields.Nested('GrievanceCommentSchema', many=True, dump_only=True)
+
     @validates('citizen')
     def validate_citizen(self, value):
         if value is None:
             return {'id': 0, 'name': 'Unknown User'}
-        
+
 class GrievanceAttachmentSchema(Schema):
     id = fields.Int(dump_only=True)
     grievance_id = fields.Int(required=True)
     file_path = fields.Str(dump_only=True)
     file_type = fields.Str(dump_only=True)
-    file_size = fields.Int(dump_only=True)  # New field
+    file_size = fields.Int(dump_only=True)  # Already included
     uploaded_at = fields.DateTime(dump_only=True)
 
 class GrievanceCommentSchema(Schema):
@@ -539,6 +690,7 @@ class GrievanceCommentSchema(Schema):
     user_id = fields.Int(dump_only=True)
     comment_text = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
+    is_public = fields.Boolean(dump_only=True)  # New field
     user = fields.Nested(UserSchema(only=("name",)), dump_only=True)
 
 class WorkproofSchema(Schema):
@@ -546,34 +698,85 @@ class WorkproofSchema(Schema):
     grievance_id = fields.Int(required=True)
     uploaded_by = fields.Int(dump_only=True)
     file_path = fields.Str(dump_only=True)
+    file_type = fields.Str(dump_only=True)  # New field
+    file_size = fields.Int(dump_only=True)  # New field
     notes = fields.Str(allow_none=True)
     uploaded_at = fields.DateTime(dump_only=True)
+    uploader = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New nested field
 
 class MasterSubjectsSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     description = fields.Str(allow_none=True)
+    category_id = fields.Int(allow_none=True)  # New field
+    is_active = fields.Boolean(dump_only=True)  # New field
+    category = fields.Nested('MasterCategoriesSchema', dump_only=True)  # New nested field
 
 class MasterAreasSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     description = fields.Str(allow_none=True)
+    is_active = fields.Boolean(dump_only=True)  # New field
+
+class MasterCategoriesSchema(Schema):
+    id = fields.Int(dump_only=True)
+    name = fields.Str(required=True)
+    description = fields.Str(allow_none=True)
+    is_active = fields.Boolean(dump_only=True)
 
 class AuditLogSchema(Schema):
     id = fields.Int(dump_only=True)
     action = fields.Str(required=True)
+    action_type = fields.Str(allow_none=True)  # New field
     performed_by = fields.Int(required=True)
     grievance_id = fields.Int(allow_none=True)
+    details = fields.Str(allow_none=True)  # New field
     timestamp = fields.DateTime(dump_only=True)
+    performer = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New nested field
 
-# app/schemas.py
+class OtpTokenSchema(Schema):
+    id = fields.Int(dump_only=True)
+    phone_number = fields.Str(required=True)
+    otp = fields.Str(required=True)
+    expires_at = fields.DateTime(required=True)
+    used = fields.Boolean(dump_only=True)  # New field
+    created_at = fields.DateTime(dump_only=True)
+
+class NotificationTokenSchema(Schema):
+    id = fields.Int(dump_only=True)
+    user_id = fields.Int(required=True)
+    fcm_token = fields.Str(required=True)
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)  # New field
+    is_active = fields.Boolean(dump_only=True)  # New field
+    user = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New nested field
+
+class MasterConfigSchema(Schema):
+    id = fields.Int(dump_only=True)
+    key = fields.Str(required=True)
+    value = fields.Str(required=True)
+    description = fields.Str(allow_none=True)  # New field
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+
 class AnnouncementSchema(Schema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True)
     message = fields.Str(required=True)
     type = fields.Str(required=True, validate=validate.OneOf(["general", "emergency"]))
     created_at = fields.DateTime(dump_only=True)
+    expires_at = fields.DateTime(allow_none=True, dump_only=True)  # New field
+    target_role = EnumField(Role, by_value=True, allow_none=True)  # New field
+    is_active = fields.Boolean(dump_only=True)  # New field
 
+class UserPreferenceSchema(Schema):
+    id = fields.Int(dump_only=True)
+    user_id = fields.Int(required=True)
+    notifications_enabled = fields.Boolean(dump_default=True)
+    language = fields.Str(dump_default='en', validate=validate.OneOf(['en', 'mr', 'hi']))
+    created_at = fields.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+    user = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\__init__.py ---
 # app/__init__.py
 
@@ -635,6 +838,7 @@ def create_app():
     from .routes.admin_routes import admin_bp
     from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
+    from .routes.settings_routes import settings_bp
     app.register_blueprint(public_bp)
     app.register_blueprint(notification_bp, url_prefix='/notifications')
 
@@ -642,7 +846,7 @@ def create_app():
     app.register_blueprint(grievance_bp, url_prefix='/grievances')
     app.register_blueprint(user_bp, url_prefix='/users')
     app.register_blueprint(admin_bp, url_prefix='/admins')
-
+    app.register_blueprint(settings_bp, url_prefix='/settings')
     return app
 
 === Folder: app\routes ===
@@ -1460,6 +1664,60 @@ def get_subjects():
 def get_areas():
     areas = MasterAreas.query.all()
     return jsonify([{'id': a.id, 'name': a.name, 'description': a.description} for a in areas])
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\settings_routes.py ---
+# app/routes.py (or in blueprints)
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from ..models import User, UserPreference
+from .. import db
+from ..utils.auth_utils import jwt_required_with_role  # If roles are needed, but since common, no role check
+
+settings_bp = Blueprint('settings', __name__)
+
+@settings_bp.route('/settings', methods=['GET'])
+@jwt_required()
+def get_settings():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    
+    pref = UserPreference.query.filter_by(user_id=user_id).first()
+    return jsonify({
+        "name": user.name,
+        "email": user.email,
+        "notifications_enabled": pref.notifications_enabled if pref else True,
+        "language": pref.language if pref else 'en'
+    }), 200
+
+@settings_bp.route('/settings', methods=['POST'])
+@jwt_required()
+def save_settings():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    
+    data = request.json
+    if 'name' in data:
+        user.name = data['name']
+    if 'email' in data:
+        user.email = data['email']
+    if 'password' in data:
+        user.set_password(data['password'])
+    
+    pref = UserPreference.query.filter_by(user_id=user_id).first()
+    if not pref:
+        pref = UserPreference(user_id=user_id)
+        db.session.add(pref)
+    
+    if 'notifications_enabled' in data:
+        pref.notifications_enabled = data['notifications_enabled']
+    if 'language' in data:
+        pref.language = data['language']
+    
+    db.session.commit()
+    return jsonify({"msg": "Settings saved"}), 200
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\user_routes.py ---
 # app/routes/user_routes.py
 
@@ -2635,473 +2893,6 @@ def calculate_dept_wise_resolution():
 
 
 === Folder: app\__pycache__ ===
-
-
-=== Folder: migrations ===
-
---- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\env.py ---
-import logging
-from logging.config import fileConfig
-
-from flask import current_app
-
-from alembic import context
-
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-
-# Interpret the config file for Python logging.
-# This line sets up loggers basically.
-fileConfig(config.config_file_name)
-logger = logging.getLogger('alembic.env')
-
-
-def get_engine():
-    try:
-        # this works with Flask-SQLAlchemy<3 and Alchemical
-        return current_app.extensions['migrate'].db.get_engine()
-    except (TypeError, AttributeError):
-        # this works with Flask-SQLAlchemy>=3
-        return current_app.extensions['migrate'].db.engine
-
-
-def get_engine_url():
-    try:
-        return get_engine().url.render_as_string(hide_password=False).replace(
-            '%', '%%')
-    except AttributeError:
-        return str(get_engine().url).replace('%', '%%')
-
-
-# add your model's MetaData object here
-# for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-config.set_main_option('sqlalchemy.url', get_engine_url())
-target_db = current_app.extensions['migrate'].db
-
-# other values from the config, defined by the needs of env.py,
-# can be acquired:
-# my_important_option = config.get_main_option("my_important_option")
-# ... etc.
-
-
-def get_metadata():
-    if hasattr(target_db, 'metadatas'):
-        return target_db.metadatas[None]
-    return target_db.metadata
-
-
-def run_migrations_offline():
-    """Run migrations in 'offline' mode.
-
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
-    """
-    url = config.get_main_option("sqlalchemy.url")
-    context.configure(
-        url=url, target_metadata=get_metadata(), literal_binds=True
-    )
-
-    with context.begin_transaction():
-        context.run_migrations()
-
-
-def run_migrations_online():
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
-
-    # this callback is used to prevent an auto-migration from being generated
-    # when there are no changes to the schema
-    # reference: http://alembic.zzzcomputing.com/en/latest/cookbook.html
-    def process_revision_directives(context, revision, directives):
-        if getattr(config.cmd_opts, 'autogenerate', False):
-            script = directives[0]
-            if script.upgrade_ops.is_empty():
-                directives[:] = []
-                logger.info('No changes in schema detected.')
-
-    conf_args = current_app.extensions['migrate'].configure_args
-    if conf_args.get("process_revision_directives") is None:
-        conf_args["process_revision_directives"] = process_revision_directives
-
-    connectable = get_engine()
-
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection,
-            target_metadata=get_metadata(),
-            **conf_args
-        )
-
-        with context.begin_transaction():
-            context.run_migrations()
-
-
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    run_migrations_online()
-
-
-=== Folder: migrations\versions ===
-
---- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\versions\2f1f3f8372c2_initial_migration.py ---
-"""Initial migration
-
-Revision ID: 2f1f3f8372c2
-Revises: 
-Create Date: 2025-08-27 17:15:33.074414
-
-"""
-from alembic import op
-import sqlalchemy as sa
-
-
-# revision identifiers, used by Alembic.
-revision = '2f1f3f8372c2'
-down_revision = None
-branch_labels = None
-depends_on = None
-
-
-def upgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    op.create_table('announcement',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=False),
-    sa.Column('message', sa.Text(), nullable=False),
-    sa.Column('type', sa.String(length=50), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('master_areas',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('master_config',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('key', sa.String(length=128), nullable=False),
-    sa.Column('value', sa.String(length=256), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('key')
-    )
-    op.create_table('master_subjects',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('otp_token',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('phone_number', sa.String(length=15), nullable=False),
-    sa.Column('otp', sa.String(length=6), nullable=False),
-    sa.Column('expires_at', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('email', sa.String(length=128), nullable=True),
-    sa.Column('phone_number', sa.String(length=15), nullable=True),
-    sa.Column('password_hash', sa.String(length=256), nullable=True),
-    sa.Column('role', sa.Enum('CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN', name='role'), nullable=False),
-    sa.Column('department_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['department_id'], ['master_areas.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
-    )
-    op.create_table('grievance',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('complaint_id', sa.String(length=50), nullable=False),
-    sa.Column('citizen_id', sa.Integer(), nullable=False),
-    sa.Column('subject_id', sa.Integer(), nullable=False),
-    sa.Column('area_id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=False),
-    sa.Column('description', sa.Text(), nullable=False),
-    sa.Column('ward_number', sa.String(length=50), nullable=True),
-    sa.Column('latitude', sa.Float(), nullable=True),
-    sa.Column('longitude', sa.Float(), nullable=True),
-    sa.Column('address', sa.String(length=256), nullable=True),
-    sa.Column('status', sa.Enum('NEW', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED', 'REJECTED', name='grievancestatus'), nullable=False),
-    sa.Column('priority', sa.Enum('LOW', 'MEDIUM', 'HIGH', 'URGENT', name='priority'), nullable=True),
-    sa.Column('assigned_to', sa.Integer(), nullable=True),
-    sa.Column('assigned_by', sa.Integer(), nullable=True),
-    sa.Column('rejection_reason', sa.Text(), nullable=True),
-    sa.Column('resolved_at', sa.DateTime(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.Column('escalation_level', sa.Integer(), nullable=True),
-    sa.Column('feedback_rating', sa.Integer(), nullable=True),
-    sa.Column('feedback_text', sa.Text(), nullable=True),
-    sa.ForeignKeyConstraint(['area_id'], ['master_areas.id'], ),
-    sa.ForeignKeyConstraint(['assigned_by'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['assigned_to'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['citizen_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['subject_id'], ['master_subjects.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('complaint_id')
-    )
-    op.create_table('notification_token',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('fcm_token', sa.String(length=256), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('audit_log',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('action', sa.Text(), nullable=False),
-    sa.Column('performed_by', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=True),
-    sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['performed_by'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('grievance_attachment',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('file_path', sa.String(length=256), nullable=False),
-    sa.Column('file_type', sa.String(length=10), nullable=False),
-    sa.Column('uploaded_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('grievance_comment',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('comment_text', sa.Text(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('workproof',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('uploaded_by', sa.Integer(), nullable=False),
-    sa.Column('file_path', sa.String(length=256), nullable=False),
-    sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('uploaded_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['uploaded_by'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    # ### end Alembic commands ###
-
-
-def downgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_table('workproof')
-    op.drop_table('grievance_comment')
-    op.drop_table('grievance_attachment')
-    op.drop_table('audit_log')
-    op.drop_table('notification_token')
-    op.drop_table('grievance')
-    op.drop_table('user')
-    op.drop_table('otp_token')
-    op.drop_table('master_subjects')
-    op.drop_table('master_config')
-    op.drop_table('master_areas')
-    op.drop_table('announcement')
-    # ### end Alembic commands ###
-
---- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\versions\d466744f65bb_initial_migration.py ---
-"""Initial migration
-
-Revision ID: d466744f65bb
-Revises: 2f1f3f8372c2
-Create Date: 2025-08-27 17:39:04.626823
-
-"""
-from alembic import op
-import sqlalchemy as sa
-
-
-# revision identifiers, used by Alembic.
-revision = 'd466744f65bb'
-down_revision = '2f1f3f8372c2'
-branch_labels = None
-depends_on = None
-
-
-def upgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    op.create_table('announcement',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=False),
-    sa.Column('message', sa.Text(), nullable=False),
-    sa.Column('type', sa.String(length=50), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('master_areas',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('master_config',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('key', sa.String(length=128), nullable=False),
-    sa.Column('value', sa.String(length=256), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('key')
-    )
-    op.create_table('master_subjects',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('description', sa.Text(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('otp_token',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('phone_number', sa.String(length=15), nullable=False),
-    sa.Column('otp', sa.String(length=6), nullable=False),
-    sa.Column('expires_at', sa.DateTime(), nullable=False),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=128), nullable=False),
-    sa.Column('email', sa.String(length=128), nullable=True),
-    sa.Column('phone_number', sa.String(length=15), nullable=True),
-    sa.Column('password_hash', sa.String(length=256), nullable=True),
-    sa.Column('role', sa.Enum('CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN', name='role'), nullable=False),
-    sa.Column('department_id', sa.Integer(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['department_id'], ['master_areas.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('phone_number')
-    )
-    op.create_table('grievance',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('complaint_id', sa.String(length=50), nullable=False),
-    sa.Column('citizen_id', sa.Integer(), nullable=False),
-    sa.Column('subject_id', sa.Integer(), nullable=False),
-    sa.Column('area_id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=256), nullable=False),
-    sa.Column('description', sa.Text(), nullable=False),
-    sa.Column('ward_number', sa.String(length=50), nullable=True),
-    sa.Column('latitude', sa.Float(), nullable=True),
-    sa.Column('longitude', sa.Float(), nullable=True),
-    sa.Column('address', sa.String(length=256), nullable=True),
-    sa.Column('status', sa.Enum('NEW', 'IN_PROGRESS', 'ON_HOLD', 'RESOLVED', 'CLOSED', 'REJECTED', name='grievancestatus'), nullable=False),
-    sa.Column('priority', sa.Enum('LOW', 'MEDIUM', 'HIGH', 'URGENT', name='priority'), nullable=True),
-    sa.Column('assigned_to', sa.Integer(), nullable=True),
-    sa.Column('assigned_by', sa.Integer(), nullable=True),
-    sa.Column('rejection_reason', sa.Text(), nullable=True),
-    sa.Column('resolved_at', sa.DateTime(), nullable=True),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.Column('updated_at', sa.DateTime(), nullable=True),
-    sa.Column('escalation_level', sa.Integer(), nullable=True),
-    sa.Column('feedback_rating', sa.Integer(), nullable=True),
-    sa.Column('feedback_text', sa.Text(), nullable=True),
-    sa.ForeignKeyConstraint(['area_id'], ['master_areas.id'], ),
-    sa.ForeignKeyConstraint(['assigned_by'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['assigned_to'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['citizen_id'], ['user.id'], ),
-    sa.ForeignKeyConstraint(['subject_id'], ['master_subjects.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('complaint_id')
-    )
-    op.create_table('notification_token',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('fcm_token', sa.String(length=256), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('audit_log',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('action', sa.Text(), nullable=False),
-    sa.Column('performed_by', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=True),
-    sa.Column('timestamp', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['performed_by'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('grievance_attachment',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('file_path', sa.String(length=256), nullable=False),
-    sa.Column('file_type', sa.String(length=10), nullable=False),
-    sa.Column('uploaded_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('grievance_comment',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('comment_text', sa.Text(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('workproof',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('grievance_id', sa.Integer(), nullable=False),
-    sa.Column('uploaded_by', sa.Integer(), nullable=False),
-    sa.Column('file_path', sa.String(length=256), nullable=False),
-    sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('uploaded_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['grievance_id'], ['grievance.id'], ),
-    sa.ForeignKeyConstraint(['uploaded_by'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    # ### end Alembic commands ###
-
-
-def downgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_table('workproof')
-    op.drop_table('grievance_comment')
-    op.drop_table('grievance_attachment')
-    op.drop_table('audit_log')
-    op.drop_table('notification_token')
-    op.drop_table('grievance')
-    op.drop_table('user')
-    op.drop_table('otp_token')
-    op.drop_table('master_subjects')
-    op.drop_table('master_config')
-    op.drop_table('master_areas')
-    op.drop_table('announcement')
-    # ### end Alembic commands ###
-
-
-=== Folder: migrations\versions\__pycache__ ===
-
-
-=== Folder: migrations\__pycache__ ===
 
 
 === Folder: uploads ===

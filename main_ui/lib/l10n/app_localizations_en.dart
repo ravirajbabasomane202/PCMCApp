@@ -334,4 +334,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notifications => 'Notifications';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get appVersion => 'App Version';
+
+  @override
+  String get about => 'About';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get faqs => 'FAQs';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get viewPrivacyPolicyprivacySecurity =>
+      'View Privacy Policy / Privacy & Security';
+
+  @override
+  String get enableNotifications => 'Enable Notifications';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get privacySecurity => 'Privacy & Security';
+
+  @override
+  String get viewPrivacyPolicy => 'View Privacy Policy';
+
+  @override
+  String get invalidEmail => 'Invalid Email';
+
+  @override
+  String get nameRequired => 'Name is required';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
 }

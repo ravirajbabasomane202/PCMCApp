@@ -335,4 +335,50 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get notifications => 'सूचना';
+
+  @override
+  String get save => 'जतन करा';
+
+  @override
+  String get appVersion => 'अ‍ॅप आवृत्ती';
+
+  @override
+  String get about => 'बद्दल';
+
+  @override
+  String get contactSupport => 'समर्थनाशी संपर्क करा';
+
+  @override
+  String get faqs => 'वारंवार विचारले जाणारे प्रश्न';
+
+  @override
+  String get helpSupport => 'मदत व समर्थन';
+
+  @override
+  String get viewPrivacyPolicyprivacySecurity =>
+      'गोपनीयता धोरण / गोपनीयता आणि सुरक्षा पहा';
+
+  @override
+  String get enableNotifications => 'सूचना सक्षम करा';
+
+  @override
+  String get account => 'खाते';
+
+  @override
+  String get privacySecurity => 'गोपनीयता आणि सुरक्षा';
+
+  @override
+  String get viewPrivacyPolicy => 'गोपनीयता धोरण पहा';
+
+  @override
+  String get invalidEmail => 'अवैध ईमेल';
+
+  @override
+  String get nameRequired => 'नाव आवश्यक आहे';
+
+  @override
+  String get emailRequired => 'ईमेल आवश्यक आहे';
+
+  @override
+  String get passwordRequired => 'पासवर्ड आवश्यक आहे';
 }

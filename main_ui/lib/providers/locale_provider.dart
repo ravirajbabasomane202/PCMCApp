@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/storage_service.dart';
 
-final localeProvider = StateProvider<Locale>((ref) => const Locale('en'));
-
+// Define a StateNotifier to manage locale state
 class LocaleNotifier extends StateNotifier<Locale> {
   LocaleNotifier() : super(const Locale('en')) {
     _loadLocale();
@@ -22,4 +21,5 @@ class LocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
+// Define the locale provider
 final localeNotifierProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) => LocaleNotifier());

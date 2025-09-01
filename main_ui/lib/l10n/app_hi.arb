@@ -128,9 +128,22 @@
 "profile": "प्रोफ़ाइल",
 "logout": "लॉगआउट",
 "logoutFailed": "लॉगआउट विफल रहा",
-"notifications":"सूचनाएँ"
-
-
-
-
+"notifications":"सूचनाएँ",
+"save":"सहेजें",
+"appVersion" : "ऐप संस्करण",
+"about" : "के बारे में",
+"contactSupport" : "सहायता से संपर्क करें",
+"faqs" : "अक्सर पूछे जाने वाले प्रश्न",
+"helpSupport" : "मदद और समर्थन",
+"viewPrivacyPolicyprivacySecurity" :"गोपनीयता नीति / गोपनीयता और सुरक्षा देखें",
+"enableNotifications" : "सूचनाएं सक्षम करें",
+"account":"खाता",
+"privacySecurity":"गोपनीयता और सुरक्षा",
+"viewPrivacyPolicy":"गोपनीयता नीति देखें",
+"invalidEmail":"अमान्य ईमेल",
+"nameRequired":"नाम आवश्यक है",
+"emailRequired":"ईमेल आवश्यक है",
+"passwordRequired":"पासवर्ड आवश्यक है"
 }
+
+

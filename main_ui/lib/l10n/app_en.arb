@@ -128,9 +128,21 @@
 "profile": "Profile",
 "logout": "Logout",
 "logoutFailed": "Logout Failed",
-"notifications":"Notifications"
-
-
-
+"notifications":"Notifications",
+"save":"Save",
+"appVersion" : "App Version",
+"about" : "About",
+"contactSupport" : "Contact Support",
+"faqs" : "FAQs",
+"helpSupport" : "Help & Support",
+"viewPrivacyPolicyprivacySecurity" :"View Privacy Policy / Privacy & Security",
+"enableNotifications" : "Enable Notifications",
+"account":"Account",
+"privacySecurity":"Privacy & Security",
+"viewPrivacyPolicy":"View Privacy Policy",
+"invalidEmail":"Invalid Email",
+"nameRequired":"Name is required",
+"emailRequired":"Email is required",
+"passwordRequired":"Password is required"
 
 }

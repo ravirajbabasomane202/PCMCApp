@@ -4,6 +4,7 @@ import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/utils/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:file_picker/file_picker.dart';
 
 final Logger _logger = Logger('ApiService');
 
@@ -140,23 +141,39 @@ class ApiService {
     }
   }
 
-  // Add a new user
-  static Future<void> addUser(Map<String, dynamic> userData) async {
+  // Add or update a user
+  static Future<Map<String, dynamic>> addUpdateUser(Map<String, String> userData) async {
     try {
-      await _dio.post('/users/', data: userData);
+      final response = await _dio.post('/users', data: userData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
-      _logger.severe('Failed to add user: ${e.message}');
-      throw Exception('Failed to add user: ${e.message}');
+      _logger.severe('Failed to add/update user: ${e.message}');
+      throw Exception('Failed to add/update user: ${e.message}');
     }
   }
 
-  // Update an existing user
-  static Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
+  // Upload profile picture
+  static Future<Map<String, dynamic>> uploadProfilePicture(PlatformFile file) async {
     try {
-      await _dio.put('/users/$userId/', data: userData);
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(file.bytes!, filename: file.name),
+      });
+      final response = await _dio.post('/users/profile-picture', data: formData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
-      _logger.severe('Failed to update user $userId: ${e.message}');
-      throw Exception('Failed to update user: ${e.message}');
+      _logger.severe('Failed to upload profile picture: ${e.message}');
+      throw Exception('Failed to upload profile picture: ${e.message}');
+    }
+  }
+
+  // Fetch area by ID
+  static Future<Map<String, dynamic>?> getMasterArea(int areaId) async {
+    try {
+      final response = await _dio.get('/areas/$areaId');
+      return response.data as Map<String, dynamic>?;
+    } on DioException catch (e) {
+      _logger.severe('Failed to fetch area $areaId: ${e.message}');
+      throw Exception('Failed to fetch area: ${e.message}');
     }
   }
 

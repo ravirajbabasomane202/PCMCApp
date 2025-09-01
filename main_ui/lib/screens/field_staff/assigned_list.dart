@@ -11,7 +11,7 @@ import 'package:main_ui/providers/user_provider.dart';
 
 // Define a provider for fetching assigned grievances
 final assignedGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
-  final user = ref.watch(userProvider);
+  final user = ref.watch(userNotifierProvider);
   if (user == null || user.role != 'field_staff') {
     return [];
   }
@@ -72,7 +72,7 @@ class AssignedList extends ConsumerWidget {
                         priorityFilter.value = newValue;
                       },
                       activeColor: theme.colorScheme.primary,
-                      inactiveColor: theme.colorScheme.onSurface.withOpacity(0.3),
+                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
                     );
                   },
                 ),

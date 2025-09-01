@@ -128,9 +128,20 @@
 "profile": "प्रोफाइल",
 "logout": "लॉगआउट",
 "logoutFailed": "लॉगआउट अयशस्वी",
-"notifications":"सूचना"
-
-
-
-
+"notifications":"सूचना",
+"save":"जतन करा",
+"appVersion" : "अ‍ॅप आवृत्ती",
+"about" : "बद्दल",
+"contactSupport" : "समर्थनाशी संपर्क करा",
+"faqs" : "वारंवार विचारले जाणारे प्रश्न",
+"helpSupport" : "मदत व समर्थन",
+"viewPrivacyPolicyprivacySecurity" :"गोपनीयता धोरण / गोपनीयता आणि सुरक्षा पहा",
+"enableNotifications" : "सूचना सक्षम करा",
+"account":"खाते",
+"privacySecurity":"गोपनीयता आणि सुरक्षा",
+"viewPrivacyPolicy":"गोपनीयता धोरण पहा",
+"invalidEmail":"अवैध ईमेल",
+"nameRequired": "नाव आवश्यक आहे",
+"emailRequired": "ईमेल आवश्यक आहे",
+"passwordRequired": "पासवर्ड आवश्यक आहे"
 }

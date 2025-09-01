@@ -12,7 +12,7 @@ import 'package:main_ui/providers/user_provider.dart';
 
 // Define a provider for fetching grievances for member_head
 final memberHeadGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
-  final user = ref.watch(userProvider);
+  final user = ref.watch(userNotifierProvider);
   if (user == null || user.role != 'member_head') {
     return [];
   }
@@ -74,7 +74,7 @@ class ViewGrievances extends ConsumerWidget {
                         priorityFilter.value = newValue;
                       },
                       activeColor: theme.colorScheme.primary,
-                      inactiveColor: theme.colorScheme.onSurface.withOpacity(0.3),
+                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
                     );
                   },
                 ),
