@@ -112,5 +112,25 @@
   "noUsers": "कोणतेही वापरकर्ते नाहीत",
   "noUsersMessage": "दाखविण्यासाठी कोणतेही वापरकर्ते नाहीत.",
   "noEmail": "ईमेल नाही",
-  "loading": "लॉगिन प्रक्रिया सुरू आहे..."
+  "loading": "लॉगिन प्रक्रिया सुरू आहे...",
+  "viewgrievanceDetails": "तक्रारी पहा",
+  "assignGrievance": "तक्रार सोपवा",
+  "rejectGrievance": "तक्रार नाकारावी",
+  "rejectionReason": "नकाराचे कारण",
+  "reject": "नाकारावे",
+  "assignedGrievances": "सोपवलेल्या तक्रारी",
+"noAssigned": "कोणत्याही तक्रारी सोपवलेल्या नाहीत",
+"noAssignedMessage": "आपल्याला कोणत्याही तक्रारी सोपवलेल्या नाहीत.",
+"upload": "अपलोड करा",
+"uploadWorkproof": "कामाचा पुरावा अपलोड करा",
+"guest": "पाहुणा",
+"invalidRole": "अवैध भूमिका",
+"profile": "प्रोफाइल",
+"logout": "लॉगआउट",
+"logoutFailed": "लॉगआउट अयशस्वी",
+"notifications":"सूचना"
+
+
+
+
 }

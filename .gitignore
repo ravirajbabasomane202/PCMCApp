@@ -1,13 +1,70 @@
-# Ignore TempFiles folder
-TempFiles/
+# ------------------------
+# Python / Backend
+# ------------------------
+__pycache__/
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+*.log
+*.sqlite3
+db.sqlite3
 
-# Ignore Python virtual environment
+# Virtual environment
 venv/
-
-# Ignore Google client secret file
-client_secret_507479079811-8sl4tn7g7nc9d872d4aje3n3bm9q4mn1.apps.googleusercontent.com.json
-
-# Ignore environment variables file
 .env
+*.env
+.env.*
+.env.example
+# Migrations cache (keep migration files but not caches)
+*/migrations/__pycache__/
 
-google-services.json
+# ------------------------
+# Node / Flutter Frontend
+# ------------------------
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+build/
+flutter_export_environment.sh
+
+# Android
+*.apk
+*.aar
+*.iml
+.gradle/
+local.properties
+.idea/
+captures/
+outputs/
+android/app/google-services.json
+
+# iOS/macOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/ephemeral/
+*.xcworkspace
+Pods/
+Podfile.lock
+
+# Web
+main_ui/.metadata
+main_ui/pubspec.lock
+
+# ------------------------
+# General
+# ------------------------
+TempFiles/
+*.swp
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Secrets
+client_secret_*.json

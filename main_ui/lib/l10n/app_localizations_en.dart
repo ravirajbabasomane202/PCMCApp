@@ -286,4 +286,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Processing login...';
+
+  @override
+  String get viewgrievanceetails => 'View Grievances';
+
+  @override
+  String get assignGrievance => 'Assign Grievance';
+
+  @override
+  String get rejectGrievance => 'Reject Grievance';
+
+  @override
+  String get rejectionReason => 'Rejection Reason';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get assignedGrievances => 'Assigned Grievances';
+
+  @override
+  String get noAssigned => 'No Assigned Grievances';
+
+  @override
+  String get noAssignedMessage => 'There are no grievances assigned to you.';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get uploadWorkproof => 'Upload Work Proof';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get invalidRole => 'Invalid Role';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutFailed => 'Logout Failed';
+
+  @override
+  String get notifications => 'Notifications';
 }

@@ -1,34 +1,33 @@
-// lib/screens/member_head/view_grievances.dart
+// lib/screens/field_staff/assigned_list.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
-import 'package:main_ui/widgets/custom_button.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/services/api_service.dart';
 import 'package:main_ui/providers/user_provider.dart';
 
-// Define a provider for fetching grievances for member_head
-final memberHeadGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
+// Define a provider for fetching assigned grievances
+final assignedGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
   final user = ref.watch(userProvider);
-  if (user == null || user.role != 'member_head') {
+  if (user == null || user.role != 'field_staff') {
     return [];
   }
-  final apiService = await ApiService.get('/grievances/department/${user.departmentId}');
-  return (apiService.data as List)
+  final response = await ApiService.get('/grievances/assigned/${user.id}');
+  return (response.data as List)
       .map((json) => Grievance.fromJson(json))
       .toList();
 });
 
-class ViewGrievances extends ConsumerWidget {
-  const ViewGrievances({super.key});
+class AssignedList extends ConsumerWidget {
+  const AssignedList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final grievancesAsync = ref.watch(memberHeadGrievancesProvider);
+    final grievancesAsync = ref.watch(assignedGrievancesProvider);
     final theme = Theme.of(context);
 
     // State for the priority filter slider
@@ -37,16 +36,15 @@ class ViewGrievances extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.viewgrievanceetails ?? 'View Grievances'),
+        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () => Navigator.pushNamed(context, '/notifications'),
-            tooltip: l10n.notifications,
           ),
         ],
       ),
-      drawer: const CustomNavigationDrawer(), // Add navigation drawer for profile, settings, logout
+      drawer: const CustomNavigationDrawer(), // Add navigation drawer
       body: Column(
         children: [
           // Slider for filtering by priority
@@ -93,18 +91,18 @@ class ViewGrievances extends ConsumerWidget {
 
                 if (filteredGrievances.isEmpty) {
                   return EmptyState(
-                    icon: Icons.list_alt,
-                    title: l10n.noGrievances,
-                    message: l10n.noGrievancesMessage,
-                    actionButton: CustomButton(
-                      text: l10n.retry,
-                      onPressed: () => ref.refresh(memberHeadGrievancesProvider),
+                    icon: Icons.assignment_turned_in,
+                    title: l10n.noAssigned,
+                    message: l10n.noAssignedMessage ?? 'No assigned grievances yet.',
+                    actionButton: TextButton(
+                      onPressed: () => ref.refresh(assignedGrievancesProvider),
+                      child: Text(l10n.retry),
                     ),
                   );
                 }
 
                 return RefreshIndicator(
-                  onRefresh: () => ref.refresh(memberHeadGrievancesProvider.future),
+                  onRefresh: () => ref.refresh(assignedGrievancesProvider.future),
                   child: ListView.builder(
                     itemCount: filteredGrievances.length,
                     itemBuilder: (context, index) {
@@ -119,9 +117,9 @@ class ViewGrievances extends ConsumerWidget {
                 icon: Icons.error_outline,
                 title: l10n.error,
                 message: l10n.failedToLoadGrievance,
-                actionButton: CustomButton(
-                  text: l10n.retry,
-                  onPressed: () => ref.refresh(memberHeadGrievancesProvider),
+                actionButton: TextButton(
+                  onPressed: () => ref.refresh(assignedGrievancesProvider),
+                  child: Text(l10n.retry),
                 ),
               ),
             ),
@@ -130,10 +128,10 @@ class ViewGrievances extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/member_head/assign');
+          Navigator.pushNamed(context, '/employer/update');
         },
-        child: const Icon(Icons.assignment),
-        tooltip: l10n.assignGrievance,
+        child: const Icon(Icons.update),
+        tooltip: l10n.updateStatus,
       ),
     );
   }

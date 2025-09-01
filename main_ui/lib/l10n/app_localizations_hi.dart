@@ -286,4 +286,52 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loading => 'लॉगिन प्रक्रिया चल रही है...';
+
+  @override
+  String get viewgrievanceetails => 'View Grievances';
+
+  @override
+  String get assignGrievance => 'शिकायत सौंपें';
+
+  @override
+  String get rejectGrievance => 'शिकायत अस्वीकारें';
+
+  @override
+  String get rejectionReason => 'अस्वीकृति का कारण';
+
+  @override
+  String get reject => 'अस्वीकारें';
+
+  @override
+  String get assignedGrievances => 'सौंपे गए शिकायतें';
+
+  @override
+  String get noAssigned => 'कोई शिकायतें नहीं सौंपी गई';
+
+  @override
+  String get noAssignedMessage => 'आपको कोई शिकायतें नहीं सौंपी गई हैं।';
+
+  @override
+  String get upload => 'अपलोड करें';
+
+  @override
+  String get uploadWorkproof => 'कार्य का प्रमाण अपलोड करें';
+
+  @override
+  String get guest => 'अतिथि';
+
+  @override
+  String get invalidRole => 'अमान्य भूमिका';
+
+  @override
+  String get profile => 'प्रोफ़ाइल';
+
+  @override
+  String get logout => 'लॉगआउट';
+
+  @override
+  String get logoutFailed => 'लॉगआउट विफल रहा';
+
+  @override
+  String get notifications => 'सूचनाएँ';
 }

@@ -651,6 +651,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Processing login...'**
   String get loading;
+
+  /// No description provided for @viewgrievanceetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Grievances'**
+  String get viewgrievanceetails;
+
+  /// No description provided for @assignGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Grievance'**
+  String get assignGrievance;
+
+  /// No description provided for @rejectGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Grievance'**
+  String get rejectGrievance;
+
+  /// No description provided for @rejectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection Reason'**
+  String get rejectionReason;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @assignedGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Grievances'**
+  String get assignedGrievances;
+
+  /// No description provided for @noAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No Assigned Grievances'**
+  String get noAssigned;
+
+  /// No description provided for @noAssignedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no grievances assigned to you.'**
+  String get noAssignedMessage;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @uploadWorkproof.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Work Proof'**
+  String get uploadWorkproof;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// No description provided for @invalidRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Role'**
+  String get invalidRole;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Failed'**
+  String get logoutFailed;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
 }
 
 class _AppLocalizationsDelegate

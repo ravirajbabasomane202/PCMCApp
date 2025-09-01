@@ -791,7 +791,7 @@ def escalate(user, id):
 
 @admin_bp.route('/configs', methods=['GET', 'POST' , 'OPTIONS'])
 @admin_required
-def manage_configs(user):
+def manage_configs():
     if request.method == 'POST' :
         data = request.json
         config = MasterConfig(key=data['key'], value=data['value'])
@@ -803,7 +803,7 @@ def manage_configs(user):
 # In app/routes/admin_routes.py
 @admin_bp.route('/configs/<string:key>', methods=['PUT'])
 @admin_required
-def update_config(user, key):
+def update_config( key):
     data = request.json
     config = MasterConfig.query.filter_by(key=key).first()
     if not config:

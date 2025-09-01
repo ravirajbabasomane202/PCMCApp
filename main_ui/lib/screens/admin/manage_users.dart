@@ -136,7 +136,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
                 try {
-                  await ref.read(userProvider.notifier).addUser({
+                  await ref.read(usersProvider.notifier).addUser({
                     'name': name,
                     'email': email,
                     'phone_number': phoneNumber,
@@ -265,7 +265,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
                 try {
-                  await ref.read(userProvider.notifier).updateUser(user.id, {
+                  await ref.read(usersProvider.notifier).updateUser(user.id, {
                     'id': user.id,
                     'name': name,
                     'email': email,
@@ -319,7 +319,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
 
     if (confirmed == true) {
       try {
-        await ref.read(userProvider.notifier).deleteUser(userId);
+        await ref.read(usersProvider.notifier).deleteUser(userId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
@@ -338,7 +338,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final users = ref.watch(userProvider);
+    final users = ref.watch(usersProvider);
+
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -348,7 +349,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () =>
-                ref.read(userProvider.notifier).fetchUsers(), // refresh users
+                ref.read(usersProvider.notifier).fetchUsers(),
             tooltip: l10n.retry,
           ),
         ],

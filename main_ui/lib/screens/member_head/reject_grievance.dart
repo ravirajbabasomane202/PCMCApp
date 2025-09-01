@@ -1,29 +1,49 @@
 // lib/screens/member_head/reject_grievance.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
 
-class RejectGrievance extends StatefulWidget {
+class RejectGrievance extends ConsumerWidget {
   const RejectGrievance({super.key});
 
   @override
-  State<RejectGrievance> createState() => _RejectGrievanceState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final TextEditingController reasonController = TextEditingController();
 
-class _RejectGrievanceState extends State<RejectGrievance> {
-  String reason = '';
-
-  void _reject() async {
-    // POST reject
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reject Grievance')),
-      body: Column(
-        children: [
-          TextFormField(onChanged: (v) => reason = v, decoration: const InputDecoration(labelText: 'Reason')),
-          ElevatedButton(onPressed: _reject, child: const Text('Reject')),
-        ],
+      appBar: AppBar(
+        title: Text(l10n.rejectGrievance ?? 'Reject Grievance'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: reasonController,
+              decoration: InputDecoration(
+                labelText: l10n.rejectionReason ?? 'Rejection Reason',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: l10n.reject ?? 'Reject',
+              onPressed: () {
+                // Add API reject logic later
+                final reason = reasonController.text;
+                if (reason.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Rejected: $reason')),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

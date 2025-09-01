@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "866444566884",
+    "project_id": "pcmc-app-2024-ravirajmane",
+    "storage_bucket": "pcmc-app-2024-ravirajmane.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866444566884:android:905c838409cbe3c8dd5a71",
+        "android_client_info": {
+          "package_name": "com.example.main_ui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3a0oLxhS5hpRpmPbUTTqbGpPYGUOolqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

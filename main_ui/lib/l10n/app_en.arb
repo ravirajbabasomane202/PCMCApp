@@ -112,5 +112,25 @@
   "noUsers": "No Users",
   "noUsersMessage": "There are no users to display.,",
   "noEmail": "No Email",
-  "loading": "Processing login..."
+  "loading": "Processing login...",
+  "viewgrievanceetails": "View Grievances",
+  "assignGrievance": "Assign Grievance",
+  "rejectGrievance": "Reject Grievance",
+  "rejectionReason": "Rejection Reason",
+  "reject": "Reject",
+  "assignedGrievances": "Assigned Grievances",
+"noAssigned": "No Assigned Grievances",
+"noAssignedMessage": "There are no grievances assigned to you.",
+"upload": "Upload",
+"uploadWorkproof": "Upload Work Proof",
+"guest": "Guest",
+"invalidRole": "Invalid Role",
+"profile": "Profile",
+"logout": "Logout",
+"logoutFailed": "Logout Failed",
+"notifications":"Notifications"
+
+
+
+
 }

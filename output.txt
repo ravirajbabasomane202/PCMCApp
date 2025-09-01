@@ -891,6 +891,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Processing login...'**
   String get loading;
+
+  /// No description provided for @viewgrievanceetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Grievances'**
+  String get viewgrievanceetails;
+
+  /// No description provided for @assignGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Grievance'**
+  String get assignGrievance;
+
+  /// No description provided for @rejectGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Grievance'**
+  String get rejectGrievance;
+
+  /// No description provided for @rejectionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection Reason'**
+  String get rejectionReason;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @assignedGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Grievances'**
+  String get assignedGrievances;
+
+  /// No description provided for @noAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No Assigned Grievances'**
+  String get noAssigned;
+
+  /// No description provided for @noAssignedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no grievances assigned to you.'**
+  String get noAssignedMessage;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @uploadWorkproof.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Work Proof'**
+  String get uploadWorkproof;
+
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// No description provided for @invalidRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Role'**
+  String get invalidRole;
+
+  /// No description provided for @profile.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// No description provided for @logout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// No description provided for @logoutFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Failed'**
+  String get logoutFailed;
 }
 
 class _AppLocalizationsDelegate
@@ -1218,6 +1308,51 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loading => 'Processing login...';
+
+  @override
+  String get viewgrievanceetails => 'View Grievances';
+
+  @override
+  String get assignGrievance => 'Assign Grievance';
+
+  @override
+  String get rejectGrievance => 'Reject Grievance';
+
+  @override
+  String get rejectionReason => 'Rejection Reason';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get assignedGrievances => 'Assigned Grievances';
+
+  @override
+  String get noAssigned => 'No Assigned Grievances';
+
+  @override
+  String get noAssignedMessage => 'There are no grievances assigned to you.';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get uploadWorkproof => 'Upload Work Proof';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get invalidRole => 'Invalid Role';
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get logoutFailed => 'Logout Failed';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -1509,6 +1644,51 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loading => 'लॉगिन प्रक्रिया चल रही है...';
+
+  @override
+  String get viewgrievanceetails => 'View Grievances';
+
+  @override
+  String get assignGrievance => 'शिकायत सौंपें';
+
+  @override
+  String get rejectGrievance => 'शिकायत अस्वीकारें';
+
+  @override
+  String get rejectionReason => 'अस्वीकृति का कारण';
+
+  @override
+  String get reject => 'अस्वीकारें';
+
+  @override
+  String get assignedGrievances => 'सौंपे गए शिकायतें';
+
+  @override
+  String get noAssigned => 'कोई शिकायतें नहीं सौंपी गई';
+
+  @override
+  String get noAssignedMessage => 'आपको कोई शिकायतें नहीं सौंपी गई हैं।';
+
+  @override
+  String get upload => 'अपलोड करें';
+
+  @override
+  String get uploadWorkproof => 'कार्य का प्रमाण अपलोड करें';
+
+  @override
+  String get guest => 'अतिथि';
+
+  @override
+  String get invalidRole => 'अमान्य भूमिका';
+
+  @override
+  String get profile => 'प्रोफ़ाइल';
+
+  @override
+  String get logout => 'लॉगआउट';
+
+  @override
+  String get logoutFailed => 'लॉगआउट विफल रहा';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -1800,6 +1980,52 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get loading => 'लॉगिन प्रक्रिया सुरू आहे...';
+
+  @override
+  String get viewgrievanceetails => 'View Grievances';
+
+  @override
+  String get assignGrievance => 'तक्रार सोपवा';
+
+  @override
+  String get rejectGrievance => 'तक्रार नाकारावी';
+
+  @override
+  String get rejectionReason => 'नकाराचे कारण';
+
+  @override
+  String get reject => 'नाकारावे';
+
+  @override
+  String get assignedGrievances => 'सोपवलेल्या तक्रारी';
+
+  @override
+  String get noAssigned => 'कोणत्याही तक्रारी सोपवलेल्या नाहीत';
+
+  @override
+  String get noAssignedMessage =>
+      'आपल्याला कोणत्याही तक्रारी सोपवलेल्या नाहीत.';
+
+  @override
+  String get upload => 'अपलोड करा';
+
+  @override
+  String get uploadWorkproof => 'कामाचा पुरावा अपलोड करा';
+
+  @override
+  String get guest => 'पाहुणा';
+
+  @override
+  String get invalidRole => 'अवैध भूमिका';
+
+  @override
+  String get profile => 'प्रोफाइल';
+
+  @override
+  String get logout => 'लॉगआउट';
+
+  @override
+  String get logoutFailed => 'लॉगआउट अयशस्वी';
 }
 
 
@@ -2646,57 +2872,108 @@ final areasProvider = FutureProvider<List<MasterArea>>((ref) async {
   return MasterDataService.getAreas();
 });
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\user_provider.dart ---
+// lib/providers/user_provider.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/user_model.dart';
-import '../services/user_service.dart';
-import 'api_provider.dart';
+import 'package:main_ui/models/user_model.dart';
+import 'package:main_ui/services/auth_service.dart';
+import 'package:main_ui/services/api_service.dart';
 
-class UserNotifier extends StateNotifier<List<User>> {
-  UserNotifier() : super([]) {
-    // Initialize by fetching users on creation
-    fetchUsers();
+// Provider for the current authenticated user
+final userProvider = StateProvider<User?>((ref) => null);
+
+// Provider for managing a list of users (for admin)
+final usersProvider = StateNotifierProvider<UsersNotifier, List<User>>((ref) {
+  return UsersNotifier(ref);
+});
+
+// Notifier for managing a list of users
+class UsersNotifier extends StateNotifier<List<User>> {
+  UsersNotifier(this.ref) : super([]) {
+    fetchUsers(); // Initialize by fetching users
   }
 
+  final Ref ref;
+
+  // Fetch all users from the backend
   Future<void> fetchUsers() async {
     try {
-      final users = await UserService.getUsers();
-      state = users ?? []; // Handle null response
+      final users = await ApiService.getUsers(); // Assume ApiService method
+      state = users ?? [];
     } catch (e) {
       print('Error fetching users: $e');
-      state = []; // Reset state on error
+      state = [];
     }
   }
 
+  // Add a new user
   Future<void> addUser(Map<String, dynamic> userData) async {
     try {
-      await UserService.addUser(userData); // Static call
-      await fetchUsers(); // Refresh user list
+      await ApiService.addUser(userData);
+      await fetchUsers(); // Refresh the user list
     } catch (e) {
       print('Error adding user: $e');
+      throw e; // Let UI handle errors
     }
   }
 
+  // Update an existing user
   Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
     try {
-      await UserService.updateUser(userId, userData); // Static call
-      await fetchUsers(); // Refresh user list
+      await ApiService.updateUser(userId, userData);
+      await fetchUsers(); // Refresh the user list
+      // If the updated user is the current user, refresh userProvider
+      if (ref.read(userProvider)?.id == userId) {
+        final updatedUser = await AuthService.getCurrentUser();
+        ref.read(userProvider.notifier).state = updatedUser;
+
+      }
     } catch (e) {
       print('Error updating user: $e');
+      throw e;
     }
   }
 
+  // Delete a user
   Future<void> deleteUser(int userId) async {
     try {
-      await UserService.deleteUser(userId); // Static call
-      await fetchUsers(); // Refresh user list
+      await ApiService.deleteUser(userId);
+      await fetchUsers(); // Refresh the user list
+      // If the deleted user is the current user, clear userProvider
+      if (ref.read(userProvider)?.id == userId) {
+        ref.read(userProvider.notifier).state = null;
+      }
     } catch (e) {
       print('Error deleting user: $e');
+      throw e;
     }
   }
 }
 
-final userProvider = StateNotifierProvider<UserNotifier, List<User>>((ref) {
-  return UserNotifier();
+// Notifier for the current authenticated user (unchanged)
+class UserNotifier extends StateNotifier<User?> {
+  UserNotifier(this.ref) : super(null) {
+    fetchCurrentUser();
+  }
+
+  final Ref ref;
+
+  Future<void> fetchCurrentUser() async {
+    try {
+      final user = await AuthService.getCurrentUser();
+      state = user;
+    } catch (e) {
+      print('Error fetching current user: $e');
+      state = null;
+    }
+  }
+
+  Future<void> refreshUser() async {
+    await fetchCurrentUser();
+  }
+}
+
+final userNotifierProvider = StateNotifierProvider<UserNotifier, User?>((ref) {
+  return UserNotifier(ref);
 });
 
 === Folder: screens ===
@@ -3833,9 +4110,11 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_configs.dart ---
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/api_service.dart';
+import '../../services/auth_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
@@ -3857,6 +4136,7 @@ class Config {
 
 // AdminNotifier for managing configs
 class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
+  static final Dio _dio = ApiService.dio;
   AdminNotifier() : super(const AsyncValue.loading()) {
     getConfigs();
   }
@@ -3864,8 +4144,7 @@ class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
   Future<void> getConfigs() async {
     try {
       state = const AsyncValue.loading();
-      
-      final response = await ApiService.get('/admin/configs');
+      final response = await _dio.get('/admin/configs');
       final configs = (response.data as List).map((json) => Config.fromJson(json)).toList();
       state = AsyncValue.data(configs);
     } catch (e, stack) {
@@ -4333,7 +4612,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
                 try {
-                  await ref.read(userProvider.notifier).addUser({
+                  await ref.read(usersProvider.notifier).addUser({
                     'name': name,
                     'email': email,
                     'phone_number': phoneNumber,
@@ -4462,7 +4741,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             onPressed: () async {
               if (formKey.currentState?.validate() ?? false) {
                 try {
-                  await ref.read(userProvider.notifier).updateUser(user.id, {
+                  await ref.read(usersProvider.notifier).updateUser(user.id, {
                     'id': user.id,
                     'name': name,
                     'email': email,
@@ -4516,7 +4795,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
 
     if (confirmed == true) {
       try {
-        await ref.read(userProvider.notifier).deleteUser(userId);
+        await ref.read(usersProvider.notifier).deleteUser(userId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
               content:
@@ -4535,7 +4814,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final users = ref.watch(userProvider);
+    final users = ref.watch(usersProvider);
+
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -4545,7 +4825,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () =>
-                ref.read(userProvider.notifier).fetchUsers(), // refresh users
+                ref.read(usersProvider.notifier).fetchUsers(),
             tooltip: l10n.retry,
           ),
         ],
@@ -6394,94 +6674,156 @@ class SettingsScreen extends StatelessWidget {
 === Folder: screens\employer ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\assigned_list.dart ---
+// lib/screens/employer/assigned_list.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/models/grievance_model.dart'; // Assume this exists
+import 'package:main_ui/widgets/empty_state.dart';
+import 'package:main_ui/widgets/grievance_card.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
-class AssignedList extends StatelessWidget {
+class AssignedList extends ConsumerWidget {
   const AssignedList({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Assigned List Screen')),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    // Static dummy data (replace with API later)
+    final List<Grievance> dummyAssigned = [
+      Grievance(
+  id: 1,
+  complaintId: 'C001',
+  title: 'Road Potholes',
+  description: 'Assigned to you',
+  status: 'in_progress',
+  priority: 'high',
+  createdAt: DateTime.now().subtract(const Duration(days: 1)),
+  updatedAt: DateTime.now(),
+  escalationLevel: 1,
+)
+,
+      // Add more dummies
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
+      ),
+      body: dummyAssigned.isEmpty
+          ? EmptyState(
+              icon: Icons.assignment_turned_in,
+              title: l10n.noAssigned,
+              message: l10n.noAssignedMessage ?? 'No assigned grievances yet.',
+            )
+          : ListView.builder(
+              itemCount: dummyAssigned.length,
+              itemBuilder: (context, index) {
+                final grievance = dummyAssigned[index];
+                return GrievanceCard(grievance: grievance);
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to update status (add routes later)
+          Navigator.pushNamed(context, '/employer/update');
+        },
+        child: const Icon(Icons.update),
+      ),
     );
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\update_status.dart ---
 // lib/screens/employer/update_status.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
 
-class UpdateStatus extends StatefulWidget {
+class UpdateStatus extends ConsumerWidget {
   const UpdateStatus({super.key});
 
   @override
-  State<UpdateStatus> createState() => _UpdateStatusState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    // Static dummy statuses (replace with enum/API later)
+    final List<String> dummyStatuses = ['In Progress', 'On Hold', 'Resolved'];
+    String? selectedStatus;
 
-class _UpdateStatusState extends State<UpdateStatus> {
-  String status = '';
-
-  void _update() async {
-    // POST status
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Update Status')),
-      body: Column(
-        children: [
-          // Dropdown for status
-          ElevatedButton(onPressed: _update, child: const Text('Update')),
-        ],
+      appBar: AppBar(
+        title: Text(l10n.updateStatus),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            DropdownButtonFormField<String>(
+              value: selectedStatus,
+              hint: Text(l10n.selectStatus),
+              items: dummyStatuses.map((status) {
+                return DropdownMenuItem(value: status, child: Text(status));
+              }).toList(),
+              onChanged: (value) => selectedStatus = value,
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: l10n.update,
+              onPressed: () {
+                // Add API update logic later
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Status updated to $selectedStatus')),
+                );
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\employer\upload_workproof.dart ---
 // lib/screens/employer/upload_workproof.dart
-import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../services/file_service.dart';
-import '../../services/grievance_service.dart';  // Assume upload method
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
+import 'package:main_ui/widgets/file_upload_widget.dart'; // Assuming this exists for file picking
 
-class UploadWorkproof extends StatefulWidget {
+class UploadWorkproof extends ConsumerWidget {
   const UploadWorkproof({super.key});
 
   @override
-  State<UploadWorkproof> createState() => _UploadWorkproofState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    List<dynamic> selectedFiles = []; // Static holder for selected files
 
-class _UploadWorkproofState extends State<UploadWorkproof> {
-  File? file;
-  String notes = '';
-
-  Future<void> _pickFile() async {
-  final files = await FileService.pickFiles();
-  if (files.isNotEmpty) {
-    final platformFile = files.first; // PlatformFile
-    setState(() {
-      file = File(platformFile.path!); // Convert using path
-    });
-  }
-}
-
-
-  void _upload() async {
-    if (file != null) {
-      // await GrievanceService.uploadWorkproof(file!, notes);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Upload Workproof')),
-      body: Column(
-        children: [
-          ElevatedButton(onPressed: _pickFile, child: const Text('Pick File')),
-          TextFormField(onChanged: (v) => notes = v, decoration: const InputDecoration(labelText: 'Notes')),
-          ElevatedButton(onPressed: _upload, child: const Text('Upload')),
-        ],
+      appBar: AppBar(
+        title: Text(l10n.uploadWorkproof ?? 'Upload Work Proof'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            FileUploadWidget(
+              onFilesSelected: (files) {
+                selectedFiles = files;
+              },
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: l10n.upload ?? 'Upload',
+              onPressed: () {
+                // Add API upload logic later (no real upload now)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Files selected (upload simulated)')),
+                );
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -6492,25 +6834,47 @@ class _UploadWorkproofState extends State<UploadWorkproof> {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\assign_grievance.dart ---
 // lib/screens/member_head/assign_grievance.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
 
-class AssignGrievance extends StatefulWidget {
+class AssignGrievance extends ConsumerWidget {
   const AssignGrievance({super.key});
 
   @override
-  State<AssignGrievance> createState() => _AssignGrievanceState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    // Static dummy field staff list (replace with API later)
+    final List<String> dummyFieldStaff = ['Staff 1', 'Staff 2', 'Staff 3'];
+    String? selectedStaff;
 
-class _AssignGrievanceState extends State<AssignGrievance> {
-  // Form for priority, assign to
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Assign Grievance')),
-      body: Form(
+      appBar: AppBar(
+        title: Text(l10n.assignGrievance ?? 'Assign Grievance'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Dropdowns
-            ElevatedButton(onPressed: () {}, child: const Text('Accept and Assign')),
+            DropdownButtonFormField<String>(
+              value: selectedStaff,
+              hint: Text(l10n.selectAssignee),
+              items: dummyFieldStaff.map((staff) {
+                return DropdownMenuItem(value: staff, child: Text(staff));
+              }).toList(),
+              onChanged: (value) => selectedStaff = value,
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: l10n.reassign ?? 'Assign',
+              onPressed: () {
+                // Add API assign logic later
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Assigned to $selectedStaff')),
+                );
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
       ),
@@ -6520,44 +6884,126 @@ class _AssignGrievanceState extends State<AssignGrievance> {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\reject_grievance.dart ---
 // lib/screens/member_head/reject_grievance.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
 
-class RejectGrievance extends StatefulWidget {
+class RejectGrievance extends ConsumerWidget {
   const RejectGrievance({super.key});
 
   @override
-  State<RejectGrievance> createState() => _RejectGrievanceState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    final TextEditingController reasonController = TextEditingController();
 
-class _RejectGrievanceState extends State<RejectGrievance> {
-  String reason = '';
-
-  void _reject() async {
-    // POST reject
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reject Grievance')),
-      body: Column(
-        children: [
-          TextFormField(onChanged: (v) => reason = v, decoration: const InputDecoration(labelText: 'Reason')),
-          ElevatedButton(onPressed: _reject, child: const Text('Reject')),
-        ],
+      appBar: AppBar(
+        title: Text(l10n.rejectGrievance ?? 'Reject Grievance'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: reasonController,
+              decoration: InputDecoration(
+                labelText: l10n.rejectionReason ?? 'Rejection Reason',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            CustomButton(
+              text: l10n.reject ?? 'Reject',
+              onPressed: () {
+                // Add API reject logic later
+                final reason = reasonController.text;
+                if (reason.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Rejected: $reason')),
+                  );
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\view_grievances.dart ---
+// lib/screens/member_head/view_grievances.dart
 import 'package:flutter/material.dart';
-
-class ViewGrievances extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/models/grievance_model.dart'; // Assume this exists
+import 'package:main_ui/widgets/empty_state.dart';
+import 'package:main_ui/widgets/grievance_card.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/custom_button.dart';
+class ViewGrievances extends ConsumerWidget {
   const ViewGrievances({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('View Grievances Screen')),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+    // Static dummy data (replace with API later)
+    final List<Grievance> dummyGrievances = [
+      Grievance(
+         id: 1,
+    complaintId: 'C001',
+    title: 'Road Potholes',
+    description: 'Potholes on main road',
+    status: 'new',
+    priority: 'high',
+    createdAt: DateTime.now().subtract(const Duration(days: 1)),
+    updatedAt: DateTime.now(),
+    escalationLevel: 1,
+      ),
+      Grievance(
+        id: 2,
+    complaintId: 'C002',
+    title: 'Garbage Collection',
+    description: 'Garbage not collected',
+    status: 'in_progress',
+    priority: 'medium',
+    createdAt: DateTime.now().subtract(const Duration(days: 2)),
+    updatedAt: DateTime.now(),
+    escalationLevel: 0,
+      ),
+      // Add more dummies as needed
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.viewgrievanceetails ?? 'View Grievances'),
+      ),
+      body: dummyGrievances.isEmpty
+          ? EmptyState(
+              icon: Icons.list_alt,
+              title: l10n.noGrievances,
+              message: l10n.noGrievancesMessage,
+              actionButton: CustomButton(
+                text: l10n.retry,
+                onPressed: () {
+                  // Add API refresh later
+                },
+              ),
+            )
+          : ListView.builder(
+              itemCount: dummyGrievances.length,
+              itemBuilder: (context, index) {
+                final grievance = dummyGrievances[index];
+                return GrievanceCard(grievance: grievance);
+              },
+            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to assign or reject (add routes later)
+          Navigator.pushNamed(context, '/member_head/assign');
+        },
+        child: const Icon(Icons.assignment),
+      ),
     );
   }
 }
@@ -6645,6 +7091,9 @@ class ApiService {
           headers: headers,
           responseType: responseType,
         );
+    
+    final url = _dio.options.baseUrl + path;
+    print("📌 Requesting URL: $url");
     try {
       return await _dio.get(path, options: mergedOptions);
     } on DioException catch (e) {
@@ -8227,6 +8676,102 @@ class LoadingIndicator extends StatelessWidget {
   }
 }
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\navigation_drawer.dart ---
+// lib/widgets/navigation_drawer.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/services/auth_service.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/models/user_model.dart';
+import 'package:main_ui/providers/user_provider.dart';
+
+class CustomNavigationDrawer extends ConsumerWidget {
+  const CustomNavigationDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localizations = AppLocalizations.of(context)!;
+    final user = ref.watch(userProvider); // Uses userProvider (User?)
+
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            child: Text(
+              '${localizations.appTitle} - ${user?.name ?? localizations.guest}',
+              style: const TextStyle(color: Colors.white, fontSize: 24),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: Text(localizations.appTitle),
+            onTap: () {
+              Navigator.pop(context);
+              final homeRoute = _getHomeRouteForRole(user?.role);
+              if (homeRoute != null) {
+                Navigator.pushNamed(context, homeRoute);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(localizations.invalidRole)),
+                );
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(localizations.profile),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/profile');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings),
+            title: Text(localizations.settings),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, '/settings');
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: Text(localizations.logout ?? 'Logout'),
+            onTap: () async {
+              try {
+                await AuthService.logout();
+                ref.read(userProvider.notifier).state = null; // Clear user state
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, '/login');
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(localizations.logoutFailed)),
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  String? _getHomeRouteForRole(String? role) {
+    switch (role?.toUpperCase()) {
+      case 'CITIZEN':
+        return '/citizen/home';
+      case 'MEMBER_HEAD':
+        return '/member_head/home';
+      case 'FIELD_STAFF':
+        return '/employer/home';
+      case 'ADMIN':
+        return '/admin/home';
+      default:
+        return null;
+    }
+  }
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\status_badge.dart ---
 // main_ui/lib/widgets/status_badge.dart
 import 'package:flutter/material.dart';

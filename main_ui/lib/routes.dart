@@ -4,13 +4,12 @@ import 'screens/auth/login_callback.dart';
 import 'screens/citizen/submit_grievance.dart';
 import 'screens/citizen/track_grievance.dart';
 import 'screens/citizen/grievance_detail.dart';
-
 import 'screens/member_head/view_grievances.dart';
 import 'screens/member_head/assign_grievance.dart';
 import 'screens/member_head/reject_grievance.dart';
-import 'screens/employer/assigned_list.dart';
-import 'screens/employer/update_status.dart';
-import 'screens/employer/upload_workproof.dart';
+import 'screens/field_staff/assigned_list.dart';
+import 'screens/field_staff/update_status.dart';
+import 'screens/field_staff/upload_workproof.dart';
 import 'screens/admin/dashboard.dart';
 import 'screens/admin/manage_users.dart';
 import 'screens/admin/manage_subjects.dart';
@@ -27,9 +26,6 @@ import 'screens/admin/reports_screen.dart';
 import 'screens/common/notifications_screen.dart';
 import 'screens/auth/otp_verification_screen.dart';
 
-
-
-
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
   '/login/callback': (context) => const LoginCallbackScreen(),
@@ -43,8 +39,6 @@ Map<String, WidgetBuilder> appRoutes = {
     }
     return GrievanceDetail(id: args);
   },
-
-  
   '/member_head/view': (context) => const ViewGrievances(),
   '/member_head/assign': (context) => const AssignGrievance(),
   '/member_head/reject': (context) => const RejectGrievance(),
@@ -69,6 +63,7 @@ Map<String, WidgetBuilder> appRoutes = {
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
   '/employer/home': (context) => const AssignedList(),
+  '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),

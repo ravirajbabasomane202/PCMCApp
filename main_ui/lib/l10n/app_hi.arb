@@ -112,5 +112,25 @@
   "noUsers": "कोई उपयोगकर्ता नहीं",
   "noUsersMessage": "दिखाने के लिए कोई उपयोगकर्ता नहीं है।",
   "noEmail": "कोई ईमेल नहीं",
-  "loading": "लॉगिन प्रक्रिया चल रही है..."
+  "loading": "लॉगिन प्रक्रिया चल रही है...",
+  "viewgrievanceDetails": "शिकायत देखें",
+  "assignGrievance": "शिकायत सौंपें",
+  "rejectGrievance": "शिकायत अस्वीकारें",
+  "rejectionReason": "अस्वीकृति का कारण",
+  "reject": "अस्वीकारें",
+  "assignedGrievances": "सौंपे गए शिकायतें",
+"noAssigned": "कोई शिकायतें नहीं सौंपी गई",
+"noAssignedMessage": "आपको कोई शिकायतें नहीं सौंपी गई हैं।",
+"upload": "अपलोड करें",
+"uploadWorkproof": "कार्य का प्रमाण अपलोड करें",
+"guest": "अतिथि",
+"invalidRole": "अमान्य भूमिका",
+"profile": "प्रोफ़ाइल",
+"logout": "लॉगआउट",
+"logoutFailed": "लॉगआउट विफल रहा",
+"notifications":"सूचनाएँ"
+
+
+
+
 }
