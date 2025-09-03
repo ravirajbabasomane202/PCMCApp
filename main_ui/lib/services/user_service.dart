@@ -9,7 +9,7 @@ class UserService {
     try {
       print('Fetching all users...'); // Debug log
       final response = await ApiService.get(
-        '/admin/users',
+        '/admins/users',
         headers: {
           'Accept': 'application/json',
         },

@@ -35,3 +35,6 @@ def field_staff_required(fn):
 
 def admin_required(fn):
     return jwt_required_with_role([Role.ADMIN])(fn)
+
+def citizen_or_admin_required(fn):  # New decorator
+    return jwt_required_with_role([Role.CITIZEN, Role.ADMIN,Role.MEMBER_HEAD,Role.FIELD_STAFF])(fn)

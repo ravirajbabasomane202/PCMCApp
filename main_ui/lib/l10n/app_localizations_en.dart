@@ -279,7 +279,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noUsers => 'No Users';
 
   @override
-  String get noUsersMessage => 'There are no users to display.,';
+  String get noUsersMessage => 'There are no users to display.';
 
   @override
   String get noEmail => 'No Email';
@@ -380,4 +380,100 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordRequired => 'Password is required';
+
+  @override
+  String get recentComplaints => 'Recent Complaints';
+
+  @override
+  String get filterByPeriod => 'Filter by Period';
+
+  @override
+  String get totalComplaints => 'Total Complaints';
+
+  @override
+  String get day => 'Day';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get month => 'Month';
+
+  @override
+  String get year => 'Year';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get complaintStatusOverview => 'Complaint Status Overview';
+
+  @override
+  String get grievanceTrend => 'Grievance Trend';
+
+  @override
+  String get numberOfGrievances => 'Number of Grievances';
+
+  @override
+  String get timePeriod => 'Time Period';
+
+  @override
+  String get deptWiseDistribution => 'Department-wise Distribution';
+
+  @override
+  String get department => 'Department';
+
+  @override
+  String get slaMetrics => 'SLA Metrics';
+
+  @override
+  String get slaDays => 'SLA Days';
+
+  @override
+  String get complianceRate => 'Compliance Rate';
+
+  @override
+  String get avgResolutionTime => 'Avg Resolution Time';
+
+  @override
+  String get exportPDF => 'Export PDF';
+
+  @override
+  String get exportCSV => 'Export CSV';
+
+  @override
+  String get exportExcel => 'Export Excel';
+
+  @override
+  String get reportExported => 'Report exported';
+
+  @override
+  String get errorExportingReport => 'Error exporting report';
+
+  @override
+  String get viewAuditLogs => 'View Audit Logs';
+
+  @override
+  String get complaintManagement => 'Complaint Management';
+
+  @override
+  String get manageConfigs => 'Manage Configurations';
+
+  @override
+  String get manageSubjects => 'Manage Subjects';
+
+  @override
+  String get manageAreas => 'Manage Areas';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get assignedList => 'Assigned Grievances';
+
+  @override
+  String get announcements => 'Announcements';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
 }

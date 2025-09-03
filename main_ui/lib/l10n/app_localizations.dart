@@ -637,7 +637,7 @@ abstract class AppLocalizations {
   /// No description provided for @noUsersMessage.
   ///
   /// In en, this message translates to:
-  /// **'There are no users to display.,'**
+  /// **'There are no users to display.'**
   String get noUsersMessage;
 
   /// No description provided for @noEmail.
@@ -837,6 +837,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password is required'**
   String get passwordRequired;
+
+  /// No description provided for @recentComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Complaints'**
+  String get recentComplaints;
+
+  /// No description provided for @filterByPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Period'**
+  String get filterByPeriod;
+
+  /// No description provided for @totalComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Complaints'**
+  String get totalComplaints;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
+  /// No description provided for @week.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get week;
+
+  /// No description provided for @month.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get month;
+
+  /// No description provided for @year.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get year;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @complaintStatusOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Status Overview'**
+  String get complaintStatusOverview;
+
+  /// No description provided for @grievanceTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance Trend'**
+  String get grievanceTrend;
+
+  /// No description provided for @numberOfGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Grievances'**
+  String get numberOfGrievances;
+
+  /// No description provided for @timePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Period'**
+  String get timePeriod;
+
+  /// No description provided for @deptWiseDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Department-wise Distribution'**
+  String get deptWiseDistribution;
+
+  /// No description provided for @department.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get department;
+
+  /// No description provided for @slaMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'SLA Metrics'**
+  String get slaMetrics;
+
+  /// No description provided for @slaDays.
+  ///
+  /// In en, this message translates to:
+  /// **'SLA Days'**
+  String get slaDays;
+
+  /// No description provided for @complianceRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance Rate'**
+  String get complianceRate;
+
+  /// No description provided for @avgResolutionTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Resolution Time'**
+  String get avgResolutionTime;
+
+  /// No description provided for @exportPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPDF;
+
+  /// No description provided for @exportCSV.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCSV;
+
+  /// No description provided for @exportExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel'**
+  String get exportExcel;
+
+  /// No description provided for @reportExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Report exported'**
+  String get reportExported;
+
+  /// No description provided for @errorExportingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting report'**
+  String get errorExportingReport;
+
+  /// No description provided for @viewAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Audit Logs'**
+  String get viewAuditLogs;
+
+  /// No description provided for @complaintManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Management'**
+  String get complaintManagement;
+
+  /// No description provided for @manageConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Configurations'**
+  String get manageConfigs;
+
+  /// No description provided for @manageSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subjects'**
+  String get manageSubjects;
+
+  /// No description provided for @manageAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Areas'**
+  String get manageAreas;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @assignedList.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Grievances'**
+  String get assignedList;
+
+  /// No description provided for @announcements.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get announcements;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
 }
 
 class _AppLocalizationsDelegate

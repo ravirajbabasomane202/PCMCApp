@@ -32,7 +32,7 @@ class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
   Future<void> getConfigs() async {
     try {
       state = const AsyncValue.loading();
-      final response = await _dio.get('/admin/configs');
+      final response = await _dio.get('/admins/configs');
       final configs = (response.data as List).map((json) => Config.fromJson(json)).toList();
       state = AsyncValue.data(configs);
     } catch (e, stack) {
@@ -43,7 +43,7 @@ class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
   Future<void> addConfig(String key, String value) async {
     try {
       state = const AsyncValue.loading();
-      await ApiService.post('/admin/configs', {'key': key, 'value': value});
+      await ApiService.post('/admins/configs', {'key': key, 'value': value});
       await getConfigs(); // Refresh configs after adding
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

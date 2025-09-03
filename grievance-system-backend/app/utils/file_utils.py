@@ -29,8 +29,7 @@ def allowed_file(filename):
 def upload_files(files, grievance_id):
     uploaded_paths = []
     upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'grievance_{grievance_id}')
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    os.makedirs(upload_folder, exist_ok=True)
     
     if len(files) > 10:
         raise ValueError("Maximum 10 files allowed")
@@ -52,8 +51,7 @@ def upload_workproof(file, grievance_id):
         raise ValueError("Invalid file type")
     
     upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'workproof_{grievance_id}')
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    os.makedirs(upload_folder, exist_ok=True)
     
     filename = secure_filename(file.filename)
     file_path = os.path.join(upload_folder, filename)

@@ -1,3 +1,4 @@
+// lib/screens/admin/complaint_management.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
@@ -45,19 +46,16 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       // Fetch grievances using adminProvider
       final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
             status: _selectedStatus,
+            priority: _selectedPriority,
+            areaId: _selectedAreaId,
+            subjectId: _selectedSubjectId,
           );
       final assignees = await UserService.getUsers();
       final areas = await MasterDataService.getAreas();
       final subjects = await MasterDataService.getSubjects();
       setState(() {
-        _grievances = grievances.where((g) {
-          if (_selectedStatus != null && g.status != _selectedStatus) return false;
-          if (_selectedPriority != null && g.priority != _selectedPriority) return false;
-          if (_selectedAreaId != null && g.area?.id != _selectedAreaId) return false;
-          if (_selectedSubjectId != null && g.subject?.id != _selectedSubjectId) return false;
-          return true;
-        }).toList();
-        _assignees = assignees.where((u) => u.role == 'employer').toList();
+        _grievances = grievances;
+        _assignees = assignees.where((u) => u.role?.toLowerCase() == 'field_staff').toList();
         _areas = areas;
         _subjects = subjects;
         _isLoading = false;
@@ -217,6 +215,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   onPressed: () async {
                                     try {
                                       await ref.read(adminProvider.notifier).escalateGrievance(grievance.id);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(l10n.escalateComplaint + ' Successful')),
+                                      );
                                       _fetchData();
                                     } catch (e) {
                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -272,47 +273,61 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
   void _showReassignDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
+    int? selectedAssigneeId;
     showDialog(
       context: context,
       builder: (ctx) {
-        int? selectedAssigneeId;
-        return AlertDialog(
-          title: Text(l10n.reassignComplaint),
-          content: DropdownButton<int>(
-            hint: Text(l10n.selectAssignee),
-            value: selectedAssigneeId,
-            isExpanded: true,
-            items: _assignees
-                .map((u) => DropdownMenuItem(value: u.id, child: Text(u.name ?? "Names Not Found")))
-                .toList(),
-            onChanged: (value) => setState(() => selectedAssigneeId = value),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (selectedAssigneeId != null) {
-                  try {
-                    await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
-                    Navigator.pop(ctx);
-                    _fetchData();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.selectAssignee)),
-                  );
-                }
-              },
-              child: Text(l10n.reassignComplaint),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.reassignComplaint),
+              content: _assignees.isEmpty
+                  ? Text('No field staff available')
+                  : DropdownButton<int>(
+                      hint: Text(l10n.selectAssignee),
+                      value: selectedAssigneeId,
+                      isExpanded: true,
+                      items: _assignees
+                          .map((u) => DropdownMenuItem(
+                                value: u.id,
+                                child: Text(u.name ?? "Unknown User"),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => selectedAssigneeId = value);
+                      },
+                    ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (selectedAssigneeId != null) {
+                      try {
+                        await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.reassignComplaint + ' Successful')),
+                        );
+                        _fetchData();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.selectAssignee)),
+                      );
+                    }
+                  },
+                  child: Text(l10n.reassign),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -320,47 +335,56 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
   void _showStatusDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
+    String? selectedStatus;
     showDialog(
       context: context,
       builder: (ctx) {
-        String? selectedStatus;
-        return AlertDialog(
-          title: Text(l10n.updateStatus),
-          content: DropdownButton<String>(
-            hint: Text(l10n.selectStatus),
-            value: selectedStatus,
-            isExpanded: true,
-            items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                .toList(),
-            onChanged: (value) => setState(() => selectedStatus = value),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (selectedStatus != null) {
-                  try {
-                    await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
-                    Navigator.pop(ctx);
-                    _fetchData();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.selectStatus)),
-                  );
-                }
-              },
-              child: Text(l10n.updateStatus),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.updateStatus),
+              content: DropdownButton<String>(
+                hint: Text(l10n.selectStatus),
+                value: selectedStatus,
+                isExpanded: true,
+                items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => selectedStatus = value);
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (selectedStatus != null) {
+                      try {
+                        await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l10n.updateStatus + ' Successful')),
+                        );
+                        _fetchData();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.selectStatus)),
+                      );
+                    }
+                  },
+                  child: Text(l10n.update),
+                ),
+              ],
+            );
+          },
         );
       },
     );

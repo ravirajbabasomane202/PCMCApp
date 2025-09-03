@@ -381,4 +381,100 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get passwordRequired => 'पासवर्ड आवश्यक आहे';
+
+  @override
+  String get recentComplaints => 'अलीकडील तक्रारी';
+
+  @override
+  String get filterByPeriod => 'कालावधीप्रमाणे फिल्टर करा';
+
+  @override
+  String get totalComplaints => 'एकूण तक्रारी';
+
+  @override
+  String get day => 'दिवस';
+
+  @override
+  String get week => 'आठवडा';
+
+  @override
+  String get month => 'महिना';
+
+  @override
+  String get year => 'वर्ष';
+
+  @override
+  String get allTime => 'संपूर्ण वेळ';
+
+  @override
+  String get complaintStatusOverview => 'तक्रार स्थितीचा आढावा';
+
+  @override
+  String get grievanceTrend => 'तक्रारींचा कल';
+
+  @override
+  String get numberOfGrievances => 'तक्रारींची संख्या';
+
+  @override
+  String get timePeriod => 'कालावधी';
+
+  @override
+  String get deptWiseDistribution => 'विभागनिहाय वितरण';
+
+  @override
+  String get department => 'विभाग';
+
+  @override
+  String get slaMetrics => 'SLA मेट्रिक्स';
+
+  @override
+  String get slaDays => 'SLA दिवस';
+
+  @override
+  String get complianceRate => 'अनुपालन दर';
+
+  @override
+  String get avgResolutionTime => 'सरासरी निराकरण वेळ';
+
+  @override
+  String get exportPDF => 'PDF निर्यात करा';
+
+  @override
+  String get exportCSV => 'CSV निर्यात करा';
+
+  @override
+  String get exportExcel => 'Excel निर्यात करा';
+
+  @override
+  String get reportExported => 'रिपोर्ट निर्यात झाला';
+
+  @override
+  String get errorExportingReport => 'रिपोर्ट निर्यात करताना त्रुटी';
+
+  @override
+  String get viewAuditLogs => 'ऑडिट लॉग पाहा';
+
+  @override
+  String get complaintManagement => 'तक्रार व्यवस्थापन';
+
+  @override
+  String get manageConfigs => 'कॉन्फिगरेशन व्यवस्थापित करा';
+
+  @override
+  String get manageSubjects => 'विषय व्यवस्थापन';
+
+  @override
+  String get manageAreas => 'क्षेत्र व्यवस्थापित करा';
+
+  @override
+  String get reports => 'अहवाल';
+
+  @override
+  String get assignedList => 'निर्धारित तक्रारी';
+
+  @override
+  String get announcements => 'जाहिराती';
+
+  @override
+  String get privacyPolicy => 'गोपनीयता धोरण';
 }

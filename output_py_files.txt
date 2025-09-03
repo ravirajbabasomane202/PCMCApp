@@ -325,6 +325,142 @@ if __name__ == "__main__":
     app = create_app()
     with app.app_context():
         create_test_users()
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\test_all_routes.py ---
+import requests
+import json
+
+BASE_URL = "http://127.0.0.1:5000"
+
+# Test users
+USERS = {
+    "citizen": "citizen@test.com",
+    "member_head": "memberhead@test.com",
+    "field_staff": "fieldstaff@test.com",
+    "admin": "admin@test.com",
+}
+PASSWORD = "password123"
+
+# Endpoints from flask routes (placeholders replaced)
+ROUTES = [
+    ("GET", "/admins/kpis/advanced"),
+    ("GET", "/admins/users/history"),
+    ("GET", "/admins/audit-logs"),
+    ("GET", "/admins/users/1/history"),
+    ("POST", "/admins/announcements"),
+    ("GET", "/admins/dashboard"),
+    ("POST", "/admins/grievances/1/escalate"),
+    ("GET", "/admins/reports/kpis/advanced"),
+    ("GET", "/admins/grievances/all"),
+    ("GET", "/admins/announcements"),
+    ("GET", "/admins/areas"),
+    ("GET", "/admins/subjects"),
+    ("GET", "/admins/users"),
+    ("GET", "/admins/reports/location"),
+    ("POST", "/admins/areas"),
+    ("GET", "/admins/configs"),
+    ("POST", "/admins/configs"),
+    ("POST", "/admins/subjects"),
+    ("POST", "/admins/reassign/1"),
+    ("GET", "/admins/reports"),
+    ("GET", "/admins/reports/staff-performance"),
+    ("PUT", "/admins/configs/MAX_ESCALATION_LEVEL"),
+    ("PUT", "/admins/users/1"),
+    ("GET", "/auth/me"),
+    ("GET", "/auth/google/callback"),
+    ("GET", "/auth/google/login"),
+    ("POST", "/auth/guest-login"),
+    ("POST", "/auth/login"),
+    ("POST", "/auth/refresh"),
+    ("POST", "/auth/register"),
+    ("POST", "/auth/otp/send"),
+    ("POST", "/auth/otp/verify"),
+    ("POST", "/grievances/1/accept"),
+    ("POST", "/grievances/1/comments"),
+    ("GET", "/grievances/assigned"),
+    ("POST", "/grievances/1/close"),
+    ("POST", "/grievances/"),
+    ("POST", "/grievances/1/escalate"),
+    ("GET", "/grievances/admin/grievances/all"),
+    ("GET", "/grievances/1"),
+    ("GET", "/grievances/admin/1"),
+    ("GET", "/grievances/mine"),
+    ("GET", "/grievances/new"),
+    ("PUT", "/grievances/1/reassign"),
+    ("POST", "/grievances/1/reject"),
+    ("GET", "/grievances/1/rejection"),
+    ("GET", "/grievances/search/TEST123"),
+    ("POST", "/grievances/1/feedback"),
+    ("GET", "/grievances/track"),
+    ("PUT", "/grievances/1/status"),
+    ("POST", "/grievances/1/workproof"),
+    ("POST", "/notifications/register"),
+    ("GET", "/areas"),
+    ("GET", "/subjects"),
+    ("GET", "/settings/settings"),
+    ("POST", "/settings/settings"),
+    ("GET", "/users/admin/users"),
+    ("POST", "/users/admin/users"),
+    ("DELETE", "/users/admin/users/1"),
+    ("GET", "/users/1"),
+    ("GET", "/users/"),
+]
+
+def login(email, password):
+    url = f"{BASE_URL}/auth/login"
+    resp = requests.post(url, json={"email": email, "password": password})
+    if resp.status_code == 200 and "access_token" in resp.json():
+        return resp.json()["access_token"]
+    print(f"❌ Login failed for {email}: {resp.status_code} {resp.text}")
+    return None
+
+def pretty_json(data, length=200):
+    """Return truncated JSON for logging"""
+    try:
+        txt = json.dumps(data, indent=2)
+        return txt[:length] + ("..." if len(txt) > length else "")
+    except Exception:
+        return str(data)
+
+def test_routes_for_user(role, token):
+    print(f"\n=== Testing routes for {role.upper()} ===")
+    headers = {"Authorization": f"Bearer {token}"} if token else {}
+
+    for method, route in ROUTES:
+        url = f"{BASE_URL}{route}"
+        try:
+            if method == "GET":
+                resp = requests.get(url, headers=headers)
+            elif method == "POST":
+                resp = requests.post(url, headers=headers, json={})
+            elif method == "PUT":
+                resp = requests.put(url, headers=headers, json={})
+            elif method == "DELETE":
+                resp = requests.delete(url, headers=headers)
+            else:
+                continue
+
+            status = resp.status_code
+            out = f"{method:6s} {route:40s} => {status}"
+
+            # Add response details
+            if status == 200:
+                try:
+                    out += f" | {pretty_json(resp.json())}"
+                except Exception:
+                    out += f" | {resp.text[:100]}"
+            else:
+                out += f" | {resp.reason} {resp.text[:80]}"
+
+            print(out)
+
+        except Exception as e:
+            print(f"{method:6s} {route:40s} => ERROR {e}")
+
+if __name__ == "__main__":
+    for role, email in USERS.items():
+        token = login(email, PASSWORD)
+        test_routes_for_user(role, token)
+
 
 === Folder: .pytest_cache ===
 
@@ -498,6 +634,69 @@ class Grievance(db.Model):
     category = db.relationship('MasterCategories')
     attachments = db.relationship('GrievanceAttachment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
     comments = db.relationship('GrievanceComment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
+    def to_dict(self):
+        """
+        Convert Grievance object to a dictionary for JSON serialization.
+        """
+        return {
+            'id': self.id,
+            'complaint_id': self.complaint_id,
+            'citizen_id': self.citizen_id,
+            'citizen': {
+                'id': self.citizen.id,
+                'name': self.citizen.name
+            } if self.citizen else None,
+            'subject_id': self.subject_id,
+            'subject': {
+                'id': self.subject.id,
+                'name': self.subject.name,
+                'description': self.subject.description,
+                'category': {
+                    'id': self.subject.category.id,
+                    'name': self.subject.category.name,
+                    'description': self.subject.category.description
+                } if self.subject.category else None
+            } if self.subject else None,
+            'area_id': self.area_id,
+            'area': {
+                'id': self.area.id,
+                'name': self.area.name,
+                'description': self.area.description
+            } if self.area else None,
+            'title': self.title,
+            'description': self.description,
+            'ward_number': self.ward_number,
+            'status': self.status.value if self.status else None,
+            'priority': self.priority.value if self.priority else None,
+            'assigned_to': self.assigned_to,
+            'assignee': {
+                'id': self.assignee.id,
+                'name': self.assignee.name
+            } if self.assignee else {'id': 0, 'name': 'Unassigned'},
+            'assigned_by': self.assigned_by,
+            'assigner': {
+                'id': self.assigner.id,
+                'name': self.assigner.name
+            } if self.assigner else None,
+            'rejection_reason': self.rejection_reason,
+            'resolved_at': self.resolved_at.isoformat() if self.resolved_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'address': self.address,
+            'escalation_level': self.escalation_level,
+            'feedback_rating': self.feedback_rating,
+            'feedback_text': self.feedback_text,
+            'category_id': self.category_id,
+            'category': {
+                'id': self.category.id,
+                'name': self.category.name,
+                'description': self.category.description
+            } if self.category else None,
+            'attachments': [attachment.to_dict() for attachment in self.attachments] if self.attachments else [],
+            'comments': [comment.to_dict() for comment in self.comments] if self.comments else []
+        }
 
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -506,6 +705,15 @@ class GrievanceAttachment(db.Model):
     file_type = db.Column(db.String(10), nullable=False)  # e.g., 'pdf', 'jpeg'
     file_size = db.Column(db.Integer, nullable=True)  # New: Store file size for validation
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'grievance_id': self.grievance_id,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 class GrievanceComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -518,6 +726,14 @@ class GrievanceComment(db.Model):
 
     # Relationship to User
     user = db.relationship('User', backref='comments')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'grievance_id': self.grievance_id,
+            'user_id': self.user_id,
+            'comment_text': self.comment_text,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 class Workproof(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -870,6 +1086,8 @@ from ..schemas import AuditLogSchema, MasterSubjectsSchema, MasterAreasSchema
 from .. import db
 from ..services.grievance_service import reassign_grievance
 from ..services.user_service import add_update_user
+from flask_cors import cross_origin
+from flask_jwt_extended import jwt_required
 admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/dashboard', methods=['GET'])
@@ -916,13 +1134,20 @@ def reassign(user, id):
     return jsonify(result), 200
 
 @admin_bp.route('/audit-logs', methods=['GET', 'OPTIONS'])
-@admin_required
-def audit_logs(user):
+def audit_logs():
     if request.method == 'OPTIONS':
-        return '', 200  # Handle preflight request
+        return '', 200  # Allow preflight without JWT
+
+    return _audit_logs_protected()
+
+
+@jwt_required()
+@admin_required
+def _audit_logs_protected(user):
     logs = AuditLog.query.all()
     schema = AuditLogSchema(many=True)
     return jsonify(schema.dump(logs)), 200
+
 
 # Add to existing admin_bp
 
@@ -934,7 +1159,7 @@ def advanced_kpis(user):
 @admin_bp.route('/reports', methods=['GET'])
 @admin_required
 def reports(user):
-    filter_type = request.args.get('filter', 'all')
+    filter_type = request.args.get('filter_type', 'all')
     format = request.args.get('format', 'pdf')
 
     # Your existing function that generates report data
@@ -973,13 +1198,27 @@ def citizen_history(user, id):
     schema = GrievanceSchema(many=True)
     return jsonify(schema.dump(history)), 200
 
-@admin_bp.route('/grievances/all', methods=['GET'])
+@admin_bp.route('/grievances/all', methods=['GET', 'OPTIONS'])
+def get_complaints():
+    if request.method == 'OPTIONS':
+        # Allow preflight without JWT
+        return jsonify({}), 200  
+
+    # Now require JWT only for GET
+    return _get_complaints_protected()
+
+
+@jwt_required()
 @admin_required
-def all_grievances(user):
-    # Add filters: status=request.args.get('status'), etc.
-    grievances = Grievance.query.all()  # Apply filters
-    schema = GrievanceSchema(many=True)
-    return jsonify(schema.dump(grievances)), 200
+def _get_complaints_protected(user):
+    try:
+        grievances = Grievance.query.all()
+        schema = GrievanceSchema(many=True)
+        return jsonify(schema.dump(grievances)), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 @admin_bp.route('/grievances/<int:id>/escalate', methods=['POST'])
 @admin_required
@@ -993,16 +1232,27 @@ def escalate(user, id):
         return jsonify({"error": str(e)}), 500
 
 
-@admin_bp.route('/configs', methods=['GET', 'POST' , 'OPTIONS'])
-@admin_required
+@admin_bp.route('/configs', methods=['GET', 'POST', 'OPTIONS'])
 def manage_configs():
-    if request.method == 'POST' :
+    if request.method == 'OPTIONS':
+        # Respond to preflight without JWT
+        return jsonify({}), 200  
+
+    return _manage_configs_protected()
+
+
+@jwt_required()
+@admin_required
+def _manage_configs_protected(user):  # <-- user comes from @admin_required
+    if request.method == 'POST':
         data = request.json
         config = MasterConfig(key=data['key'], value=data['value'])
         db.session.add(config)
         db.session.commit()
+
     configs = MasterConfig.query.all()
     return jsonify([{'key': c.key, 'value': c.value} for c in configs]), 200
+
 
 # In app/routes/admin_routes.py
 @admin_bp.route('/configs/<string:key>', methods=['PUT'])
@@ -1126,6 +1376,28 @@ def list_announcements(user):
     announcements = Announcement.query.order_by(Announcement.created_at.desc()).all()
     schema = AnnouncementSchema(many=True)
     return jsonify(schema.dump(announcements)), 200
+
+@admin_bp.route('/reports/kpis/advanced', methods=['GET', 'OPTIONS'])
+def get_advanced_kpis_route():
+    # Skip authentication for OPTIONS preflight requests
+    if request.method == "OPTIONS":
+        return '', 200
+
+    # For actual GET requests, enforce JWT + admin
+    @jwt_required()
+    @admin_required
+    def actual_route(user):
+        time_period = request.args.get('time_period', 'all')
+        try:
+            kpis = get_advanced_kpis(time_period)
+            return jsonify(kpis), 200
+        except ValueError as ve:
+            return jsonify({"error": str(ve)}), 400
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    return actual_route()
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\auth_routes.py ---
 # app/routes/auth_routes.py
 
@@ -1320,7 +1592,7 @@ def guest_login():
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\grievance_routes.py ---
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required
+from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required
 from ..models import Grievance, GrievanceStatus, Role, User, GrievanceComment, MasterConfig
 from ..schemas import GrievanceSchema, GrievanceCommentSchema
 from ..services.grievance_service import (
@@ -1363,11 +1635,14 @@ def create_grievance(user):
         return jsonify({"msg": str(e)}), 400
 
 @grievance_bp.route('/mine', methods=['GET'])
-@citizen_required
+@citizen_or_admin_required
 def my_grievances(user):
     try:
-        result = get_my_grievances(user.id)
-        return jsonify(result), 200
+        if user.role == Role.ADMIN:
+            grievances = Grievance.query.all()  # Admins see all grievances
+        else:
+            grievances = Grievance.query.filter_by(citizen_id=user.id).all()  # Citizens see only their own
+        return jsonify([grievance.to_dict() for grievance in grievances]), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
@@ -1466,6 +1741,36 @@ def assigned_grievances(user):
     except Exception as e:
         current_app.logger.error(f"Error fetching assigned grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
+
+
+
+
+
+# app/routes/grievance_routes.py
+@grievance_bp.route('/assigned/<int:user_id>', methods=['GET'])
+@jwt_required()
+@field_staff_required
+def get_assigned_grievances_by_user(user, user_id):
+    """
+    Retrieve grievances assigned to a specific user (admin only).
+    """
+    try:
+        # Verify the target user exists
+        target_user = User.query.get(user_id)
+        if not target_user:
+            return jsonify({"msg": "User not found"}), 404
+
+        # Fetch grievances assigned to the specified user
+        grievances = Grievance.query.filter_by(assigned_to=user_id).all()
+        if not grievances:
+            return jsonify({"msg": "No grievances assigned to this user"}), 404
+
+        return jsonify([grievance.to_dict() for grievance in grievances]), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error fetching assigned grievances: {str(e)}"}), 500
+
+
+
 
 @grievance_bp.route('/<int:id>/status', methods=['PUT'])
 @field_staff_required
@@ -1674,7 +1979,7 @@ from ..utils.auth_utils import jwt_required_with_role  # If roles are needed, bu
 
 settings_bp = Blueprint('settings', __name__)
 
-@settings_bp.route('/settings', methods=['GET'])
+@settings_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_settings():
     user_id = get_jwt_identity()
@@ -1690,7 +1995,7 @@ def get_settings():
         "language": pref.language if pref else 'en'
     }), 200
 
-@settings_bp.route('/settings', methods=['POST'])
+@settings_bp.route('/', methods=['POST'])
 @jwt_required()
 def save_settings():
     user_id = get_jwt_identity()
@@ -1703,8 +2008,9 @@ def save_settings():
         user.name = data['name']
     if 'email' in data:
         user.email = data['email']
-    if 'password' in data:
+    if 'password' in data and data['password']:
         user.set_password(data['password'])
+
     
     pref = UserPreference.query.filter_by(user_id=user_id).first()
     if not pref:
@@ -1718,13 +2024,29 @@ def save_settings():
     
     db.session.commit()
     return jsonify({"msg": "Settings saved"}), 200
+
+@settings_bp.route('/user', methods=['GET'])
+@jwt_required()
+def get_user():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    
+    return jsonify({
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role.value if user.role else None
+    }), 200
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\user_routes.py ---
 # app/routes/user_routes.py
 
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required, citizen_required, get_jwt_identity
 from ..services.user_service import add_update_user
-from ..models import User,Role, Grievance
+from ..models import User,Role, Grievance, MasterAreas
 from ..schemas import GrievanceSchema
 from ..schemas import UserSchema
 from .. import db
@@ -1815,6 +2137,75 @@ def delete_user(user, id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "Failed to delete user", "error": str(e)}), 500
+    
+
+from flask import Blueprint, request, jsonify
+from ..services.user_service import add_update_user, delete_user
+from ..utils.file_utils import upload_files
+from .. import db
+from ..models import User
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
+user_routes = Blueprint('users', __name__)
+
+@user_routes.route('/users', methods=['POST'])
+@jwt_required()
+def update_user():
+    try:
+        data = request.get_json()
+        user = add_update_user(data)
+        return jsonify(user), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@user_routes.route('/users/<int:user_id>', methods=['DELETE'])
+@jwt_required()
+def delete_user_route(user_id):
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if user.role != 'admin':
+            return jsonify({'error': 'Admin access required'}), 403
+        delete_user(user_id)
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@user_routes.route('/users/profile-picture', methods=['POST'])
+@jwt_required()
+def upload_profile_picture():
+    try:
+        current_user_id = get_jwt_identity()
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        file = request.files['file']
+        uploaded_paths = upload_files([file], current_user_id)
+        if not uploaded_paths:
+            return jsonify({'error': 'No valid files uploaded'}), 400
+        file_path, _, _ = uploaded_paths[0]
+        user = User.query.get(current_user_id)
+        user.profile_picture = file_path
+        db.session.commit()
+        return jsonify({'file_path': file_path}), 200
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@user_routes.route('/areas/<int:area_id>', methods=['GET'])
+@jwt_required()
+def get_area(area_id):
+    try:
+        area = db.session.query(MasterAreas).get(area_id)
+        if not area:
+            return jsonify({'error': 'Area not found'}), 404
+        return jsonify({'id': area.id, 'name': area.name, 'description': area.description}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 
 
@@ -2796,6 +3187,9 @@ def field_staff_required(fn):
 
 def admin_required(fn):
     return jwt_required_with_role([Role.ADMIN])(fn)
+
+def citizen_or_admin_required(fn):  # New decorator
+    return jwt_required_with_role([Role.CITIZEN, Role.ADMIN,Role.MEMBER_HEAD,Role.FIELD_STAFF])(fn)
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\utils\file_utils.py ---
 # app/utils/file_utils.py
 

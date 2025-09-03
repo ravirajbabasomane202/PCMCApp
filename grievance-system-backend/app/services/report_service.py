@@ -352,13 +352,14 @@ def get_citizen_history(user_id):
     except Exception as e:
         raise Exception(f"Failed to fetch citizen history: {str(e)}")
 
-def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
+def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
     """
     Escalate a grievance to a higher level.
 
     Args:
         grievance_id (int): ID of the grievance to escalate.
         escalated_by (int): ID of the user performing the escalation.
+        new_assignee_id (int, optional): ID of the new assignee.
 
     Returns:
         dict: Result of the escalation operation.
@@ -371,6 +372,10 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         if not grievance:
             return {"success": False, "message": "Grievance not found"}
         
+        max_escalation_level = int(current_app.config.get('MAX_ESCALATION_LEVEL', 3))
+        if grievance.escalation_level >= max_escalation_level:
+            return {"success": False, "message": f"Cannot escalate beyond level {max_escalation_level}"}
+        
         # Increment escalation level
         grievance.escalation_level = (grievance.escalation_level or 0) + 1
         
@@ -379,7 +384,14 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         
         # Optionally reassign to a new user
         if new_assignee_id:
+            assignee = User.query.get(new_assignee_id)
+            if not assignee:
+                return {"success": False, "message": "Assignee not found"}
             grievance.assigned_to = new_assignee_id
+            grievance.assigned_by = escalated_by
+        
+        # Update timestamps
+        grievance.updated_at = datetime.utcnow()
         
         # Log the escalation
         log_audit(f'Grievance escalated to level {grievance.escalation_level}', escalated_by, grievance_id)
@@ -387,11 +399,11 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         db.session.commit()
         
         # Notify administrators and new assignee (if applicable)
-        admins = User.query.filter_by(role='admin').all()
+        admins = User.query.filter_by(role=Role.ADMIN).all()
         for admin in admins:
             send_notification(
-                admin.email, 
-                'Grievance Escalated', 
+                admin.email,
+                'Grievance Escalated',
                 f'Grievance #{grievance_id} has been escalated to level {grievance.escalation_level}'
             )
         if new_assignee_id:
@@ -490,3 +502,55 @@ def get_location_reports():
         }
         for row in ward_data
     ]
+
+def update_grievance_status(grievance_id, new_status, updated_by):
+    """
+    Update the status of a grievance.
+
+    Args:
+        grievance_id (int): ID of the grievance to update.
+        new_status (str): New status to set.
+        updated_by (int): ID of the user updating the status.
+
+    Returns:
+        dict: Result of the status update operation.
+
+    Raises:
+        Exception: If the grievance is not found or status update fails.
+    """
+    try:
+        grievance = Grievance.query.get(grievance_id)
+        if not grievance:
+            return {"success": False, "message": "Grievance not found"}
+        
+        # Validate new status
+        valid_statuses = [e.value for e in GrievanceStatus]
+        if new_status not in valid_statuses:
+            return {"success": False, "message": f"Invalid status. Must be one of {valid_statuses}"}
+        
+        # Update status
+        grievance.status = GrievanceStatus(new_status)
+        grievance.updated_at = datetime.utcnow()
+        
+        # If status is resolved or closed, set resolved_at
+        if new_status in [GrievanceStatus.RESOLVED.value, GrievanceStatus.CLOSED.value]:
+            grievance.resolved_at = datetime.utcnow()
+        
+        # Log the status update
+        log_audit(f'Grievance status updated to {new_status}', updated_by, grievance_id)
+        
+        db.session.commit()
+        
+        # Notify the citizen
+        citizen = User.query.get(grievance.citizen_id)
+        if citizen and citizen.email:
+            send_notification(
+                citizen.email,
+                'Grievance Status Updated',
+                f'Your grievance #{grievance_id} has been updated to status: {new_status}'
+            )
+        
+        return {"success": True, "message": f"Grievance status updated to {new_status}"}
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"Failed to update grievance status: {str(e)}")

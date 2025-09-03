@@ -25,6 +25,10 @@ import 'screens/common/announcements_screen.dart';
 import 'screens/admin/reports_screen.dart';
 import 'screens/common/notifications_screen.dart';
 import 'screens/auth/otp_verification_screen.dart';
+import 'screens/common/view_privacy_policy_screen.dart';
+import 'screens/common/faqs_screen.dart';
+import 'screens/common/contact_support_screen.dart';
+import 'screens/common/app_version_screen.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
@@ -70,4 +74,10 @@ Map<String, WidgetBuilder> appRoutes = {
   '/admin/reports': (context) => const ReportsScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
+
+  '/privacy-policy': (context) => const PrivacyPolicyScreen(),
+  '/faqs': (context) => const FaqsScreen(),
+  '/contact-support': (context) => const ContactSupportScreen(),
+  '/app-version': (context) => const AppVersionScreen(),
+
 };

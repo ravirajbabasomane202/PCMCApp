@@ -4,7 +4,7 @@ import 'status_badge.dart';
 
 class GrievanceCard extends StatelessWidget {
   final Grievance grievance;
-  const GrievanceCard({super.key, required this.grievance});
+  const GrievanceCard({super.key, required this.grievance,});
 
   @override
   Widget build(BuildContext context) {

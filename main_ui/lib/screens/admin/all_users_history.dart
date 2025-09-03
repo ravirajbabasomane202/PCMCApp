@@ -24,7 +24,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
 
   Future<void> fetchAllHistories() async {
     try {
-      final response = await ApiService.dio.get('/admin/users/history');
+      final response = await ApiService.dio.get('/admins/users/history');
       setState(() {
         usersHistory = response.data;
         isLoading = false;

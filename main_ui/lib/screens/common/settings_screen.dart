@@ -33,7 +33,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadSettings() async {
     setState(() => _isLoading = true);
     try {
-      final response = await ApiService.get('/settings'); // New backend route
+      final response = await ApiService.get('/settings/'); // New backend route
       if (response != null) {
         setState(() {
           _notificationsEnabled = response.data['notifications_enabled'] ?? true;
@@ -53,7 +53,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      await ApiService.post('/settings', {
+      await ApiService.post('/settings/', {
         'notifications_enabled': _notificationsEnabled,
         'name': _nameController.text,
         'email': _emailController.text,
@@ -133,7 +133,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(localizations.privacySecurity ?? 'Privacy & Security', style: Theme.of(context).textTheme.titleLarge),
                     ListTile(
                       title: Text(localizations.viewPrivacyPolicy ?? 'View Privacy Policy'),
-                      onTap: () => Navigator.pushNamed(context, '/privacy'), // Add route if needed
+                      onTap: () => Navigator.pushNamed(context, '/privacy-policy'), // Add route if needed
                     ),
                     const SizedBox(height: 24),
 
@@ -145,7 +145,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     ListTile(
                       title: Text(localizations.contactSupport ?? 'Contact Support'),
-                      onTap: () => Navigator.pushNamed(context, '/support'), // Add route if needed
+                      onTap: () => Navigator.pushNamed(context, '/contact-support'), // Add route if needed
                     ),
                     const SizedBox(height: 24),
 
@@ -153,6 +153,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(localizations.about ?? 'About', style: Theme.of(context).textTheme.titleLarge),
                     ListTile(
                       title: Text(localizations.appVersion ?? 'App Version: 1.0.0'),
+                      onTap: () => Navigator.pushNamed(context, '/app-version'), 
                     ),
                     const SizedBox(height: 24),
 

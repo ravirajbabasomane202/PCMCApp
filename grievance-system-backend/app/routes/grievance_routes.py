@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required
+from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required
 from ..models import Grievance, GrievanceStatus, Role, User, GrievanceComment, MasterConfig
 from ..schemas import GrievanceSchema, GrievanceCommentSchema
 from ..services.grievance_service import (
@@ -43,11 +43,14 @@ def create_grievance(user):
         return jsonify({"msg": str(e)}), 400
 
 @grievance_bp.route('/mine', methods=['GET'])
-@citizen_required
+@citizen_or_admin_required
 def my_grievances(user):
     try:
-        result = get_my_grievances(user.id)
-        return jsonify(result), 200
+        if user.role == Role.ADMIN:
+            grievances = Grievance.query.all()  # Admins see all grievances
+        else:
+            grievances = Grievance.query.filter_by(citizen_id=user.id).all()  # Citizens see only their own
+        return jsonify([grievance.to_dict() for grievance in grievances]), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
@@ -146,6 +149,36 @@ def assigned_grievances(user):
     except Exception as e:
         current_app.logger.error(f"Error fetching assigned grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
+
+
+
+
+
+# app/routes/grievance_routes.py
+@grievance_bp.route('/assigned/<int:user_id>', methods=['GET'])
+@jwt_required()
+@field_staff_required
+def get_assigned_grievances_by_user(user, user_id):
+    """
+    Retrieve grievances assigned to a specific user (admin only).
+    """
+    try:
+        # Verify the target user exists
+        target_user = User.query.get(user_id)
+        if not target_user:
+            return jsonify({"msg": "User not found"}), 404
+
+        # Fetch grievances assigned to the specified user
+        grievances = Grievance.query.filter_by(assigned_to=user_id).all()
+        if not grievances:
+            return jsonify({"msg": "No grievances assigned to this user"}), 404
+
+        return jsonify([grievance.to_dict() for grievance in grievances]), 200
+    except Exception as e:
+        return jsonify({"msg": f"Error fetching assigned grievances: {str(e)}"}), 500
+
+
+
 
 @grievance_bp.route('/<int:id>/status', methods=['PUT'])
 @field_staff_required

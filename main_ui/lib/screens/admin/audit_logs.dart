@@ -22,7 +22,7 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   Future<List<dynamic>> _fetchLogs() async {
-    final response = await ApiService.get('/admin/audit-logs');
+    final response = await ApiService.get('/admins/audit-logs');
     return response.data as List<dynamic>;
   }
 

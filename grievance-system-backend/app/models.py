@@ -85,6 +85,69 @@ class Grievance(db.Model):
     category = db.relationship('MasterCategories')
     attachments = db.relationship('GrievanceAttachment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
     comments = db.relationship('GrievanceComment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
+    def to_dict(self):
+        """
+        Convert Grievance object to a dictionary for JSON serialization.
+        """
+        return {
+            'id': self.id,
+            'complaint_id': self.complaint_id,
+            'citizen_id': self.citizen_id,
+            'citizen': {
+                'id': self.citizen.id,
+                'name': self.citizen.name
+            } if self.citizen else None,
+            'subject_id': self.subject_id,
+            'subject': {
+                'id': self.subject.id,
+                'name': self.subject.name,
+                'description': self.subject.description,
+                'category': {
+                    'id': self.subject.category.id,
+                    'name': self.subject.category.name,
+                    'description': self.subject.category.description
+                } if self.subject.category else None
+            } if self.subject else None,
+            'area_id': self.area_id,
+            'area': {
+                'id': self.area.id,
+                'name': self.area.name,
+                'description': self.area.description
+            } if self.area else None,
+            'title': self.title,
+            'description': self.description,
+            'ward_number': self.ward_number,
+            'status': self.status.value if self.status else None,
+            'priority': self.priority.value if self.priority else None,
+            'assigned_to': self.assigned_to,
+            'assignee': {
+                'id': self.assignee.id,
+                'name': self.assignee.name
+            } if self.assignee else {'id': 0, 'name': 'Unassigned'},
+            'assigned_by': self.assigned_by,
+            'assigner': {
+                'id': self.assigner.id,
+                'name': self.assigner.name
+            } if self.assigner else None,
+            'rejection_reason': self.rejection_reason,
+            'resolved_at': self.resolved_at.isoformat() if self.resolved_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'address': self.address,
+            'escalation_level': self.escalation_level,
+            'feedback_rating': self.feedback_rating,
+            'feedback_text': self.feedback_text,
+            'category_id': self.category_id,
+            'category': {
+                'id': self.category.id,
+                'name': self.category.name,
+                'description': self.category.description
+            } if self.category else None,
+            'attachments': [attachment.to_dict() for attachment in self.attachments] if self.attachments else [],
+            'comments': [comment.to_dict() for comment in self.comments] if self.comments else []
+        }
 
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -93,6 +156,15 @@ class GrievanceAttachment(db.Model):
     file_type = db.Column(db.String(10), nullable=False)  # e.g., 'pdf', 'jpeg'
     file_size = db.Column(db.Integer, nullable=True)  # New: Store file size for validation
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'grievance_id': self.grievance_id,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 class GrievanceComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -105,6 +177,14 @@ class GrievanceComment(db.Model):
 
     # Relationship to User
     user = db.relationship('User', backref='comments')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'grievance_id': self.grievance_id,
+            'user_id': self.user_id,
+            'comment_text': self.comment_text,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 class Workproof(db.Model):
     id = db.Column(db.Integer, primary_key=True)

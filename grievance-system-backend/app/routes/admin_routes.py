@@ -16,6 +16,8 @@ from ..schemas import AuditLogSchema, MasterSubjectsSchema, MasterAreasSchema
 from .. import db
 from ..services.grievance_service import reassign_grievance
 from ..services.user_service import add_update_user
+from flask_cors import cross_origin
+from flask_jwt_extended import jwt_required
 admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/dashboard', methods=['GET'])
@@ -54,21 +56,60 @@ def manage_areas(user):
     db.session.commit()
     return schema.dump(area), 201
 
-@admin_bp.route('/reassign/<int:id>', methods=['POST'])
+@admin_bp.route('/reassign/<int:grievance_id>', methods=['POST'])
 @admin_required
-def reassign(user, id):
-    data = request.json
-    result = reassign_grievance(id, data['assigned_to'], user.id)
-    return jsonify(result), 200
+def reassign_grievance(grievance_id, user):
+    """
+    Reassign a grievance to a new field staff member.
+    """
+    try:
+        data = request.get_json()
+        new_assignee_id = data.get('assignee_id')
+        if not new_assignee_id:
+            return jsonify({"success": False, "message": "Assignee ID is required"}), 400
+        
+        grievance = Grievance.query.get(grievance_id)
+        if not grievance:
+            return jsonify({"success": False, "message": "Grievance not found"}), 404
+        
+        assignee = User.query.get(new_assignee_id)
+        if not assignee or assignee.role != Role.FIELD_STAFF:
+            return jsonify({"success": False, "message": "Invalid assignee"}), 400
+        
+        grievance.assigned_to = new_assignee_id
+        grievance.assigned_by = user.id
+        grievance.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        # Notify the new assignee
+        from ..services.notification_service import send_notification
+        send_notification(
+            assignee.email,
+            'Grievance Assigned',
+            f'You have been assigned grievance #{grievance_id}'
+        )
+        
+        return jsonify({"success": True, "message": "Grievance reassigned successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
 
 @admin_bp.route('/audit-logs', methods=['GET', 'OPTIONS'])
-@admin_required
-def audit_logs(user):
+def audit_logs():
     if request.method == 'OPTIONS':
-        return '', 200  # Handle preflight request
+        return '', 200  # Allow preflight without JWT
+
+    return _audit_logs_protected()
+
+
+@jwt_required()
+@admin_required
+def _audit_logs_protected(user):
     logs = AuditLog.query.all()
     schema = AuditLogSchema(many=True)
     return jsonify(schema.dump(logs)), 200
+
 
 # Add to existing admin_bp
 
@@ -80,7 +121,7 @@ def advanced_kpis(user):
 @admin_bp.route('/reports', methods=['GET'])
 @admin_required
 def reports(user):
-    filter_type = request.args.get('filter', 'all')
+    filter_type = request.args.get('filter_type', 'all')
     format = request.args.get('format', 'pdf')
 
     # Your existing function that generates report data
@@ -121,11 +162,33 @@ def citizen_history(user, id):
 
 @admin_bp.route('/grievances/all', methods=['GET'])
 @admin_required
-def all_grievances(user):
-    # Add filters: status=request.args.get('status'), etc.
-    grievances = Grievance.query.all()  # Apply filters
-    schema = GrievanceSchema(many=True)
-    return jsonify(schema.dump(grievances)), 200
+def get_all_grievances(user):
+    """
+    Fetch all grievances with optional filters.
+    """
+    try:
+        from ..models import Grievance
+        status = request.args.get('status')
+        priority = request.args.get('priority')
+        area_id = request.args.get('area_id', type=int)
+        subject_id = request.args.get('subject_id', type=int)
+        
+        query = Grievance.query
+        if status:
+            query = query.filter_by(status=status)
+        if priority:
+            query = query.filter_by(priority=priority)
+        if area_id:
+            query = query.filter_by(area_id=area_id)
+        if subject_id:
+            query = query.filter_by(subject_id=subject_id)
+        
+        grievances = query.all()
+        return jsonify([g.to_dict() for g in grievances])
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
 
 @admin_bp.route('/grievances/<int:id>/escalate', methods=['POST'])
 @admin_required
@@ -139,16 +202,27 @@ def escalate(user, id):
         return jsonify({"error": str(e)}), 500
 
 
-@admin_bp.route('/configs', methods=['GET', 'POST' , 'OPTIONS'])
-@admin_required
+@admin_bp.route('/configs', methods=['GET', 'POST', 'OPTIONS'])
 def manage_configs():
-    if request.method == 'POST' :
+    if request.method == 'OPTIONS':
+        # Respond to preflight without JWT
+        return jsonify({}), 200  
+
+    return _manage_configs_protected()
+
+
+@jwt_required()
+@admin_required
+def _manage_configs_protected(user):  # <-- user comes from @admin_required
+    if request.method == 'POST':
         data = request.json
         config = MasterConfig(key=data['key'], value=data['value'])
         db.session.add(config)
         db.session.commit()
+
     configs = MasterConfig.query.all()
     return jsonify([{'key': c.key, 'value': c.value} for c in configs]), 200
+
 
 # In app/routes/admin_routes.py
 @admin_bp.route('/configs/<string:key>', methods=['PUT'])
@@ -272,3 +346,24 @@ def list_announcements(user):
     announcements = Announcement.query.order_by(Announcement.created_at.desc()).all()
     schema = AnnouncementSchema(many=True)
     return jsonify(schema.dump(announcements)), 200
+
+@admin_bp.route('/reports/kpis/advanced', methods=['GET', 'OPTIONS'])
+def get_advanced_kpis_route():
+    # Skip authentication for OPTIONS preflight requests
+    if request.method == "OPTIONS":
+        return '', 200
+
+    # For actual GET requests, enforce JWT + admin
+    @jwt_required()
+    @admin_required
+    def actual_route(user):
+        time_period = request.args.get('time_period', 'all')
+        try:
+            kpis = get_advanced_kpis(time_period)
+            return jsonify(kpis), 200
+        except ValueError as ve:
+            return jsonify({"error": str(ve)}), 400
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    return actual_route()

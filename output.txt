@@ -182,6 +182,10 @@ import 'screens/common/announcements_screen.dart';
 import 'screens/admin/reports_screen.dart';
 import 'screens/common/notifications_screen.dart';
 import 'screens/auth/otp_verification_screen.dart';
+import 'screens/common/view_privacy_policy_screen.dart';
+import 'screens/common/faqs_screen.dart';
+import 'screens/common/contact_support_screen.dart';
+import 'screens/common/app_version_screen.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
@@ -227,6 +231,12 @@ Map<String, WidgetBuilder> appRoutes = {
   '/admin/reports': (context) => const ReportsScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
+
+  '/privacy-policy': (context) => const PrivacyPolicyScreen(),
+  '/faqs': (context) => const FaqsScreen(),
+  '/contact-support': (context) => const ContactSupportScreen(),
+  '/app-version': (context) => const AppVersionScreen(),
+
 };
 
 === Folder: l10n ===
@@ -871,7 +881,7 @@ abstract class AppLocalizations {
   /// No description provided for @noUsersMessage.
   ///
   /// In en, this message translates to:
-  /// **'There are no users to display.,'**
+  /// **'There are no users to display.'**
   String get noUsersMessage;
 
   /// No description provided for @noEmail.
@@ -1047,6 +1057,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Privacy Policy'**
   String get viewPrivacyPolicy;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Email'**
+  String get invalidEmail;
+
+  /// No description provided for @nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameRequired;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequired;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequired;
+
+  /// No description provided for @recentComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Complaints'**
+  String get recentComplaints;
+
+  /// No description provided for @filterByPeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Period'**
+  String get filterByPeriod;
+
+  /// No description provided for @totalComplaints.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Complaints'**
+  String get totalComplaints;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get day;
+
+  /// No description provided for @week.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get week;
+
+  /// No description provided for @month.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get month;
+
+  /// No description provided for @year.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get year;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get allTime;
+
+  /// No description provided for @complaintStatusOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Status Overview'**
+  String get complaintStatusOverview;
+
+  /// No description provided for @grievanceTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance Trend'**
+  String get grievanceTrend;
+
+  /// No description provided for @numberOfGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Grievances'**
+  String get numberOfGrievances;
+
+  /// No description provided for @timePeriod.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Period'**
+  String get timePeriod;
+
+  /// No description provided for @deptWiseDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Department-wise Distribution'**
+  String get deptWiseDistribution;
+
+  /// No description provided for @department.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get department;
+
+  /// No description provided for @slaMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'SLA Metrics'**
+  String get slaMetrics;
+
+  /// No description provided for @slaDays.
+  ///
+  /// In en, this message translates to:
+  /// **'SLA Days'**
+  String get slaDays;
+
+  /// No description provided for @complianceRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance Rate'**
+  String get complianceRate;
+
+  /// No description provided for @avgResolutionTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Resolution Time'**
+  String get avgResolutionTime;
+
+  /// No description provided for @exportPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPDF;
+
+  /// No description provided for @exportCSV.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get exportCSV;
+
+  /// No description provided for @exportExcel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel'**
+  String get exportExcel;
+
+  /// No description provided for @reportExported.
+  ///
+  /// In en, this message translates to:
+  /// **'Report exported'**
+  String get reportExported;
+
+  /// No description provided for @errorExportingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting report'**
+  String get errorExportingReport;
+
+  /// No description provided for @viewAuditLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Audit Logs'**
+  String get viewAuditLogs;
+
+  /// No description provided for @complaintManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Complaint Management'**
+  String get complaintManagement;
+
+  /// No description provided for @manageConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Configurations'**
+  String get manageConfigs;
+
+  /// No description provided for @manageSubjects.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subjects'**
+  String get manageSubjects;
+
+  /// No description provided for @manageAreas.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Areas'**
+  String get manageAreas;
+
+  /// No description provided for @reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get reports;
+
+  /// No description provided for @assignedList.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Grievances'**
+  String get assignedList;
+
+  /// No description provided for @announcements.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get announcements;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
 }
 
 class _AppLocalizationsDelegate
@@ -1367,7 +1593,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noUsers => 'No Users';
 
   @override
-  String get noUsersMessage => 'There are no users to display.,';
+  String get noUsersMessage => 'There are no users to display.';
 
   @override
   String get noEmail => 'No Email';
@@ -1456,6 +1682,114 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewPrivacyPolicy => 'View Privacy Policy';
+
+  @override
+  String get invalidEmail => 'Invalid Email';
+
+  @override
+  String get nameRequired => 'Name is required';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get recentComplaints => 'Recent Complaints';
+
+  @override
+  String get filterByPeriod => 'Filter by Period';
+
+  @override
+  String get totalComplaints => 'Total Complaints';
+
+  @override
+  String get day => 'Day';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get month => 'Month';
+
+  @override
+  String get year => 'Year';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get complaintStatusOverview => 'Complaint Status Overview';
+
+  @override
+  String get grievanceTrend => 'Grievance Trend';
+
+  @override
+  String get numberOfGrievances => 'Number of Grievances';
+
+  @override
+  String get timePeriod => 'Time Period';
+
+  @override
+  String get deptWiseDistribution => 'Department-wise Distribution';
+
+  @override
+  String get department => 'Department';
+
+  @override
+  String get slaMetrics => 'SLA Metrics';
+
+  @override
+  String get slaDays => 'SLA Days';
+
+  @override
+  String get complianceRate => 'Compliance Rate';
+
+  @override
+  String get avgResolutionTime => 'Avg Resolution Time';
+
+  @override
+  String get exportPDF => 'Export PDF';
+
+  @override
+  String get exportCSV => 'Export CSV';
+
+  @override
+  String get exportExcel => 'Export Excel';
+
+  @override
+  String get reportExported => 'Report exported';
+
+  @override
+  String get errorExportingReport => 'Error exporting report';
+
+  @override
+  String get viewAuditLogs => 'View Audit Logs';
+
+  @override
+  String get complaintManagement => 'Complaint Management';
+
+  @override
+  String get manageConfigs => 'Manage Configurations';
+
+  @override
+  String get manageSubjects => 'Manage Subjects';
+
+  @override
+  String get manageAreas => 'Manage Areas';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get assignedList => 'Assigned Grievances';
+
+  @override
+  String get announcements => 'Announcements';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -1829,6 +2163,114 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get viewPrivacyPolicy => 'गोपनीयता नीति देखें';
+
+  @override
+  String get invalidEmail => 'अमान्य ईमेल';
+
+  @override
+  String get nameRequired => 'नाम आवश्यक है';
+
+  @override
+  String get emailRequired => 'ईमेल आवश्यक है';
+
+  @override
+  String get passwordRequired => 'पासवर्ड आवश्यक है';
+
+  @override
+  String get recentComplaints => 'हाल की शिकायतें';
+
+  @override
+  String get filterByPeriod => 'अवधि अनुसार फ़िल्टर करें';
+
+  @override
+  String get totalComplaints => 'कुल शिकायतें';
+
+  @override
+  String get day => 'दिन';
+
+  @override
+  String get week => 'सप्ताह';
+
+  @override
+  String get month => 'महीना';
+
+  @override
+  String get year => 'साल';
+
+  @override
+  String get allTime => 'सभी समय';
+
+  @override
+  String get complaintStatusOverview => 'शिकायत स्थिति अवलोकन';
+
+  @override
+  String get grievanceTrend => 'शिकायत प्रवृत्ति';
+
+  @override
+  String get numberOfGrievances => 'शिकायतों की संख्या';
+
+  @override
+  String get timePeriod => 'समय अवधि';
+
+  @override
+  String get deptWiseDistribution => 'विभागवार वितरण';
+
+  @override
+  String get department => 'विभाग';
+
+  @override
+  String get slaMetrics => 'SLA मेट्रिक्स';
+
+  @override
+  String get slaDays => 'SLA दिन';
+
+  @override
+  String get complianceRate => 'अनुपालन दर';
+
+  @override
+  String get avgResolutionTime => 'औसत समाधान समय';
+
+  @override
+  String get exportPDF => 'PDF निर्यात करें';
+
+  @override
+  String get exportCSV => 'CSV निर्यात करें';
+
+  @override
+  String get exportExcel => 'Excel निर्यात करें';
+
+  @override
+  String get reportExported => 'रिपोर्ट निर्यात की गई';
+
+  @override
+  String get errorExportingReport => 'रिपोर्ट निर्यात करने में त्रुटि';
+
+  @override
+  String get viewAuditLogs => 'ऑडिट लॉग देखें';
+
+  @override
+  String get complaintManagement => 'शिकायत प्रबंधन';
+
+  @override
+  String get manageConfigs => 'कॉन्फ़िगरेशन प्रबंधित करें';
+
+  @override
+  String get manageSubjects => 'विषयों का प्रबंधन करें';
+
+  @override
+  String get manageAreas => 'क्षेत्र प्रबंधित करें';
+
+  @override
+  String get reports => 'रिपोर्ट्स';
+
+  @override
+  String get assignedList => 'निर्धारित शिकायतें';
+
+  @override
+  String get announcements => 'सूचनाएँ';
+
+  @override
+  String get privacyPolicy => 'गोपनीयता नीति';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2203,6 +2645,114 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get viewPrivacyPolicy => 'गोपनीयता धोरण पहा';
+
+  @override
+  String get invalidEmail => 'अवैध ईमेल';
+
+  @override
+  String get nameRequired => 'नाव आवश्यक आहे';
+
+  @override
+  String get emailRequired => 'ईमेल आवश्यक आहे';
+
+  @override
+  String get passwordRequired => 'पासवर्ड आवश्यक आहे';
+
+  @override
+  String get recentComplaints => 'अलीकडील तक्रारी';
+
+  @override
+  String get filterByPeriod => 'कालावधीप्रमाणे फिल्टर करा';
+
+  @override
+  String get totalComplaints => 'एकूण तक्रारी';
+
+  @override
+  String get day => 'दिवस';
+
+  @override
+  String get week => 'आठवडा';
+
+  @override
+  String get month => 'महिना';
+
+  @override
+  String get year => 'वर्ष';
+
+  @override
+  String get allTime => 'संपूर्ण वेळ';
+
+  @override
+  String get complaintStatusOverview => 'तक्रार स्थितीचा आढावा';
+
+  @override
+  String get grievanceTrend => 'तक्रारींचा कल';
+
+  @override
+  String get numberOfGrievances => 'तक्रारींची संख्या';
+
+  @override
+  String get timePeriod => 'कालावधी';
+
+  @override
+  String get deptWiseDistribution => 'विभागनिहाय वितरण';
+
+  @override
+  String get department => 'विभाग';
+
+  @override
+  String get slaMetrics => 'SLA मेट्रिक्स';
+
+  @override
+  String get slaDays => 'SLA दिवस';
+
+  @override
+  String get complianceRate => 'अनुपालन दर';
+
+  @override
+  String get avgResolutionTime => 'सरासरी निराकरण वेळ';
+
+  @override
+  String get exportPDF => 'PDF निर्यात करा';
+
+  @override
+  String get exportCSV => 'CSV निर्यात करा';
+
+  @override
+  String get exportExcel => 'Excel निर्यात करा';
+
+  @override
+  String get reportExported => 'रिपोर्ट निर्यात झाला';
+
+  @override
+  String get errorExportingReport => 'रिपोर्ट निर्यात करताना त्रुटी';
+
+  @override
+  String get viewAuditLogs => 'ऑडिट लॉग पाहा';
+
+  @override
+  String get complaintManagement => 'तक्रार व्यवस्थापन';
+
+  @override
+  String get manageConfigs => 'कॉन्फिगरेशन व्यवस्थापित करा';
+
+  @override
+  String get manageSubjects => 'विषय व्यवस्थापन';
+
+  @override
+  String get manageAreas => 'क्षेत्र व्यवस्थापित करा';
+
+  @override
+  String get reports => 'अहवाल';
+
+  @override
+  String get assignedList => 'निर्धारित तक्रारी';
+
+  @override
+  String get announcements => 'जाहिराती';
+
+  @override
+  String get privacyPolicy => 'गोपनीयता धोरण';
 }
 
 
@@ -2565,6 +3115,13 @@ class User {
   final String? phoneNumber;
   final String? role;
   final int? departmentId;
+  final String? address;
+  final String? profilePicture;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? lastLogin;
+  final bool twoFactorEnabled;
+  final bool isActive;
 
   User({
     required this.id,
@@ -2573,6 +3130,13 @@ class User {
     this.phoneNumber,
     this.role,
     this.departmentId,
+    this.address,
+    this.profilePicture,
+    this.createdAt,
+    this.updatedAt,
+    this.lastLogin,
+    this.twoFactorEnabled = false,
+    this.isActive = true,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -2583,6 +3147,13 @@ class User {
       phoneNumber: json['phone_number'],
       role: json['role'] ?? 'Unknown',
       departmentId: json['department_id'],
+      address: json['address'],
+      profilePicture: json['profile_picture'],
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
+      lastLogin: json['last_login'] != null ? DateTime.parse(json['last_login']) : null,
+      twoFactorEnabled: json['two_factor_enabled'] ?? false,
+      isActive: json['is_active'] ?? true,
     );
   }
 
@@ -2594,9 +3165,17 @@ class User {
       'phone_number': phoneNumber,
       'role': role,
       'department_id': departmentId,
+      'address': address,
+      'profile_picture': profilePicture,
+      'created_at': createdAt?.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
+      'last_login': lastLogin?.toIso8601String(),
+      'two_factor_enabled': twoFactorEnabled,
+      'is_active': isActive,
     };
   }
 }
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\models\workproof_model.dart ---
 // lib/models/workproof_model.dart
 class Workproof {
@@ -2692,10 +3271,10 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
   Future<void> fetchAdvancedKPIs({String timePeriod = 'all'}) async {
     try {
-      final response =
-          await ApiService.get('/admin/kpis/advanced?time_period=$timePeriod');
+      final response = await ApiService.get('/admins/reports/kpis/advanced?time_period=$timePeriod');
       final kpiData = KpiData.fromJson(response.data);
       state = state.copyWith(kpiData: kpiData, error: null);
+      print(response.data);
     } catch (e) {
       state = state.copyWith(error: e.toString());
     }
@@ -2703,36 +3282,35 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
   Future<List<Grievance>> getAllGrievances({String? status}) async {
     try {
-      final response = await ApiService
-          .get('/admin/grievances/all${status != null ? '?status=$status' : ''}');
+      final response = await ApiService.get('/admins/grievances/all');
       final grievances =
           (response.data as List).map((g) => Grievance.fromJson(g)).toList();
       state = state.copyWith(grievances: grievances, error: null);
+      
+
       return grievances;
     } catch (e) {
-      state = state.copyWith(error: e.toString());
-      throw Exception('Failed to fetch grievances: $e');
+      state = state.copyWith(grievances: [], error: e.toString());
+      return [];
     }
   }
 
   Future<void> escalateGrievance(int grievanceId) async {
     try {
-      await ApiService.post('/admin/grievances/$grievanceId/escalate', {});
+      await ApiService.post('/admins/grievances/$grievanceId/escalate', {});
       state = state.copyWith(error: null);
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      throw Exception('Failed to escalate grievance: $e');
     }
   }
 
   Future<void> reassignGrievance(int grievanceId, int assigneeId) async {
     try {
       await ApiService
-          .post('/admin/reassign/$grievanceId', {'assigned_to': assigneeId});
+          .post('/admins/reassign/$grievanceId', {'assigned_to': assigneeId});
       state = state.copyWith(error: null);
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      throw Exception('Failed to reassign grievance: $e');
     }
   }
 
@@ -2742,35 +3320,31 @@ class AdminNotifier extends StateNotifier<AdminState> {
       state = state.copyWith(error: null);
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      throw Exception('Failed to update grievance status: $e');
     }
   }
 
   Future<List<Grievance>> getCitizenHistory(int userId) async {
     try {
-      final response = await ApiService.get('/admin/users/$userId/history');
+      final response = await ApiService.get('/admins/users/$userId/history');
       final grievances =
           (response.data as List).map((g) => Grievance.fromJson(g)).toList();
       state = state.copyWith(grievances: grievances, error: null);
       return grievances;
     } catch (e) {
-      state = state.copyWith(error: e.toString());
-      throw Exception('Failed to fetch citizen history: $e');
+      state = state.copyWith(grievances: [], error: e.toString());
+      return [];
     }
   }
 
   Future<List<int>> generateReport(String filter, String format) async {
     try {
       // Note: For web, handle ResponseType.bytes (e.g., base64 or blob for downloads)
-      final response = await ApiService.get(
-        '/admin/reports?filter=$filter&format=$format',
-        responseType: ResponseType.bytes,
-      );
+      final response = await ApiService.get('/admins/reports?filter_type=$filter&format=$format', responseType: ResponseType.bytes);
       state = state.copyWith(error: null);
       return response.data;
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      throw Exception('Failed to generate report: $e');
+      return [];
     }
   }
 
@@ -2778,7 +3352,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
   Future<void> getConfigs() async {
     try {
       state = state.copyWith(error: null); // Clear previous errors
-      final response = await ApiService.get('/admin/configs');
+      final response = await ApiService.get('/admins/configs');
       final configs =
           (response.data as List).map((json) => Config.fromJson(json)).toList();
       state = state.copyWith(configs: configs, error: null);
@@ -2790,7 +3364,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
   Future<void> addConfig(String key, String value) async {
     try {
       state = state.copyWith(error: null); // Clear previous errors
-      await ApiService.post('/admin/configs', {'key': key, 'value': value});
+      await ApiService.post('/admins/configs', {'key': key, 'value': value});
       await getConfigs(); // Refresh configs after adding
     } catch (e) {
       state = state.copyWith(error: 'Failed to add config: $e');
@@ -3078,7 +3652,7 @@ class UserNotifier extends StateNotifier<User?> {
 
   Future<void> updateUser() async {
     try {
-      final response = await ApiService.get('/user'); // Fetch updated user data
+      final response = await ApiService.get('/settings/user'); // Fetch updated user data
       if (response != null && response.data != null) {
         state = User.fromJson(response.data); // Update state with new user data
       }
@@ -3122,10 +3696,12 @@ class UsersNotifier extends StateNotifier<List<User>> {
     }
   }
 
-  // Add a new user
+  // Add or update a user
   Future<void> addUser(Map<String, dynamic> userData) async {
     try {
-      await ApiService.addUser(userData);
+      // Convert dynamic values to strings for ApiService.addUpdateUser
+      final stringUserData = userData.map((key, value) => MapEntry(key, value.toString()));
+      await ApiService.addUpdateUser(stringUserData);
       await fetchUsers(); // Refresh the user list
     } catch (e) {
       print('Error adding user: $e');
@@ -3136,7 +3712,12 @@ class UsersNotifier extends StateNotifier<List<User>> {
   // Update an existing user
   Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
     try {
-      await ApiService.updateUser(userId, userData);
+      // Include user ID in the data map and convert values to strings
+      final stringUserData = {
+        'id': userId.toString(),
+        ...userData.map((key, value) => MapEntry(key, value.toString())),
+      };
+      await ApiService.addUpdateUser(stringUserData);
       await fetchUsers(); // Refresh the user list
       // If the updated user is the current user, refresh userNotifierProvider
       if (ref.read(userNotifierProvider)?.id == userId) {
@@ -3196,7 +3777,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
 
   Future<void> fetchAllHistories() async {
     try {
-      final response = await ApiService.dio.get('/admin/users/history');
+      final response = await ApiService.dio.get('/admins/users/history');
       setState(() {
         usersHistory = response.data;
         isLoading = false;
@@ -3267,7 +3848,7 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   Future<List<dynamic>> _fetchLogs() async {
-    final response = await ApiService.get('/admin/audit-logs');
+    final response = await ApiService.get('/admins/audit-logs');
     return response.data as List<dynamic>;
   }
 
@@ -3746,17 +4327,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
-
 import 'package:main_ui/providers/admin_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:io' as io;
-
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/models/kpi_model.dart';
 import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
+import 'dart:convert';
+import 'package:universal_html/html.dart' as html;
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -3773,6 +4357,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
   void initState() {
     super.initState();
     _grievancesFuture = ref.read(adminProvider.notifier).getAllGrievances();
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
@@ -3784,63 +4369,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error fetching data: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
         );
       }
-    }
-  }
-
-  List<PieChartSectionData> _buildPieChartSections(Map<String, dynamic> statusOverview) {
-    const colors = [Colors.blue, Colors.orange, Colors.green, Colors.red, Colors.grey, Colors.purple];
-    int index = 0;
-
-    final entries = statusOverview.entries
-        .where((entry) =>
-            (entry.value is num && (entry.value as num) > 0) ||
-            (entry.value is String && int.tryParse(entry.value) != null && int.parse(entry.value) > 0))
-        .toList();
-
-    if (entries.isEmpty) {
-      return [
-        PieChartSectionData(
-          value: 1,
-          title: 'No Data',
-          color: Colors.grey,
-          radius: 50,
-        )
-      ];
-    }
-
-    return entries.map((entry) {
-      final color = colors[index % colors.length];
-      index++;
-
-      final value = entry.value is num
-          ? (entry.value as num).toDouble()
-          : double.tryParse(entry.value.toString()) ?? 0.0;
-
-      return PieChartSectionData(
-        value: value,
-        title: '${entry.key.replaceAll('_', ' ').capitalize()}\n${value.toInt()}',
-        color: color,
-        radius: 50,
-        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      );
-    }).toList();
-  }
-
-  Future<void> _exportReport(String format) async {
-    try {
-      final data = await ref.read(adminProvider.notifier).generateReport(_selectedPeriod, format);
-      final dir = await getTemporaryDirectory();
-      final fileName = 'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
-      final filePath = '${dir.path}/$fileName';
-      final file = io.File(filePath);
-      await file.writeAsBytes(data);
-      await OpenFile.open(filePath);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report exported: $fileName')));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error exporting report: $e')));
     }
   }
 
@@ -3857,7 +4388,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
         centerTitle: true,
         elevation: 2,
       ),
-      drawer: _buildDrawer(theme),
+      drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
         onRefresh: _fetchData,
         child: SingleChildScrollView(
@@ -3865,23 +4396,38 @@ class _DashboardState extends ConsumerState<Dashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildFilterDropdown(theme),
+              _buildFilterDropdown(theme, loc),
               const SizedBox(height: 20),
-              if (kpiData != null) ...[
-                _buildKpiCard(theme, kpiData),
-                const SizedBox(height: 20),
-                _buildPieChartCard(theme, kpiData),
-                const SizedBox(height: 20),
-                _buildSlaCard(theme, kpiData),
-                const SizedBox(height: 20),
-                Text('Recent Complaints', style: theme.textTheme.titleMedium),
-                const SizedBox(height: 8),
-                _buildRecentComplaints(),
-                const SizedBox(height: 24),
-                _buildExportButtons(),
-              ] else ...[
-                const Center(child: Text('No KPI data available')),
-              ],
+              kpiData != null
+                  ? Column(
+                      children: [
+                        _buildKpiCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildPieChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildLineChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildBarChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildSlaCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        Text(loc.recentComplaints ?? 'Recent Complaints',
+                            style: theme.textTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        _buildRecentComplaints(loc),
+                        const SizedBox(height: 24),
+                        _buildExportButtons(loc),
+                      ],
+                    )
+                  : EmptyState(
+                      icon: Icons.error,
+                      title: loc.noGrievances,
+                      message: loc.noGrievancesMessage,
+                      actionButton: ElevatedButton(
+                        onPressed: _fetchData,
+                        child: Text(loc.retry),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -3889,56 +4435,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildDrawer(ThemeData theme) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: theme.colorScheme.primary),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Admin Menu',
-                style: theme.textTheme.headlineSmall?.copyWith(color: Colors.white),
-              ),
-            ),
-          ),
-          _drawerItem(Icons.dashboard, 'Dashboard', () => Navigator.pop(context)),
-          _drawerItem(Icons.history, 'View Audit Logs', () => Navigator.pushNamed(context, '/admin/audit')),
-          _drawerItem(Icons.report_problem, 'Complaint Management', () => Navigator.pushNamed(context, '/admin/complaints')),
-          _drawerItem(Icons.settings, 'Manage Configs', () => Navigator.pushNamed(context, '/admin/configs')),
-          _drawerItem(Icons.subject, 'Manage Subjects', () => Navigator.pushNamed(context, '/admin/subjects')),
-          _drawerItem(Icons.people, 'Manage Users', () => Navigator.pushNamed(context, '/admin/users')),
-          _drawerItem(Icons.person_search, 'User History', () => Navigator.pushNamed(context, '/admin/all_users_history')),
-          _drawerItem(Icons.map, 'Manage Areas', () => Navigator.pushNamed(context, '/admin/areas')),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout'),
-            onTap: () async {
-              await ref.read(authProvider.notifier).logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  ListTile _drawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildFilterDropdown(ThemeData theme) {
+  Widget _buildFilterDropdown(ThemeData theme, AppLocalizations loc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text('Time Period: '),
+        Text(loc.filterByPeriod ?? 'Time Period: ',
+            style: theme.textTheme.bodyMedium),
         const SizedBox(width: 8),
         DropdownButton<String>(
           value: _selectedPeriod,
@@ -3950,16 +4452,18 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   ))
               .toList(),
           onChanged: (value) {
-            setState(() => _selectedPeriod = value!);
-            _fetchData();
+            if (value != null) {
+              setState(() => _selectedPeriod = value);
+              _fetchData();
+            }
           },
         ),
       ],
     );
   }
 
-  Widget _buildKpiCard(ThemeData theme, KpiData kpiData) {
-    final totalComplaints = kpiData.totalComplaints;
+  Widget _buildKpiCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
       elevation: 3,
@@ -3969,17 +4473,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Total Complaints', style: theme.textTheme.titleMedium),
+            Text(loc.totalComplaints ?? 'Total Complaints',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Wrap(
               spacing: 16,
               runSpacing: 8,
               children: [
-                _buildMetricItem('Day', totalComplaints['day']),
-                _buildMetricItem('Week', totalComplaints['week']),
-                _buildMetricItem('Month', totalComplaints['month']),
-                _buildMetricItem('Year', totalComplaints['year']),
-                _buildMetricItem('All Time', totalComplaints['all']),
+                _buildMetricItem(loc.day ?? 'Day', totalComplaints['day'] ?? 0),
+                _buildMetricItem(
+                    loc.week ?? 'Week', totalComplaints['week'] ?? 0),
+                _buildMetricItem(
+                    loc.month ?? 'Month', totalComplaints['month'] ?? 0),
+                _buildMetricItem(
+                    loc.year ?? 'Year', totalComplaints['year'] ?? 0),
+                _buildMetricItem(
+                    loc.allTime ?? 'All Time', totalComplaints['all'] ?? 0),
               ],
             ),
           ],
@@ -3988,19 +4497,21 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildMetricItem(String label, int? value) {
+  Widget _buildMetricItem(String label, int value) {
     return Column(
       children: [
         Text(label, style: const TextStyle(fontSize: 12)),
         Text(
-          '${value ?? 0}',
+          '$value',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );
   }
 
-  Widget _buildPieChartCard(ThemeData theme, KpiData kpiData) {
+  Widget _buildPieChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final statusOverview = kpiData.statusOverview ?? {};
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -4009,17 +4520,20 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Complaint Status Overview', style: theme.textTheme.titleMedium),
+            Text(loc.complaintStatusOverview ?? 'Complaint Status Overview',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             SizedBox(
               height: 220,
-              child: PieChart(
-                PieChartData(
-                  sections: _buildPieChartSections(kpiData.statusOverview),
-                  centerSpaceRadius: 40,
-                  sectionsSpace: 2,
-                ),
-              ),
+              child: statusOverview.isNotEmpty
+                  ? PieChart(
+                      PieChartData(
+                        sections: _buildPieChartSections(statusOverview),
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 2,
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
             ),
           ],
         ),
@@ -4027,8 +4541,65 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildSlaCard(ThemeData theme, KpiData kpiData) {
-    final slaMetrics = kpiData.slaMetrics;
+  List<PieChartSectionData> _buildPieChartSections(Map<String, dynamic> statusOverview) {
+    const colors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.green,
+      Colors.red,
+      Colors.grey,
+      Colors.purple
+    ];
+    int index = 0;
+
+    final entries = statusOverview.entries
+        .where((entry) =>
+            (entry.value is num && (entry.value as num) > 0) ||
+            (entry.value is String && int.tryParse(entry.value) != null && int.parse(entry.value) > 0))
+        .toList();
+
+    if (entries.isEmpty) {
+      return [
+        PieChartSectionData(
+          value: 1,
+          title: 'No Data',
+          color: Colors.grey,
+          radius: 50,
+          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        )
+      ];
+    }
+
+    return entries.map((entry) {
+      final color = colors[index % colors.length];
+      index++;
+      final value = entry.value is num
+          ? (entry.value as num).toDouble()
+          : double.tryParse(entry.value.toString()) ?? 0.0;
+
+      return PieChartSectionData(
+        value: value,
+        title: '${entry.key.replaceAll('_', ' ').capitalize()}\n${value.toInt()}',
+        color: color,
+        radius: 50,
+        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        badgeWidget: Tooltip(
+          message: '${entry.key.capitalize()}: ${value.toInt()}',
+          child: Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildLineChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
       elevation: 3,
@@ -4038,11 +4609,192 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('SLA Metrics', style: theme.textTheme.titleMedium),
+            Text(loc.grievanceTrend ?? 'Grievance Trend Over Time',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 220,
+              child: totalComplaints.isNotEmpty
+                  ? LineChart(
+                      LineChartData(
+                        gridData: FlGridData(show: true),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                const labels = ['Day', 'Week', 'Month', 'Year', 'All'];
+                                return Text(
+                                  labels[value.toInt()],
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.timePeriod ?? 'Time Period'),
+                          ),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: true),
+                        minX: 0,
+                        maxX: 4,
+                        minY: 0,
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: [
+                              FlSpot(0, (totalComplaints['day'] ?? 0).toDouble()),
+                              FlSpot(1, (totalComplaints['week'] ?? 0).toDouble()),
+                              FlSpot(2, (totalComplaints['month'] ?? 0).toDouble()),
+                              FlSpot(3, (totalComplaints['year'] ?? 0).toDouble()),
+                              FlSpot(4, (totalComplaints['all'] ?? 0).toDouble()),
+                            ],
+                            isCurved: true,
+                            color: Colors.blue,
+                            barWidth: 3,
+                            dotData: FlDotData(show: true),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: Colors.blue.withOpacity(0.2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final deptWise = kpiData.deptWise ?? {};
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(loc.deptWiseDistribution ?? 'Department-Wise Distribution',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 220,
+              child: deptWise.isNotEmpty
+                  ? BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        barGroups: _buildBarChartGroups(deptWise),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                final keys = deptWise.keys.toList();
+                                return Text(
+                                  keys[value.toInt()].capitalize(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.department ?? 'Department'),
+                          ),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: true),
+                        gridData: FlGridData(show: true),
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<BarChartGroupData> _buildBarChartGroups(Map<String, dynamic> deptWise) {
+    const colors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.green,
+      Colors.red,
+      Colors.purple,
+    ];
+    return deptWise.entries.toList().asMap().entries.map((entry) {
+  final index = entry.key;
+  final dept = entry.value.key;
+  final value = entry.value.value is num
+      ? (entry.value.value as num).toDouble()
+      : double.tryParse(entry.value.value.toString()) ?? 0.0;
+
+  return BarChartGroupData(
+    x: index,
+    barRods: [
+      BarChartRodData(
+        toY: value,
+        color: colors[index % colors.length],
+        width: 16,
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ],
+  );
+}).toList();
+
+  }
+
+  Widget _buildSlaCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final slaMetrics = kpiData.slaMetrics ?? {};
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(loc.slaMetrics ?? 'SLA Metrics',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
-            _buildSlaMetricItem('SLA Days', '${slaMetrics['sla_days'] ?? 7}'),
-            _buildSlaMetricItem('Compliance Rate', '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%'),
-            _buildSlaMetricItem('Avg Resolution Time', '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days'),
+            _buildSlaMetricItem(loc.slaDays ?? 'SLA Days',
+                '${slaMetrics['sla_days'] ?? 7}'),
+            _buildSlaMetricItem(loc.complianceRate ?? 'Compliance Rate',
+                '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%'),
+            _buildSlaMetricItem(
+                loc.avgResolutionTime ?? 'Avg Resolution Time',
+                '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days'),
           ],
         ),
       ),
@@ -4062,7 +4814,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildRecentComplaints() {
+  Widget _buildRecentComplaints(AppLocalizations loc) {
     return FutureBuilder<List<Grievance>>(
       future: _grievancesFuture,
       builder: (context, snapshot) {
@@ -4071,22 +4823,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
         } else if (snapshot.hasError) {
           return EmptyState(
             icon: Icons.error,
-            title: AppLocalizations.of(context)!.error,
-            message: '${AppLocalizations.of(context)!.noGrievancesMessage}\n${snapshot.error}',
+            title: loc.error,
+            message: '${loc.noGrievancesMessage}\n${snapshot.error}',
             actionButton: ElevatedButton(
               onPressed: () {
                 setState(() {
                   _grievancesFuture = ref.read(adminProvider.notifier).getAllGrievances();
                 });
               },
-              child: Text(AppLocalizations.of(context)!.retry),
+              child: Text(loc.retry),
             ),
           );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return EmptyState(
             icon: Icons.inbox,
-            title: AppLocalizations.of(context)!.noGrievances,
-            message: AppLocalizations.of(context)!.noGrievancesMessage,
+            title: loc.noGrievances,
+            message: loc.noGrievancesMessage,
           );
         }
 
@@ -4101,28 +4853,63 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildExportButtons() {
+  Widget _buildExportButtons(AppLocalizations loc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         OutlinedButton.icon(
           onPressed: () => _exportReport('pdf'),
           icon: const Icon(Icons.picture_as_pdf),
-          label: const Text('Export PDF'),
+          label: Text(loc.exportPDF ?? 'Export PDF'),
         ),
         OutlinedButton.icon(
           onPressed: () => _exportReport('csv'),
           icon: const Icon(Icons.table_chart),
-          label: const Text('Export CSV'),
+          label: Text(loc.exportCSV ?? 'Export CSV'),
         ),
         OutlinedButton.icon(
           onPressed: () => _exportReport('excel'),
           icon: const Icon(Icons.grid_on),
-          label: const Text('Export Excel'),
+          label: Text(loc.exportExcel ?? 'Export Excel'),
         ),
       ],
     );
   }
+
+  Future<void> _exportReport(String format) async {
+  final loc = AppLocalizations.of(context)!;
+  try {
+    final data = await ref
+        .read(adminProvider.notifier)
+        .generateReport(_selectedPeriod, format);
+    final fileName =
+        'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
+
+    if (kIsWeb) {
+      // Web-specific file download
+      final blob = html.Blob([data]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', fileName)
+        ..click();
+      html.Url.revokeObjectUrl(url);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
+    } else {
+      // Mobile/desktop file handling
+      final dir = await getTemporaryDirectory();
+      final filePath = '${dir.path}/$fileName';
+      final file = io.File(filePath);
+      await file.writeAsBytes(data);
+      await OpenFile.open(filePath);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${loc.errorExportingReport ?? 'Error exporting report'}: $e')));
+  }
+}
 }
 
 extension StringExtension on String {
@@ -4332,7 +5119,7 @@ class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
   Future<void> getConfigs() async {
     try {
       state = const AsyncValue.loading();
-      final response = await _dio.get('/admin/configs');
+      final response = await _dio.get('/admins/configs');
       final configs = (response.data as List).map((json) => Config.fromJson(json)).toList();
       state = AsyncValue.data(configs);
     } catch (e, stack) {
@@ -4343,7 +5130,7 @@ class AdminNotifier extends StateNotifier<AsyncValue<List<Config>>> {
   Future<void> addConfig(String key, String value) async {
     try {
       state = const AsyncValue.loading();
-      await ApiService.post('/admin/configs', {'key': key, 'value': value});
+      await ApiService.post('/admins/configs', {'key': key, 'value': value});
       await getConfigs(); // Refresh configs after adding
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
@@ -6639,6 +7426,132 @@ class AnnouncementsScreen extends StatelessWidget {
   }
 }
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\app_version_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+class AppVersionScreen extends StatefulWidget {
+  const AppVersionScreen({super.key});
+
+  @override
+  State<AppVersionScreen> createState() => _AppVersionScreenState();
+}
+
+class _AppVersionScreenState extends State<AppVersionScreen> {
+  String version = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVersion();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      version = "${info.version} (Build ${info.buildNumber})";
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("App Version")),
+      body: Center(
+        child: Text("Current Version: $version", style: const TextStyle(fontSize: 18)),
+      ),
+    );
+  }
+}
+
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\contact_support_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class ContactSupportScreen extends StatelessWidget {
+  const ContactSupportScreen({super.key});
+
+  void _launchEmail() async {
+    final Uri emailUri = Uri(scheme: 'mailto', path: 'support@pcmcapp.com', query: 'subject=App Support');
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
+    }
+  }
+
+  void _launchPhone() async {
+    final Uri phoneUri = Uri(scheme: 'tel', path: '+91-9876543210');
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Contact Support")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Need help?", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text("You can reach us via email or phone for assistance."),
+            const SizedBox(height: 20),
+            ListTile(
+              leading: const Icon(Icons.email, color: Colors.blue),
+              title: const Text("Email Us"),
+              subtitle: const Text("support@pcmcapp.com"),
+              onTap: _launchEmail,
+            ),
+            ListTile(
+              leading: const Icon(Icons.phone, color: Colors.green),
+              title: const Text("Call Us"),
+              subtitle: const Text("+91-9876543210"),
+              onTap: _launchPhone,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\faqs_screen.dart ---
+import 'package:flutter/material.dart';
+
+class FaqsScreen extends StatelessWidget {
+  const FaqsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final faqs = [
+      {"q": "How to submit a grievance?", "a": "Go to 'Submit Grievance' from the home screen and fill in details."},
+      {"q": "How can I track my complaint?", "a": "Navigate to 'Track Grievance' and enter your grievance ID."},
+      {"q": "Can I upload documents?", "a": "Yes, you can upload photos or PDFs as proof while submitting grievances."},
+      {"q": "How long does it take to resolve?", "a": "It usually takes 7 working days, depending on priority."},
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("FAQs")),
+      body: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: faqs.length,
+        separatorBuilder: (_, __) => const Divider(),
+        itemBuilder: (context, index) {
+          return ExpansionTile(
+            title: Text(faqs[index]['q']!, style: const TextStyle(fontWeight: FontWeight.w600)),
+            children: [Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(faqs[index]['a']!),
+            )],
+          );
+        },
+      ),
+    );
+  }
+}
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\notifications_screen.dart ---
 import 'package:flutter/material.dart';
 
@@ -6674,153 +7587,448 @@ class NotificationsScreen extends StatelessWidget {
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\profile_screen.dart ---
-// lib/screens/common/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_provider.dart';
-import '../../utils/theme.dart'; // Assuming you have theme utilities
+import 'package:intl/intl.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/services/auth_service.dart';
+import 'package:main_ui/utils/theme.dart';
+import 'package:main_ui/widgets/custom_button.dart';
+import 'package:main_ui/widgets/loading_indicator.dart';
+import 'package:main_ui/widgets/file_upload_widget.dart';
+import 'package:main_ui/models/user_model.dart';
+import 'package:main_ui/providers/user_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider);
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final _formKey = GlobalKey<FormState>();
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneController;
+  late TextEditingController _addressController;
+  bool _isEditing = false;
+  bool _isLoading = false;
+  bool _twoFactorEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = ref.read(userNotifierProvider);
+    _nameController = TextEditingController(text: user?.name);
+    _emailController = TextEditingController(text: user?.email);
+    _phoneController = TextEditingController(text: user?.phoneNumber);
+    _addressController = TextEditingController(text: user?.address);
+    _twoFactorEnabled = user?.twoFactorEnabled ?? false;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _updateProfile() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+      try {
+        final userData = {
+          'id': ref.read(userNotifierProvider)!.id.toString(), // Convert to string
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'phoneNumber': _phoneController.text,
+          'address': _addressController.text,
+          'twoFactorEnabled': _twoFactorEnabled.toString(),
+        };
+        final updatedUser = await ApiService.addUpdateUser(userData);
+        ref.read(userNotifierProvider.notifier).setUser(User.fromJson(updatedUser));
+        setState(() => _isEditing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.userUpdatedSuccess)),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.failedToUpdateUser)),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _uploadProfilePicture(List<PlatformFile> files) async {
+    if (files.isNotEmpty) {
+      setState(() => _isLoading = true);
+      try {
+        final file = files.first;
+        final response = await ApiService.uploadProfilePicture(file);
+        final user = ref.read(userNotifierProvider)!;
+        ref.read(userNotifierProvider.notifier).setUser(
+              User(
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phoneNumber: user.phoneNumber,
+                role: user.role,
+                departmentId: user.departmentId,
+                address: user.address,
+                profilePicture: response['file_path'],
+                lastLogin: user.lastLogin,
+                twoFactorEnabled: user.twoFactorEnabled,
+                isActive: user.isActive,
+              ),
+            );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile picture uploaded successfully')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload profile picture')),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final user = ref.watch(userNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(localizations.profile),
         actions: [
           if (user != null)
             IconButton(
               icon: const Icon(Icons.logout),
-              tooltip: 'Logout',
+              tooltip: localizations.logout,
               onPressed: () async {
-                await ref.read(authProvider.notifier).logout();
-                Navigator.pushReplacementNamed(context, '/login');
+                setState(() => _isLoading = true);
+                try {
+                  await AuthService.logout();
+                  ref.read(userNotifierProvider.notifier).setUser(null);
+                  Navigator.pushReplacementNamed(context, '/login');
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(localizations.logoutFailed)),
+                  );
+                } finally {
+                  setState(() => _isLoading = false);
+                }
               },
             ),
         ],
       ),
-      body: user == null
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    'You are not logged in',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    icon: const Icon(Icons.login),
-                    label: const Text('Login'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+      body: _isLoading
+          ? const LoadingIndicator()
+          : user == null
+              ? _buildNotLoggedInView(context, localizations, theme)
+              : _buildProfileView(context, localizations, theme, user),
+    );
+  }
+
+  Widget _buildNotLoggedInView(
+      BuildContext context, AppLocalizations localizations, ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            localizations.please_login,
+            style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: 200, // Constrain the button width
+            child: CustomButton(
+              text: localizations.login,
+              icon: Icons.login,
+              onPressed: () => Navigator.pushNamed(context, '/login'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileView(
+      BuildContext context, AppLocalizations localizations, ThemeData theme, User user) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Profile header with picture
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withAlpha(40), // Fixed: changed withValues to withAlpha
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Attractive profile header
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues (alpha:  0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: theme.colorScheme.primary,
-                            child: Text(
-                            (user.name?.isNotEmpty == true) ? user.name![0].toUpperCase() : '?',
-                            style: TextStyle(
-                              color: theme.colorScheme.onPrimary,
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundImage:
+                              user.profilePicture != null ? NetworkImage(user.profilePicture!) : null,
+                          backgroundColor: theme.colorScheme.primary,
+                          child: user.profilePicture == null
+                              ? Text(
+                                  user.name?.isNotEmpty == true ? user.name![0].toUpperCase() : '?',
+                                  style: TextStyle(
+                                    color: theme.colorScheme.onPrimary,
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        if (_isEditing)
+                          IconButton(
+                            icon: const Icon(Icons.camera_alt, color: Colors.white),
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                builder: (context) => FileUploadWidget(
+                                  onFilesSelected: _uploadProfilePicture,
+                                ),
+                              );
+                            },
                           ),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            user.name ?? "No Name",
-                            style: theme.textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            (user.role ?? 'DEFAULT').toUpperCase(),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.secondary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      user.name ?? localizations.name,
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    // Profile details in a card
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              leading: Icon(Icons.email, color: theme.colorScheme.primary),
-                              title: Text('Email'),
-                              subtitle: Text(user?.email ?? "No Email"),
-                            ),
-                            const Divider(),
-                            ListTile(
-                              leading: Icon(Icons.person, color: theme.colorScheme.primary),
-                              title: Text('Role'),
-                              subtitle: Text(user.role ?? 'No role'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    // Logout button at the bottom
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          await ref.read(authProvider.notifier).logout();
-                          Navigator.pushReplacementNamed(context, '/login');
-                        },
-                        icon: const Icon(Icons.logout),
-                        label: const Text('Logout'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.error,
-                          foregroundColor: theme.colorScheme.onError,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
+                    const SizedBox(height: 8),
+                    Text(
+                      user.role?.toUpperCase() ?? 'UNKNOWN',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(height: 24),
+              // Profile details card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProfileField(
+                        icon: Icons.email,
+                        label: localizations.email,
+                        value: user.email,
+                        controller: _emailController,
+                        enabled: _isEditing,
+                        validator: (value) =>
+                            value == null || !value.contains('@') ? localizations.invalidEmail : null,
+                      ),
+                      const Divider(),
+                      _buildProfileField(
+                        icon: Icons.person,
+                        label: localizations.name,
+                        value: user.name,
+                        controller: _nameController,
+                        enabled: _isEditing,
+                        validator: (value) =>
+                            value == null || value.isEmpty ? localizations.nameRequired : null,
+                      ),
+                      const Divider(),
+                      _buildProfileField(
+                        icon: Icons.phone,
+                        label: 'Phone',
+                        value: user.phoneNumber,
+                        controller: _phoneController,
+                        enabled: _isEditing,
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Phone number is required' : null,
+                      ),
+                      const Divider(),
+                      _buildProfileField(
+                        icon: Icons.location_on,
+                        label: 'Address',
+                        value: user.address,
+                        controller: _addressController,
+                        enabled: _isEditing,
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: Icon(Icons.security, color: theme.colorScheme.primary),
+                        title: Text('Two-Factor Authentication'),
+                        trailing: Switch(
+                          value: _twoFactorEnabled,
+                          onChanged: _isEditing
+                              ? (value) => setState(() => _twoFactorEnabled = value)
+                              : null,
+                        ),
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
+                        title: Text('Last Login'),
+                        subtitle: Text(
+                          user.lastLogin != null
+                              ? DateFormat('dd/MM/yyyy HH:mm').format(user.lastLogin!)
+                              : 'N/A',
+                        ),
+                      ),
+                      const Divider(),
+                      ListTile(
+                        leading: Icon(Icons.verified_user, color: theme.colorScheme.primary),
+                        title: Text('Account Status'),
+                        subtitle: Text(user.isActive ? 'Active' : 'Inactive'),
+                      ),
+                      if (user.departmentId != null) ...[
+                        const Divider(),
+                        ListTile(
+                          leading: Icon(Icons.location_city, color: theme.colorScheme.primary),
+                          title: Text('Department'),
+                          subtitle: FutureBuilder(
+                            future: ApiService.getMasterArea(user.departmentId!),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const Text('Loading...');
+                              }
+                              if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+                                return const Text('Unknown');
+                              }
+                              return Text(snapshot.data!['name'] ?? 'Unknown');
+                            },
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Action buttons - FIXED: Added proper constraints
+              if (_isEditing) 
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: CustomButton(
+                          text: localizations.cancel,
+                          backgroundColor: theme.colorScheme.secondary,
+                          onPressed: () => setState(() {
+                            _isEditing = false;
+                            _nameController.text = user.name ?? '';
+                            _emailController.text = user.email ?? '';
+                            _phoneController.text = user.phoneNumber ?? '';
+                            _addressController.text = user.address ?? '';
+                            _twoFactorEnabled = user.twoFactorEnabled ?? false;
+                          }),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: CustomButton(
+                          text: localizations.update,
+                          icon: Icons.save,
+                          onPressed: _updateProfile,
+                          isLoading: _isLoading,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    text: 'Edit Profile',
+                    icon: Icons.edit,
+                    onPressed: () => setState(() => _isEditing = true),
+                  ),
+                ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity, // Make logout button full width
+                child: CustomButton(
+                  text: localizations.logout,
+                  icon: Icons.logout,
+                  backgroundColor: theme.colorScheme.error,
+                  foregroundColor: theme.colorScheme.onError,
+                  onPressed: () async {
+                    setState(() => _isLoading = true);
+                    try {
+                      await AuthService.logout();
+                      ref.read(userNotifierProvider.notifier).setUser(null);
+                      Navigator.pushReplacementNamed(context, '/login');
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(localizations.logoutFailed)),
+                      );
+                    } finally {
+                      setState(() => _isLoading = false);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileField({
+    required IconData icon,
+    required String label,
+    required String? value,
+    required TextEditingController controller,
+    bool enabled = false,
+    String? Function(String?)? validator,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+      title: Text(label),
+      subtitle: enabled
+          ? TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: label,
+              ),
+              validator: validator,
+            )
+          : Text(value ?? 'N/A'),
     );
   }
 }
@@ -6860,7 +8068,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Future<void> _loadSettings() async {
     setState(() => _isLoading = true);
     try {
-      final response = await ApiService.get('/settings'); // New backend route
+      final response = await ApiService.get('/settings/'); // New backend route
       if (response != null) {
         setState(() {
           _notificationsEnabled = response.data['notifications_enabled'] ?? true;
@@ -6880,7 +8088,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
-      await ApiService.post('/settings', {
+      await ApiService.post('/settings/', {
         'notifications_enabled': _notificationsEnabled,
         'name': _nameController.text,
         'email': _emailController.text,
@@ -6960,7 +8168,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(localizations.privacySecurity ?? 'Privacy & Security', style: Theme.of(context).textTheme.titleLarge),
                     ListTile(
                       title: Text(localizations.viewPrivacyPolicy ?? 'View Privacy Policy'),
-                      onTap: () => Navigator.pushNamed(context, '/privacy'), // Add route if needed
+                      onTap: () => Navigator.pushNamed(context, '/privacy-policy'), // Add route if needed
                     ),
                     const SizedBox(height: 24),
 
@@ -6972,7 +8180,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     ),
                     ListTile(
                       title: Text(localizations.contactSupport ?? 'Contact Support'),
-                      onTap: () => Navigator.pushNamed(context, '/support'), // Add route if needed
+                      onTap: () => Navigator.pushNamed(context, '/contact-support'), // Add route if needed
                     ),
                     const SizedBox(height: 24),
 
@@ -6980,6 +8188,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     Text(localizations.about ?? 'About', style: Theme.of(context).textTheme.titleLarge),
                     ListTile(
                       title: Text(localizations.appVersion ?? 'App Version: 1.0.0'),
+                      onTap: () => Navigator.pushNamed(context, '/app-version'), 
                     ),
                     const SizedBox(height: 24),
 
@@ -7002,6 +8211,47 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 }
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\view_privacy_policy_screen.dart ---
+import 'package:flutter/material.dart';
+
+class PrivacyPolicyScreen extends StatelessWidget {
+  const PrivacyPolicyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Privacy Policy")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            Text("Our Commitment", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            SizedBox(height: 8),
+            Text(
+              "We value your privacy and are committed to protecting your personal data. "
+              "This policy explains how we handle your information securely.",
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 20),
+            Text("1. Data Collection", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            SizedBox(height: 8),
+            Text("We collect your name, email, and grievance details only to process complaints."),
+            SizedBox(height: 20),
+            Text("2. Data Usage", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            SizedBox(height: 8),
+            Text("Your data is used solely for grievance redressal and system improvement."),
+            SizedBox(height: 20),
+            Text("3. Security", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            SizedBox(height: 8),
+            Text("We implement encryption and strict access policies to safeguard your information."),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 
 === Folder: screens\field_staff ===
 
@@ -7011,7 +8261,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/empty_state.dart';
-import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/services/api_service.dart';
@@ -7023,11 +8272,198 @@ final assignedGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
   if (user == null || user.role != 'field_staff') {
     return [];
   }
-  final response = await ApiService.get('/grievances/assigned/${user.id}');
+  final response = await ApiService.get('/grievances/assigned');
   return (response.data as List)
       .map((json) => Grievance.fromJson(json))
       .toList();
 });
+
+// Separate card widget for field staff grievances
+class FieldStaffGrievanceCard extends StatelessWidget {
+  final Grievance grievance;
+  const FieldStaffGrievanceCard({super.key, required this.grievance});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: theme.colorScheme.surfaceVariant,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => Navigator.pushNamed(
+          context,
+          '/employer/detail',
+          arguments: grievance.id,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      grievance.title ?? 'Untitled Grievance',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      _buildStatusBadge(grievance.status ?? 'new', theme),
+                      const SizedBox(width: 8),
+                      Text(
+                        grievance.priority?.toUpperCase() ?? 'N/A',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.secondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                grievance.description ?? 'No description provided',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today_rounded,
+                        size: 16,
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        grievance.createdAt != null
+                            ? _formatDate(grievance.createdAt!)
+                            : 'Unknown date',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (grievance.escalationLevel != null &&
+                      grievance.escalationLevel! > 0)
+                    Chip(
+                      label: Text('Escalated: Level ${grievance.escalationLevel}'),
+                      backgroundColor: Colors.orange.withOpacity(0.2),
+                      labelStyle: const TextStyle(color: Colors.orange),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              // Quick action buttons specific to field staff
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton.icon(
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      '/employer/update',
+                      arguments: grievance.id,
+                    ),
+                    icon: const Icon(Icons.update),
+                    label: const Text('Update Status'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton.icon(
+                    onPressed: () => Navigator.pushNamed(
+                      context,
+                      '/employer/upload',
+                      arguments: grievance.id,
+                    ),
+                    icon: const Icon(Icons.upload_file),
+                    label: const Text('Upload Proof'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status, ThemeData theme) {
+    Color color;
+    switch (status) {
+      case 'new':
+        color = Colors.blue;
+        break;
+      case 'in_progress':
+        color = Colors.orange;
+        break;
+      case 'resolved':
+        color = Colors.green;
+        break;
+      case 'rejected':
+        color = Colors.red;
+        break;
+      case 'on_hold':
+        color = Colors.yellow;
+        break;
+      case 'closed':
+        color = Colors.grey;
+        break;
+      default:
+        color = Colors.grey;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(color: color, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    if (difference.inDays > 1) {
+      return '${difference.inDays} days ago';
+    } else if (difference.inDays == 1) {
+      return '1 day ago';
+    } else if (difference.inHours > 1) {
+      return '${difference.inHours} hours ago';
+    } else if (difference.inMinutes > 1) {
+      return '${difference.inMinutes} minutes ago';
+    } else {
+      return 'Just now';
+    }
+  }
+}
 
 class AssignedList extends ConsumerWidget {
   const AssignedList({super.key});
@@ -7036,11 +8472,6 @@ class AssignedList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final grievancesAsync = ref.watch(assignedGrievancesProvider);
-    final theme = Theme.of(context);
-
-    // State for the priority filter slider
-    final priorityLevels = ['low', 'medium', 'high', 'urgent'];
-    final ValueNotifier<double> priorityFilter = ValueNotifier<double>(0);
 
     return Scaffold(
       appBar: AppBar(
@@ -7052,87 +8483,43 @@ class AssignedList extends ConsumerWidget {
           ),
         ],
       ),
-      drawer: const CustomNavigationDrawer(), // Add navigation drawer
-      body: Column(
-        children: [
-          // Slider for filtering by priority
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.filterByPriority,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                ValueListenableBuilder<double>(
-                  valueListenable: priorityFilter,
-                  builder: (context, value, child) {
-                    return Slider(
-                      value: value,
-                      min: 0,
-                      max: priorityLevels.length - 1,
-                      divisions: priorityLevels.length - 1,
-                      label: priorityLevels[value.toInt()],
-                      onChanged: (newValue) {
-                        priorityFilter.value = newValue;
-                      },
-                      activeColor: theme.colorScheme.primary,
-                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-          // Grievance list
-          Expanded(
-            child: grievancesAsync.when(
-              data: (grievances) {
-                // Filter grievances based on priority slider
-                final filteredGrievances = grievances.where((grievance) {
-                  final priorityIndex = priorityLevels.indexOf(grievance.priority?.toLowerCase() ?? 'medium');
-                  return priorityIndex >= priorityFilter.value.toInt();
-                }).toList();
-
-                if (filteredGrievances.isEmpty) {
-                  return EmptyState(
-                    icon: Icons.assignment_turned_in,
-                    title: l10n.noAssigned,
-                    message: l10n.noAssignedMessage ?? 'No assigned grievances yet.',
-                    actionButton: TextButton(
-                      onPressed: () => ref.refresh(assignedGrievancesProvider),
-                      child: Text(l10n.retry),
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () => ref.refresh(assignedGrievancesProvider.future),
-                  child: ListView.builder(
-                    itemCount: filteredGrievances.length,
-                    itemBuilder: (context, index) {
-                      final grievance = filteredGrievances[index];
-                      return GrievanceCard(grievance: grievance);
-                    },
-                  ),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => EmptyState(
-                icon: Icons.error_outline,
-                title: l10n.error,
-                message: l10n.failedToLoadGrievance,
-                actionButton: TextButton(
-                  onPressed: () => ref.refresh(assignedGrievancesProvider),
-                  child: Text(l10n.retry),
-                ),
+      drawer: const CustomNavigationDrawer(),
+      body: grievancesAsync.when(
+        data: (grievances) {
+          if (grievances.isEmpty) {
+            return EmptyState(
+              icon: Icons.assignment_turned_in,
+              title: l10n.noAssigned,
+              message:
+                  l10n.noAssignedMessage ?? 'No assigned grievances yet.',
+              actionButton: TextButton(
+                onPressed: () => ref.refresh(assignedGrievancesProvider),
+                child: Text(l10n.retry),
               ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => ref.refresh(assignedGrievancesProvider.future),
+            child: ListView.builder(
+              itemCount: grievances.length,
+              itemBuilder: (context, index) {
+                final grievance = grievances[index];
+                return FieldStaffGrievanceCard(grievance: grievance);
+              },
             ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => EmptyState(
+          icon: Icons.error_outline,
+          title: l10n.error,
+          message: l10n.failedToLoadGrievance,
+          actionButton: TextButton(
+            onPressed: () => ref.refresh(assignedGrievancesProvider),
+            child: Text(l10n.retry),
           ),
-        ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -7144,6 +8531,7 @@ class AssignedList extends ConsumerWidget {
     );
   }
 }
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\update_status.dart ---
 // lib/screens/employer/update_status.dart
 import 'package:flutter/material.dart';
@@ -7520,6 +8908,7 @@ import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/utils/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:file_picker/file_picker.dart';
 
 final Logger _logger = Logger('ApiService');
 
@@ -7656,23 +9045,39 @@ class ApiService {
     }
   }
 
-  // Add a new user
-  static Future<void> addUser(Map<String, dynamic> userData) async {
+  // Add or update a user
+  static Future<Map<String, dynamic>> addUpdateUser(Map<String, String> userData) async {
     try {
-      await _dio.post('/users/', data: userData);
+      final response = await _dio.post('/users', data: userData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
-      _logger.severe('Failed to add user: ${e.message}');
-      throw Exception('Failed to add user: ${e.message}');
+      _logger.severe('Failed to add/update user: ${e.message}');
+      throw Exception('Failed to add/update user: ${e.message}');
     }
   }
 
-  // Update an existing user
-  static Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
+  // Upload profile picture
+  static Future<Map<String, dynamic>> uploadProfilePicture(PlatformFile file) async {
     try {
-      await _dio.put('/users/$userId/', data: userData);
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(file.bytes!, filename: file.name),
+      });
+      final response = await _dio.post('/users/profile-picture', data: formData);
+      return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
-      _logger.severe('Failed to update user $userId: ${e.message}');
-      throw Exception('Failed to update user: ${e.message}');
+      _logger.severe('Failed to upload profile picture: ${e.message}');
+      throw Exception('Failed to upload profile picture: ${e.message}');
+    }
+  }
+
+  // Fetch area by ID
+  static Future<Map<String, dynamic>?> getMasterArea(int areaId) async {
+    try {
+      final response = await _dio.get('/areas/$areaId');
+      return response.data as Map<String, dynamic>?;
+    } on DioException catch (e) {
+      _logger.severe('Failed to fetch area $areaId: ${e.message}');
+      throw Exception('Failed to fetch area: ${e.message}');
     }
   }
 
@@ -8334,7 +9739,7 @@ class UserService {
     try {
       print('Fetching all users...'); // Debug log
       final response = await ApiService.get(
-        '/admin/users',
+        '/admins/users',
         headers: {
           'Accept': 'application/json',
         },
@@ -9042,7 +10447,7 @@ import 'status_badge.dart';
 
 class GrievanceCard extends StatelessWidget {
   final Grievance grievance;
-  const GrievanceCard({super.key, required this.grievance});
+  const GrievanceCard({super.key, required this.grievance,});
 
   @override
   Widget build(BuildContext context) {
@@ -9156,12 +10561,11 @@ class LoadingIndicator extends StatelessWidget {
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\navigation_drawer.dart ---
-// lib/widgets/navigation_drawer.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/models/user_model.dart';
+import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/providers/user_provider.dart';
 
 class CustomNavigationDrawer extends ConsumerWidget {
@@ -9170,22 +10574,27 @@ class CustomNavigationDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localizations = AppLocalizations.of(context)!;
-    final user = ref.watch(userNotifierProvider); // Uses userProvider (User?)
+    final user = ref.watch(userNotifierProvider);
+    final theme = Theme.of(context);
 
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
-        children: <Widget>[
+        children: [
           DrawerHeader(
-            decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+            decoration: BoxDecoration(color: theme.primaryColor),
             child: Text(
-              '${localizations.appTitle} - ${user?.name ?? localizations.guest}',
-              style: const TextStyle(color: Colors.white, fontSize: 24),
+              '${localizations.appTitle} - ${user?.name ?? user?.email ?? localizations.guest}',
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: Text(localizations.appTitle),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.home,
+            title: localizations.appTitle ?? 'Home',
             onTap: () {
               Navigator.pop(context);
               final homeRoute = _getHomeRouteForRole(user?.role);
@@ -9193,46 +10602,186 @@ class CustomNavigationDrawer extends ConsumerWidget {
                 Navigator.pushNamed(context, homeRoute);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(localizations.invalidRole)),
+                  SnackBar(content: Text(localizations.invalidRole ?? 'Invalid Role')),
                 );
               }
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(localizations.profile),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/profile');
-            },
+          if (user?.role?.toUpperCase() == 'ADMIN') ...[
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.history,
+              title: localizations.viewAuditLogs ?? 'View Audit Logs',
+              route: '/admin/audit',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.report,
+              title: localizations.complaintManagement ?? 'Complaint Management',
+              route: '/admin/complaints',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.settings_applications,
+              title: localizations.manageConfigs ?? 'Manage Configs',
+              route: '/admin/configs',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.subject,
+              title: localizations.manageSubjects ?? 'Manage Subjects',
+              route: '/admin/subjects',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.people,
+              title: localizations.manageUsers ?? 'Manage Users',
+              route: '/admin/users',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.history_toggle_off,
+              title: localizations.userHistory ?? 'User History',
+              route: '/admin/all_users_history',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.location_on,
+              title: localizations.manageAreas ?? 'Manage Areas',
+              route: '/admin/areas',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.assessment,
+              title: localizations.reports ?? 'Reports',
+              route: '/admin/reports',
+            ),
+          ],
+          if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.view_list,
+              title: localizations.viewgrievanceetails ?? 'View Grievances',
+              route: '/member_head/view',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.assignment,
+              title: localizations.assignGrievance ?? 'Assign Grievance',
+              route: '/member_head/assign',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.cancel,
+              title: localizations.rejectGrievance ?? 'Reject Grievance',
+              route: '/member_head/reject',
+            ),
+          ],
+          if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
+            
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.update,
+              title: localizations.updateStatus ?? 'Update Status',
+              route: '/employer/update',
+            ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.upload_file,
+              title: localizations.uploadWorkproof ?? 'Upload Work Proof',
+              route: '/employer/upload',
+            ),
+          ],
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.person,
+            title: localizations.profile ?? 'Profile',
+            route: '/profile',
           ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: Text(localizations.settings),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.pushNamed(context, '/settings');
-            },
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.settings,
+            title: localizations.settings ?? 'Settings',
+            route: '/settings',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.announcement,
+            title: localizations.announcements ?? 'Announcements',
+            route: '/announcements',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.notifications,
+            title: localizations.notifications ?? 'Notifications',
+            route: '/notifications',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.privacy_tip,
+            title: localizations.privacyPolicy ?? 'Privacy Policy',
+            route: '/privacy-policy',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.help,
+            title: localizations.faqs ?? 'FAQs',
+            route: '/faqs',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.support,
+            title: localizations.contactSupport ?? 'Contact Support',
+            route: '/contact-support',
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.info,
+            title: localizations.appVersion ?? 'App Version',
+            route: '/app-version',
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: Text(localizations.logout ?? 'Logout'),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.logout,
+            title: localizations.logout ?? 'Logout',
+            iconColor: Colors.red,
             onTap: () async {
               try {
-                await AuthService.logout();
-                ref.read(userNotifierProvider.notifier).setUser(null);// Clear user state
+                await ref.read(authProvider.notifier).logout();
+                ref.read(userNotifierProvider.notifier).setUser(null);
                 Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(localizations.logoutFailed)),
+                  SnackBar(content: Text(localizations.logoutFailed ?? 'Logout Failed: $e')),
                 );
               }
             },
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    String? route,
+    VoidCallback? onTap,
+    Color? iconColor,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(title),
+      onTap: onTap ??
+          () {
+            if (route != null) {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, route);
+            }
+          },
     );
   }
 

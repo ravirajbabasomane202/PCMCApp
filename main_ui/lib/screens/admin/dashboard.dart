@@ -3,17 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
-
 import 'package:main_ui/providers/admin_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'dart:io' as io;
-
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/models/kpi_model.dart';
 import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
+import 'dart:convert';
+import 'package:universal_html/html.dart' as html;
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -30,6 +33,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
   void initState() {
     super.initState();
     _grievancesFuture = ref.read(adminProvider.notifier).getAllGrievances();
+    _fetchData();
   }
 
   Future<void> _fetchData() async {
@@ -41,63 +45,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error fetching data: $e')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
         );
       }
-    }
-  }
-
-  List<PieChartSectionData> _buildPieChartSections(Map<String, dynamic> statusOverview) {
-    const colors = [Colors.blue, Colors.orange, Colors.green, Colors.red, Colors.grey, Colors.purple];
-    int index = 0;
-
-    final entries = statusOverview.entries
-        .where((entry) =>
-            (entry.value is num && (entry.value as num) > 0) ||
-            (entry.value is String && int.tryParse(entry.value) != null && int.parse(entry.value) > 0))
-        .toList();
-
-    if (entries.isEmpty) {
-      return [
-        PieChartSectionData(
-          value: 1,
-          title: 'No Data',
-          color: Colors.grey,
-          radius: 50,
-        )
-      ];
-    }
-
-    return entries.map((entry) {
-      final color = colors[index % colors.length];
-      index++;
-
-      final value = entry.value is num
-          ? (entry.value as num).toDouble()
-          : double.tryParse(entry.value.toString()) ?? 0.0;
-
-      return PieChartSectionData(
-        value: value,
-        title: '${entry.key.replaceAll('_', ' ').capitalize()}\n${value.toInt()}',
-        color: color,
-        radius: 50,
-        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      );
-    }).toList();
-  }
-
-  Future<void> _exportReport(String format) async {
-    try {
-      final data = await ref.read(adminProvider.notifier).generateReport(_selectedPeriod, format);
-      final dir = await getTemporaryDirectory();
-      final fileName = 'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
-      final filePath = '${dir.path}/$fileName';
-      final file = io.File(filePath);
-      await file.writeAsBytes(data);
-      await OpenFile.open(filePath);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Report exported: $fileName')));
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error exporting report: $e')));
     }
   }
 
@@ -114,7 +64,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
         centerTitle: true,
         elevation: 2,
       ),
-      drawer: _buildDrawer(theme),
+      drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
         onRefresh: _fetchData,
         child: SingleChildScrollView(
@@ -122,23 +72,38 @@ class _DashboardState extends ConsumerState<Dashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildFilterDropdown(theme),
+              _buildFilterDropdown(theme, loc),
               const SizedBox(height: 20),
-              if (kpiData != null) ...[
-                _buildKpiCard(theme, kpiData),
-                const SizedBox(height: 20),
-                _buildPieChartCard(theme, kpiData),
-                const SizedBox(height: 20),
-                _buildSlaCard(theme, kpiData),
-                const SizedBox(height: 20),
-                Text('Recent Complaints', style: theme.textTheme.titleMedium),
-                const SizedBox(height: 8),
-                _buildRecentComplaints(),
-                const SizedBox(height: 24),
-                _buildExportButtons(),
-              ] else ...[
-                const Center(child: Text('No KPI data available')),
-              ],
+              kpiData != null
+                  ? Column(
+                      children: [
+                        _buildKpiCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildPieChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildLineChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildBarChartCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        _buildSlaCard(theme, kpiData, loc),
+                        const SizedBox(height: 20),
+                        Text(loc.recentComplaints ?? 'Recent Complaints',
+                            style: theme.textTheme.titleMedium),
+                        const SizedBox(height: 8),
+                        _buildRecentComplaints(loc),
+                        const SizedBox(height: 24),
+                        _buildExportButtons(loc),
+                      ],
+                    )
+                  : EmptyState(
+                      icon: Icons.error,
+                      title: loc.noGrievances,
+                      message: loc.noGrievancesMessage,
+                      actionButton: ElevatedButton(
+                        onPressed: _fetchData,
+                        child: Text(loc.retry),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -146,56 +111,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildDrawer(ThemeData theme) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: theme.colorScheme.primary),
-            child: Align(
-              alignment: Alignment.bottomLeft,
-              child: Text(
-                'Admin Menu',
-                style: theme.textTheme.headlineSmall?.copyWith(color: Colors.white),
-              ),
-            ),
-          ),
-          _drawerItem(Icons.dashboard, 'Dashboard', () => Navigator.pop(context)),
-          _drawerItem(Icons.history, 'View Audit Logs', () => Navigator.pushNamed(context, '/admin/audit')),
-          _drawerItem(Icons.report_problem, 'Complaint Management', () => Navigator.pushNamed(context, '/admin/complaints')),
-          _drawerItem(Icons.settings, 'Manage Configs', () => Navigator.pushNamed(context, '/admin/configs')),
-          _drawerItem(Icons.subject, 'Manage Subjects', () => Navigator.pushNamed(context, '/admin/subjects')),
-          _drawerItem(Icons.people, 'Manage Users', () => Navigator.pushNamed(context, '/admin/users')),
-          _drawerItem(Icons.person_search, 'User History', () => Navigator.pushNamed(context, '/admin/all_users_history')),
-          _drawerItem(Icons.map, 'Manage Areas', () => Navigator.pushNamed(context, '/admin/areas')),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout'),
-            onTap: () async {
-              await ref.read(authProvider.notifier).logout();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  ListTile _drawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(title),
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildFilterDropdown(ThemeData theme) {
+  Widget _buildFilterDropdown(ThemeData theme, AppLocalizations loc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        const Text('Time Period: '),
+        Text(loc.filterByPeriod ?? 'Time Period: ',
+            style: theme.textTheme.bodyMedium),
         const SizedBox(width: 8),
         DropdownButton<String>(
           value: _selectedPeriod,
@@ -207,16 +128,18 @@ class _DashboardState extends ConsumerState<Dashboard> {
                   ))
               .toList(),
           onChanged: (value) {
-            setState(() => _selectedPeriod = value!);
-            _fetchData();
+            if (value != null) {
+              setState(() => _selectedPeriod = value);
+              _fetchData();
+            }
           },
         ),
       ],
     );
   }
 
-  Widget _buildKpiCard(ThemeData theme, KpiData kpiData) {
-    final totalComplaints = kpiData.totalComplaints;
+  Widget _buildKpiCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
       elevation: 3,
@@ -226,17 +149,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Total Complaints', style: theme.textTheme.titleMedium),
+            Text(loc.totalComplaints ?? 'Total Complaints',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             Wrap(
               spacing: 16,
               runSpacing: 8,
               children: [
-                _buildMetricItem('Day', totalComplaints['day']),
-                _buildMetricItem('Week', totalComplaints['week']),
-                _buildMetricItem('Month', totalComplaints['month']),
-                _buildMetricItem('Year', totalComplaints['year']),
-                _buildMetricItem('All Time', totalComplaints['all']),
+                _buildMetricItem(loc.day ?? 'Day', totalComplaints['day'] ?? 0),
+                _buildMetricItem(
+                    loc.week ?? 'Week', totalComplaints['week'] ?? 0),
+                _buildMetricItem(
+                    loc.month ?? 'Month', totalComplaints['month'] ?? 0),
+                _buildMetricItem(
+                    loc.year ?? 'Year', totalComplaints['year'] ?? 0),
+                _buildMetricItem(
+                    loc.allTime ?? 'All Time', totalComplaints['all'] ?? 0),
               ],
             ),
           ],
@@ -245,19 +173,21 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildMetricItem(String label, int? value) {
+  Widget _buildMetricItem(String label, int value) {
     return Column(
       children: [
         Text(label, style: const TextStyle(fontSize: 12)),
         Text(
-          '${value ?? 0}',
+          '$value',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
       ],
     );
   }
 
-  Widget _buildPieChartCard(ThemeData theme, KpiData kpiData) {
+  Widget _buildPieChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final statusOverview = kpiData.statusOverview ?? {};
+
     return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -266,17 +196,20 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Complaint Status Overview', style: theme.textTheme.titleMedium),
+            Text(loc.complaintStatusOverview ?? 'Complaint Status Overview',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 8),
             SizedBox(
               height: 220,
-              child: PieChart(
-                PieChartData(
-                  sections: _buildPieChartSections(kpiData.statusOverview),
-                  centerSpaceRadius: 40,
-                  sectionsSpace: 2,
-                ),
-              ),
+              child: statusOverview.isNotEmpty
+                  ? PieChart(
+                      PieChartData(
+                        sections: _buildPieChartSections(statusOverview),
+                        centerSpaceRadius: 40,
+                        sectionsSpace: 2,
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
             ),
           ],
         ),
@@ -284,8 +217,65 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildSlaCard(ThemeData theme, KpiData kpiData) {
-    final slaMetrics = kpiData.slaMetrics;
+  List<PieChartSectionData> _buildPieChartSections(Map<String, dynamic> statusOverview) {
+    const colors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.green,
+      Colors.red,
+      Colors.grey,
+      Colors.purple
+    ];
+    int index = 0;
+
+    final entries = statusOverview.entries
+        .where((entry) =>
+            (entry.value is num && (entry.value as num) > 0) ||
+            (entry.value is String && int.tryParse(entry.value) != null && int.parse(entry.value) > 0))
+        .toList();
+
+    if (entries.isEmpty) {
+      return [
+        PieChartSectionData(
+          value: 1,
+          title: 'No Data',
+          color: Colors.grey,
+          radius: 50,
+          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        )
+      ];
+    }
+
+    return entries.map((entry) {
+      final color = colors[index % colors.length];
+      index++;
+      final value = entry.value is num
+          ? (entry.value as num).toDouble()
+          : double.tryParse(entry.value.toString()) ?? 0.0;
+
+      return PieChartSectionData(
+        value: value,
+        title: '${entry.key.replaceAll('_', ' ').capitalize()}\n${value.toInt()}',
+        color: color,
+        radius: 50,
+        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        badgeWidget: Tooltip(
+          message: '${entry.key.capitalize()}: ${value.toInt()}',
+          child: Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  Widget _buildLineChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
       elevation: 3,
@@ -295,11 +285,192 @@ class _DashboardState extends ConsumerState<Dashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('SLA Metrics', style: theme.textTheme.titleMedium),
+            Text(loc.grievanceTrend ?? 'Grievance Trend Over Time',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 220,
+              child: totalComplaints.isNotEmpty
+                  ? LineChart(
+                      LineChartData(
+                        gridData: FlGridData(show: true),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                const labels = ['Day', 'Week', 'Month', 'Year', 'All'];
+                                return Text(
+                                  labels[value.toInt()],
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.timePeriod ?? 'Time Period'),
+                          ),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: true),
+                        minX: 0,
+                        maxX: 4,
+                        minY: 0,
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: [
+                              FlSpot(0, (totalComplaints['day'] ?? 0).toDouble()),
+                              FlSpot(1, (totalComplaints['week'] ?? 0).toDouble()),
+                              FlSpot(2, (totalComplaints['month'] ?? 0).toDouble()),
+                              FlSpot(3, (totalComplaints['year'] ?? 0).toDouble()),
+                              FlSpot(4, (totalComplaints['all'] ?? 0).toDouble()),
+                            ],
+                            isCurved: true,
+                            color: Colors.blue,
+                            barWidth: 3,
+                            dotData: FlDotData(show: true),
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: Colors.blue.withOpacity(0.2),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarChartCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final deptWise = kpiData.deptWise ?? {};
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(loc.deptWiseDistribution ?? 'Department-Wise Distribution',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 220,
+              child: deptWise.isNotEmpty
+                  ? BarChart(
+                      BarChartData(
+                        alignment: BarChartAlignment.spaceAround,
+                        barGroups: _buildBarChartGroups(deptWise),
+                        titlesData: FlTitlesData(
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 40,
+                              getTitlesWidget: (value, meta) {
+                                return Text(
+                                  value.toInt().toString(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (value, meta) {
+                                final keys = deptWise.keys.toList();
+                                return Text(
+                                  keys[value.toInt()].capitalize(),
+                                  style: const TextStyle(fontSize: 12),
+                                );
+                              },
+                            ),
+                            axisNameWidget: Text(loc.department ?? 'Department'),
+                          ),
+                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        borderData: FlBorderData(show: true),
+                        gridData: FlGridData(show: true),
+                      ),
+                    )
+                  : const Center(child: LoadingIndicator()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<BarChartGroupData> _buildBarChartGroups(Map<String, dynamic> deptWise) {
+    const colors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.green,
+      Colors.red,
+      Colors.purple,
+    ];
+    return deptWise.entries.toList().asMap().entries.map((entry) {
+  final index = entry.key;
+  final dept = entry.value.key;
+  final value = entry.value.value is num
+      ? (entry.value.value as num).toDouble()
+      : double.tryParse(entry.value.value.toString()) ?? 0.0;
+
+  return BarChartGroupData(
+    x: index,
+    barRods: [
+      BarChartRodData(
+        toY: value,
+        color: colors[index % colors.length],
+        width: 16,
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ],
+  );
+}).toList();
+
+  }
+
+  Widget _buildSlaCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
+    final slaMetrics = kpiData.slaMetrics ?? {};
+
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(loc.slaMetrics ?? 'SLA Metrics',
+                style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
-            _buildSlaMetricItem('SLA Days', '${slaMetrics['sla_days'] ?? 7}'),
-            _buildSlaMetricItem('Compliance Rate', '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%'),
-            _buildSlaMetricItem('Avg Resolution Time', '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days'),
+            _buildSlaMetricItem(loc.slaDays ?? 'SLA Days',
+                '${slaMetrics['sla_days'] ?? 7}'),
+            _buildSlaMetricItem(loc.complianceRate ?? 'Compliance Rate',
+                '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%'),
+            _buildSlaMetricItem(
+                loc.avgResolutionTime ?? 'Avg Resolution Time',
+                '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days'),
           ],
         ),
       ),
@@ -319,7 +490,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildRecentComplaints() {
+  Widget _buildRecentComplaints(AppLocalizations loc) {
     return FutureBuilder<List<Grievance>>(
       future: _grievancesFuture,
       builder: (context, snapshot) {
@@ -328,22 +499,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
         } else if (snapshot.hasError) {
           return EmptyState(
             icon: Icons.error,
-            title: AppLocalizations.of(context)!.error,
-            message: '${AppLocalizations.of(context)!.noGrievancesMessage}\n${snapshot.error}',
+            title: loc.error,
+            message: '${loc.noGrievancesMessage}\n${snapshot.error}',
             actionButton: ElevatedButton(
               onPressed: () {
                 setState(() {
                   _grievancesFuture = ref.read(adminProvider.notifier).getAllGrievances();
                 });
               },
-              child: Text(AppLocalizations.of(context)!.retry),
+              child: Text(loc.retry),
             ),
           );
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return EmptyState(
             icon: Icons.inbox,
-            title: AppLocalizations.of(context)!.noGrievances,
-            message: AppLocalizations.of(context)!.noGrievancesMessage,
+            title: loc.noGrievances,
+            message: loc.noGrievancesMessage,
           );
         }
 
@@ -358,28 +529,63 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildExportButtons() {
+  Widget _buildExportButtons(AppLocalizations loc) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         OutlinedButton.icon(
           onPressed: () => _exportReport('pdf'),
           icon: const Icon(Icons.picture_as_pdf),
-          label: const Text('Export PDF'),
+          label: Text(loc.exportPDF ?? 'Export PDF'),
         ),
         OutlinedButton.icon(
           onPressed: () => _exportReport('csv'),
           icon: const Icon(Icons.table_chart),
-          label: const Text('Export CSV'),
+          label: Text(loc.exportCSV ?? 'Export CSV'),
         ),
         OutlinedButton.icon(
           onPressed: () => _exportReport('excel'),
           icon: const Icon(Icons.grid_on),
-          label: const Text('Export Excel'),
+          label: Text(loc.exportExcel ?? 'Export Excel'),
         ),
       ],
     );
   }
+
+  Future<void> _exportReport(String format) async {
+  final loc = AppLocalizations.of(context)!;
+  try {
+    final data = await ref
+        .read(adminProvider.notifier)
+        .generateReport(_selectedPeriod, format);
+    final fileName =
+        'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
+
+    if (kIsWeb) {
+      // Web-specific file download
+      final blob = html.Blob([data]);
+      final url = html.Url.createObjectUrlFromBlob(blob);
+      final anchor = html.AnchorElement(href: url)
+        ..setAttribute('download', fileName)
+        ..click();
+      html.Url.revokeObjectUrl(url);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
+    } else {
+      // Mobile/desktop file handling
+      final dir = await getTemporaryDirectory();
+      final filePath = '${dir.path}/$fileName';
+      final file = io.File(filePath);
+      await file.writeAsBytes(data);
+      await OpenFile.open(filePath);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${loc.errorExportingReport ?? 'Error exporting report'}: $e')));
+  }
+}
 }
 
 extension StringExtension on String {

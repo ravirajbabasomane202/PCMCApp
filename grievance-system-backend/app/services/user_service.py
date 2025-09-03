@@ -31,3 +31,13 @@ def delete_user(user_id):
         raise ValueError("User not found")
     db.session.delete(user)
     db.session.commit()
+
+def get_users():
+    """
+    Fetch all users, particularly those suitable for grievance assignment (e.g., FIELD_STAFF).
+    """
+    try:
+        users = User.query.filter_by(role=Role.FIELD_STAFF).all()
+        return [UserSchema().dump(user) for user in users]
+    except Exception as e:
+        raise Exception(f"Failed to fetch users: {str(e)}")
