@@ -258,6 +258,81 @@ with app.app_context():
     print("✅ Sample data inserted successfully!")
 
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\testusers.py ---
+# # create_users.py
+# from app import create_app, db
+# from app.models import User, Role
+# from datetime import datetime, timezone
+
+# def create_test_users():
+#     users = [
+#         {
+#             "name": "Test Citizen",
+#             "email": "citizen@test.com",
+#             "phone_number": "+1234567890",
+#             "password": "password123",
+#             "role": Role.CITIZEN,
+#             "department_id": None
+#         },
+#         {
+#             "name": "Test Member Head",
+#             "email": "memberhead@test.com",
+#             "phone_number": "+1234567891",
+#             "password": "password123",
+#             "role": Role.MEMBER_HEAD,
+#             "department_id": 1  # Assumes area ID 1 exists
+#         },
+#         {
+#             "name": "Test Field Staff",
+#             "email": "fieldstaff@test.com",
+#             "phone_number": "+1234567892",
+#             "password": "password123",
+#             "role": Role.FIELD_STAFF,
+#             "department_id": 1
+#         },
+#         {
+#             "name": "Test Admin",
+#             "email": "admin@test.com",
+#             "phone_number": "+1234567893",
+#             "password": "password123",
+#             "role": Role.ADMIN,
+#             "department_id": None
+#         }
+#     ]
+
+#     for user_data in users:
+#         # Check if user already exists
+#         if User.query.filter_by(email=user_data["email"]).first():
+#             print(f"User {user_data['email']} already exists, skipping.")
+#             continue
+        
+#         user = User(
+#             name=user_data["name"],
+#             email=user_data["email"],
+#             phone_number=user_data["phone_number"],
+#             role=user_data["role"],
+#             department_id=user_data["department_id"],
+#             created_at=datetime.now(timezone.utc),
+#             updated_at=datetime.now(timezone.utc)
+#         )
+#         user.set_password(user_data["password"])
+#         db.session.add(user)
+#         print(f"Created user: {user_data['name']} ({user_data['role'].value})")
+    
+#     db.session.commit()
+#     print("✅ All users created successfully!")
+
+# if __name__ == "__main__":
+#     app = create_app()
+#     with app.app_context():
+#         create_test_users()
+
+
+
+
+
+
+
+
 # create_users.py
 from app import create_app, db
 from app.models import User, Role
@@ -266,36 +341,28 @@ from datetime import datetime, timezone
 def create_test_users():
     users = [
         {
-            "name": "Test Citizen",
-            "email": "citizen@test.com",
-            "phone_number": "+1234567890",
-            "password": "password123",
-            "role": Role.CITIZEN,
-            "department_id": None
-        },
-        {
-            "name": "Test Member Head",
-            "email": "memberhead@test.com",
-            "phone_number": "+1234567891",
-            "password": "password123",
-            "role": Role.MEMBER_HEAD,
-            "department_id": 1  # Assumes area ID 1 exists
-        },
-        {
-            "name": "Test Field Staff",
-            "email": "fieldstaff@test.com",
-            "phone_number": "+1234567892",
+            "name": "Test Field Staff2",
+            "email": "fieldstaff@test.com2",
+            "phone_number": "+1234567898",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
         },
         {
-            "name": "Test Admin",
-            "email": "admin@test.com",
-            "phone_number": "+1234567893",
+            "name": "Test Field Staff3",
+            "email": "fieldstaff@test.com3",
+            "phone_number": "+1234567894",
             "password": "password123",
-            "role": Role.ADMIN,
-            "department_id": None
+            "role": Role.FIELD_STAFF,
+            "department_id": 1
+        },
+        {
+            "name": "Test Field Staff4",
+            "email": "fieldstaff@test.com4",
+            "phone_number": "+1234567895",
+            "password": "password123",
+            "role": Role.FIELD_STAFF,
+            "department_id": 1
         }
     ]
 
@@ -981,9 +1048,16 @@ class AnnouncementSchema(Schema):
     message = fields.Str(required=True)
     type = fields.Str(required=True, validate=validate.OneOf(["general", "emergency"]))
     created_at = fields.DateTime(dump_only=True)
-    expires_at = fields.DateTime(allow_none=True, dump_only=True)  # New field
-    target_role = EnumField(Role, by_value=True, allow_none=True)  # New field
-    is_active = fields.Boolean(dump_only=True)  # New field
+    expires_at = fields.DateTime(allow_none=True)  # New field
+    target_role = fields.Str(allow_none=True, validate=validate.OneOf([r.value for r in Role]))
+    is_active = fields.Boolean()  # New field
+    @validates("target_role")
+    def validate_role(self, value):
+        if value is None:
+            return  # allow nulls
+        allowed = ["CITIZEN", "MEMBER_HEAD", "FIELD_STAFF", "ADMIN"]
+        if value.upper() not in allowed:
+            raise ValidationError(f"Invalid target_role. Must be one of {allowed}")
 
 class UserPreferenceSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -1088,6 +1162,11 @@ from ..services.grievance_service import reassign_grievance
 from ..services.user_service import add_update_user
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required
+import logging
+from datetime import datetime, timezone
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/dashboard', methods=['GET'])
@@ -1100,18 +1179,75 @@ def dashboard(user):
     }
     return jsonify(kpis), 200
 
+@admin_bp.route('/users/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_user(user, id):
+    """Delete a specific user by ID."""
+    try:
+        user_to_delete = User.query.get(id)
+        if not user_to_delete:
+            return jsonify({"msg": "User not found"}), 404
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return jsonify({"msg": "User deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Failed to delete user", "error": str(e)}), 500
+
+
+
+
+
 @admin_bp.route('/subjects', methods=['POST'])
 @admin_required
 def manage_subjects(user):
     data = request.json
+    print(f"Received data: {data}")
     schema = MasterSubjectsSchema()
     errors = schema.validate(data)
     if errors:
+        print(f"Validation errors: {errors}")
         return jsonify(errors), 400
-    subject = MasterSubjects(**data)
-    db.session.add(subject)
-    db.session.commit()
-    return schema.dump(subject), 201
+    try:
+        subject = MasterSubjects(**data)
+        db.session.add(subject)
+        db.session.commit()
+        print(f"Subject {subject.name} added successfully")
+        return schema.dump(subject), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to save subject"}), 500
+
+
+@admin_bp.route('/subjects/<int:id>', methods=['PUT'])
+@admin_required
+def update_subject(user, id):
+    data = request.json
+    print(f"Update request for subject {id}: {data}")
+
+    schema = MasterSubjectsSchema()
+    errors = schema.validate(data, partial=True)  # allow partial updates
+    if errors:
+        return jsonify(errors), 400
+
+    try:
+        subject = db.session.get(MasterSubjects, id)
+        if not subject:
+            return jsonify({"error": "Subject not found"}), 404
+
+        # Update fields
+        subject.name = data.get("name", subject.name)
+        subject.description = data.get("description", subject.description)
+
+        db.session.commit()
+        print(f"Subject {subject.id} updated successfully")
+        return schema.dump(subject), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to update subject"}), 500
+
 
 @admin_bp.route('/areas', methods=['POST'])
 @admin_required
@@ -1126,12 +1262,45 @@ def manage_areas(user):
     db.session.commit()
     return schema.dump(area), 201
 
-@admin_bp.route('/reassign/<int:id>', methods=['POST'])
+@admin_bp.route('/reassign/<int:grievance_id>', methods=['POST'])
 @admin_required
-def reassign(user, id):
-    data = request.json
-    result = reassign_grievance(id, data['assigned_to'], user.id)
-    return jsonify(result), 200
+def reassign_grievance(user, grievance_id):
+    """
+    Reassign a grievance to a new field staff member.
+    """
+    try:
+        data = request.get_json()
+        # The frontend code is sending 'assigned_to', not 'assignee_id'.
+        new_assignee_id = data.get('assigned_to')
+        if not new_assignee_id:
+            return jsonify({"success": False, "message": "Assignee ID is required"}), 400
+        
+        grievance = Grievance.query.get(grievance_id)
+        if not grievance:
+            return jsonify({"success": False, "message": "Grievance not found"}), 404
+        
+        assignee = User.query.get(new_assignee_id)
+        if not assignee or assignee.role != Role.FIELD_STAFF:
+            return jsonify({"success": False, "message": "Invalid assignee"}), 400
+        
+        grievance.assigned_to = new_assignee_id
+        grievance.assigned_by = user.id
+        grievance.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        
+        # Notify the new assignee
+        from ..services.notification_service import send_notification
+        send_notification(
+            assignee.email,
+            'Grievance Assigned',
+            f'You have been assigned grievance #{grievance_id}'
+        )
+        
+        return jsonify({"success": True, "message": "Grievance reassigned successfully"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"success": False, "message": str(e)}), 500
 
 @admin_bp.route('/audit-logs', methods=['GET', 'OPTIONS'])
 def audit_logs():
@@ -1198,25 +1367,33 @@ def citizen_history(user, id):
     schema = GrievanceSchema(many=True)
     return jsonify(schema.dump(history)), 200
 
-@admin_bp.route('/grievances/all', methods=['GET', 'OPTIONS'])
-def get_complaints():
-    if request.method == 'OPTIONS':
-        # Allow preflight without JWT
-        return jsonify({}), 200  
-
-    # Now require JWT only for GET
-    return _get_complaints_protected()
-
-
-@jwt_required()
+@admin_bp.route('/grievances/all', methods=['GET'])
 @admin_required
-def _get_complaints_protected(user):
+def get_all_grievances(user):
+    """
+    Fetch all grievances with optional filters.
+    """
     try:
-        grievances = Grievance.query.all()
-        schema = GrievanceSchema(many=True)
-        return jsonify(schema.dump(grievances)), 200
+        from ..models import Grievance
+        status = request.args.get('status')
+        priority = request.args.get('priority')
+        area_id = request.args.get('area_id', type=int)
+        subject_id = request.args.get('subject_id', type=int)
+        
+        query = Grievance.query
+        if status:
+            query = query.filter_by(status=status)
+        if priority:
+            query = query.filter_by(priority=priority)
+        if area_id:
+            query = query.filter_by(area_id=area_id)
+        if subject_id:
+            query = query.filter_by(subject_id=subject_id)
+        
+        grievances = query.all()
+        return jsonify([g.to_dict() for g in grievances])
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "message": str(e)}), 500
 
 
 
@@ -1225,34 +1402,72 @@ def _get_complaints_protected(user):
 def escalate(user, id):
     try:
         data = request.json or {}
+        print("Incoming escalate request:", data)
+
         new_assignee_id = data.get('assignee_id')
-        result = escalate_grievance(id, user.id, new_assignee_id)
-        return jsonify(result), 200 if result["success"] else 400
+
+        # Escalate grievance
+        result = escalate_grievance(
+            grievance_id=id,
+            escalated_by=user.id,   # always take from current logged-in user
+            new_assignee_id=new_assignee_id
+        )
+
+        status_code = 200 if result.get("success") else 400
+        return jsonify(result), status_code
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 
 @admin_bp.route('/configs', methods=['GET', 'POST', 'OPTIONS'])
 def manage_configs():
     if request.method == 'OPTIONS':
         # Respond to preflight without JWT
-        return jsonify({}), 200  
+        return jsonify({}), 200
 
     return _manage_configs_protected()
 
 
 @jwt_required()
 @admin_required
-def _manage_configs_protected(user):  # <-- user comes from @admin_required
+def _manage_configs_protected(user):
     if request.method == 'POST':
         data = request.json
-        config = MasterConfig(key=data['key'], value=data['value'])
-        db.session.add(config)
+
+        # Check if config already exists (upsert)
+        config = MasterConfig.query.filter_by(key=data['key']).first()
+        if config:
+            # Update existing
+            config.value = data['value']
+            config.updated_at = datetime.now(timezone.utc)
+            if 'description' in data:
+                config.description = data['description']
+        else:
+            # Insert new
+            config = MasterConfig(
+                key=data['key'],
+                value=data['value'],
+                description=data.get('description')
+            )
+            db.session.add(config)
+
         db.session.commit()
 
+    # Always return configs
     configs = MasterConfig.query.all()
-    return jsonify([{'key': c.key, 'value': c.value} for c in configs]), 200
-
+    return jsonify([
+        {
+            'id': c.id,
+            'key': c.key,
+            'value': c.value,
+            'description': c.description,
+            'created_at': c.created_at,
+            'updated_at': c.updated_at,
+        }
+        for c in configs
+    ]), 200
 
 # In app/routes/admin_routes.py
 @admin_bp.route('/configs/<string:key>', methods=['PUT'])
@@ -1310,31 +1525,24 @@ def list_users(user):
 @admin_bp.route('/users/<int:id>', methods=['PUT'])
 @admin_required
 def update_user(user, id):
-    """Update a specific user by ID."""
-    data = request.json
-    if 'role' in data:
-        try:
-            role_mapping = {
-                'citizen': Role.CITIZEN,
-                'member_head': Role.MEMBER_HEAD,
-                'field_staff': Role.FIELD_STAFF,
-                'admin': Role.ADMIN
-            }
-            if data['role'] in role_mapping:
-                data['role'] = role_mapping[data['role']]
-            else:
-                return jsonify({"msg": f"Invalid role: {data['role']}"}), 400
-        except Exception as e:
-            return jsonify({"msg": f"Error processing role: {str(e)}"}), 400
-    
     try:
-        result = add_update_user({**data, 'id': id})
+        data = request.json
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+        
+        result = add_update_user({**data, "id": id})
         return jsonify(result), 200
-    except ValueError as e:
-        return jsonify({"msg": str(e)}), 400
+
     except Exception as e:
-        return jsonify({"msg": "Failed to update user", "error": str(e)}), 500
-    
+        # fallback if str(e) is empty/null
+        return jsonify({
+            "msg": "Failed to update user",
+            "error": str(e) or "Unknown error"
+        }), 500
+
+
+
+
 @admin_bp.route('/reports/staff-performance', methods=['GET'])
 @admin_required
 def staff_performance(user):
@@ -1349,11 +1557,19 @@ def location_reports(user):
 @admin_required
 def create_announcement(user):
     data = request.json
+    print("DEBUG incoming:", data)
     schema = AnnouncementSchema()
     errors = schema.validate(data)
+    print("DEBUG errors:", errors)
     if errors:
         return jsonify(errors), 400
-    
+    data["target_role"] = data["target_role"].upper() if data.get("target_role") else None
+    if data.get("expires_at"):
+        try:
+            # Handle ISO 8601 format from frontend
+            data["expires_at"] = datetime.fromisoformat(data["expires_at"].replace("Z", ""))
+        except ValueError:
+            return jsonify({"error": "Invalid date format for expires_at"}), 400
     announcement = Announcement(**data)
     db.session.add(announcement)
     db.session.commit()
@@ -1361,6 +1577,8 @@ def create_announcement(user):
     # Broadcast via email/FCM
     users = User.query.all()
     for u in users:
+        if not u.email:  # skip users without email
+            continue
         token = NotificationToken.query.filter_by(user_id=u.id).first()
         send_notification(
             to=u.email,
@@ -1371,11 +1589,15 @@ def create_announcement(user):
     return schema.dump(announcement), 201
 
 @admin_bp.route('/announcements', methods=['GET'])
-@admin_required
-def list_announcements(user):
-    announcements = Announcement.query.order_by(Announcement.created_at.desc()).all()
-    schema = AnnouncementSchema(many=True)
-    return jsonify(schema.dump(announcements)), 200
+def get_announcements():
+    # This could be moved to a public blueprint if needed, but for now under admin
+    # Optionally filter by active, non-expired, etc.
+    now = datetime.now(timezone.utc)
+    announcements = Announcement.query.filter(
+        Announcement.is_active == True,
+        db.or_(Announcement.expires_at > now, Announcement.expires_at == None)
+    ).order_by(Announcement.created_at.desc()).all()
+    return AnnouncementSchema(many=True).dump(announcements), 200
 
 @admin_bp.route('/reports/kpis/advanced', methods=['GET', 'OPTIONS'])
 def get_advanced_kpis_route():
@@ -1592,7 +1814,7 @@ def guest_login():
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\grievance_routes.py ---
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required
+from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required, field_staff_or_admin_required
 from ..models import Grievance, GrievanceStatus, Role, User, GrievanceComment, MasterConfig
 from ..schemas import GrievanceSchema, GrievanceCommentSchema
 from ..services.grievance_service import (
@@ -1772,8 +1994,8 @@ def get_assigned_grievances_by_user(user, user_id):
 
 
 
-@grievance_bp.route('/<int:id>/status', methods=['PUT'])
-@field_staff_required
+@grievance_bp.route('/<int:id>/status', methods=['PUT','POST'])
+@field_staff_or_admin_required
 def update_grievance_status(user, id):
     data = request.json
     new_status = data.get('status')
@@ -1781,8 +2003,11 @@ def update_grievance_status(user, id):
         grievance = db.session.get(Grievance, id)
         if not grievance:
             return jsonify({"error": "Grievance not found"}), 404
-        if grievance.assigned_to != user.id:
+        
+        # Check if the user is the assigned staff OR an ADMIN
+        if grievance.assigned_to != user.id and user.role != Role.ADMIN:
             return jsonify({"error": "Not authorized to update this grievance"}), 403
+        
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
@@ -2123,20 +2348,7 @@ def manage_user(user):
     except Exception as e:
         return jsonify({"msg": "An error occurred", "error": str(e)}), 500
 
-@user_bp.route('/admin/users/<int:id>', methods=['DELETE'])
-@admin_required
-def delete_user(user, id):
-    """Delete a specific user by ID."""
-    try:
-        user_to_delete = User.query.get(id)
-        if not user_to_delete:
-            return jsonify({"msg": "User not found"}), 404
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        return jsonify({"msg": "User deleted successfully"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"msg": "Failed to delete user", "error": str(e)}), 500
+
     
 
 from flask import Blueprint, request, jsonify
@@ -2970,13 +3182,14 @@ def get_citizen_history(user_id):
     except Exception as e:
         raise Exception(f"Failed to fetch citizen history: {str(e)}")
 
-def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
+def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
     """
     Escalate a grievance to a higher level.
 
     Args:
         grievance_id (int): ID of the grievance to escalate.
         escalated_by (int): ID of the user performing the escalation.
+        new_assignee_id (int, optional): ID of the new assignee.
 
     Returns:
         dict: Result of the escalation operation.
@@ -2989,6 +3202,10 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         if not grievance:
             return {"success": False, "message": "Grievance not found"}
         
+        max_escalation_level = int(current_app.config.get('MAX_ESCALATION_LEVEL', 3))
+        if grievance.escalation_level >= max_escalation_level:
+            return {"success": False, "message": f"Cannot escalate beyond level {max_escalation_level}"}
+        
         # Increment escalation level
         grievance.escalation_level = (grievance.escalation_level or 0) + 1
         
@@ -2997,7 +3214,14 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         
         # Optionally reassign to a new user
         if new_assignee_id:
+            assignee = User.query.get(new_assignee_id)
+            if not assignee:
+                return {"success": False, "message": "Assignee not found"}
             grievance.assigned_to = new_assignee_id
+            grievance.assigned_by = escalated_by
+        
+        # Update timestamps
+        grievance.updated_at = datetime.utcnow()
         
         # Log the escalation
         log_audit(f'Grievance escalated to level {grievance.escalation_level}', escalated_by, grievance_id)
@@ -3005,11 +3229,11 @@ def escalate_grievance(grievance_id, escalated_by , new_assignee_id=None):
         db.session.commit()
         
         # Notify administrators and new assignee (if applicable)
-        admins = User.query.filter_by(role='admin').all()
+        admins = User.query.filter_by(role=Role.ADMIN).all()
         for admin in admins:
             send_notification(
-                admin.email, 
-                'Grievance Escalated', 
+                admin.email,
+                'Grievance Escalated',
                 f'Grievance #{grievance_id} has been escalated to level {grievance.escalation_level}'
             )
         if new_assignee_id:
@@ -3109,6 +3333,57 @@ def get_location_reports():
         for row in ward_data
     ]
 
+def update_grievance_status(grievance_id, new_status, updated_by):
+    """
+    Update the status of a grievance.
+
+    Args:
+        grievance_id (int): ID of the grievance to update.
+        new_status (str): New status to set.
+        updated_by (int): ID of the user updating the status.
+
+    Returns:
+        dict: Result of the status update operation.
+
+    Raises:
+        Exception: If the grievance is not found or status update fails.
+    """
+    try:
+        grievance = Grievance.query.get(grievance_id)
+        if not grievance:
+            return {"success": False, "message": "Grievance not found"}
+        
+        # Validate new status
+        valid_statuses = [e.value for e in GrievanceStatus]
+        if new_status not in valid_statuses:
+            return {"success": False, "message": f"Invalid status. Must be one of {valid_statuses}"}
+        
+        # Update status
+        grievance.status = GrievanceStatus(new_status)
+        grievance.updated_at = datetime.utcnow()
+        
+        # If status is resolved or closed, set resolved_at
+        if new_status in [GrievanceStatus.RESOLVED.value, GrievanceStatus.CLOSED.value]:
+            grievance.resolved_at = datetime.utcnow()
+        
+        # Log the status update
+        log_audit(f'Grievance status updated to {new_status}', updated_by, grievance_id)
+        
+        db.session.commit()
+        
+        # Notify the citizen
+        citizen = User.query.get(grievance.citizen_id)
+        if citizen and citizen.email:
+            send_notification(
+                citizen.email,
+                'Grievance Status Updated',
+                f'Your grievance #{grievance_id} has been updated to status: {new_status}'
+            )
+        
+        return {"success": True, "message": f"Grievance status updated to {new_status}"}
+    except Exception as e:
+        db.session.rollback()
+        raise Exception(f"Failed to update grievance status: {str(e)}")
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\services\user_service.py ---
 # app/services/user_service.py
 
@@ -3143,6 +3418,16 @@ def delete_user(user_id):
         raise ValueError("User not found")
     db.session.delete(user)
     db.session.commit()
+
+def get_users():
+    """
+    Fetch all users, particularly those suitable for grievance assignment (e.g., FIELD_STAFF).
+    """
+    try:
+        users = User.query.filter_by(role=Role.FIELD_STAFF).all()
+        return [UserSchema().dump(user) for user in users]
+    except Exception as e:
+        raise Exception(f"Failed to fetch users: {str(e)}")
 
 === Folder: app\services\__pycache__ ===
 
@@ -3190,6 +3475,9 @@ def admin_required(fn):
 
 def citizen_or_admin_required(fn):  # New decorator
     return jwt_required_with_role([Role.CITIZEN, Role.ADMIN,Role.MEMBER_HEAD,Role.FIELD_STAFF])(fn)
+
+def field_staff_or_admin_required(fn):  # New decorator
+    return jwt_required_with_role([Role.FIELD_STAFF, Role.ADMIN])(fn)
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\utils\file_utils.py ---
 # app/utils/file_utils.py
 
@@ -3222,8 +3510,7 @@ def allowed_file(filename):
 def upload_files(files, grievance_id):
     uploaded_paths = []
     upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'grievance_{grievance_id}')
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    os.makedirs(upload_folder, exist_ok=True)
     
     if len(files) > 10:
         raise ValueError("Maximum 10 files allowed")
@@ -3245,8 +3532,7 @@ def upload_workproof(file, grievance_id):
         raise ValueError("Invalid file type")
     
     upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'workproof_{grievance_id}')
-    if not os.path.exists(upload_folder):
-        os.makedirs(upload_folder)
+    os.makedirs(upload_folder, exist_ok=True)
     
     filename = secure_filename(file.filename)
     file_path = os.path.join(upload_folder, filename)

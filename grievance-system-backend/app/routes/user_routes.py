@@ -80,20 +80,7 @@ def manage_user(user):
     except Exception as e:
         return jsonify({"msg": "An error occurred", "error": str(e)}), 500
 
-@user_bp.route('/admin/users/<int:id>', methods=['DELETE'])
-@admin_required
-def delete_user(user, id):
-    """Delete a specific user by ID."""
-    try:
-        user_to_delete = User.query.get(id)
-        if not user_to_delete:
-            return jsonify({"msg": "User not found"}), 404
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        return jsonify({"msg": "User deleted successfully"}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"msg": "Failed to delete user", "error": str(e)}), 500
+
     
 
 from flask import Blueprint, request, jsonify

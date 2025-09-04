@@ -163,137 +163,143 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
   }
 
   Future<void> _showEditUserDialog(User user) async {
-    final l10n = AppLocalizations.of(context)!;
-    final formKey = GlobalKey<FormState>();
-    String name = user.name ?? "";
-    String email = user.email ?? '';
-    String phoneNumber = user.phoneNumber ?? '';
-    String role = user.role ?? "";
-    String? departmentId = user.departmentId?.toString();
+  final l10n = AppLocalizations.of(context)!;
+  final formKey = GlobalKey<FormState>();
+  String name = user.name ?? "";
+  String email = user.email ?? '';
+  String phoneNumber = user.phoneNumber ?? '';
+  // Normalize role to match dropdown items
+  String role = ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+      .contains(user.role?.toUpperCase())
+      ? user.role!.toUpperCase()
+      : 'CITIZEN'; // Default to 'CITIZEN' if invalid
+  String? departmentId = user.departmentId?.toString();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.editUser ?? 'Edit User'),
-        content: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: name,
-                  decoration: InputDecoration(
-                    labelText: l10n.name,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.editUser ?? 'Edit User'),
+      content: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                initialValue: name,
+                decoration: InputDecoration(
+                  labelText: l10n.name,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: validateRequired,
-                  onChanged: (value) => name = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: email,
-                  decoration: InputDecoration(
-                    labelText: l10n.email,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: validateRequired,
+                onChanged: (value) => name = value,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: email,
+                decoration: InputDecoration(
+                  labelText: l10n.email,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: validateEmail,
-                  onChanged: (value) => email = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: phoneNumber,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: validateEmail,
+                onChanged: (value) => email = value,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: phoneNumber,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Phone number is required';
-                    }
-                    if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                      return 'Invalid phone number';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => phoneNumber = value,
                 ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: role,
-                  decoration: InputDecoration(
-                    labelText: l10n.role,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Phone number is required';
+                  }
+                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                    return 'Invalid phone number';
+                  }
+                  return null;
+                },
+                onChanged: (value) => phoneNumber = value,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: role,
+                decoration: InputDecoration(
+                  labelText: l10n.role,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                      .toList(),
-                  onChanged: (value) => role = value ?? 'CITIZEN',
-                  validator: validateRequired,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: departmentId,
-                  decoration: InputDecoration(
-                    labelText: 'Department ID (Optional)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                    .toList(),
+                onChanged: (value) => setState(() {
+                  role = value ?? 'CITIZEN';
+                }),
+                validator: validateRequired,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: departmentId,
+                decoration: InputDecoration(
+                  labelText: 'Department ID (Optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => departmentId = value.isEmpty ? null : value,
                 ),
-              ],
-            ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) => departmentId = value.isEmpty ? null : value,
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CustomButton(
-            text: l10n.update,
-            onPressed: () async {
-              if (formKey.currentState?.validate() ?? false) {
-                try {
-                  await ref.read(usersProvider.notifier).updateUser(user.id, {
-                    'id': user.id,
-                    'name': name,
-                    'email': email,
-                    'phone_number': phoneNumber,
-                    'role': role,
-                    'department_id':
-                        departmentId != null ? int.tryParse(departmentId!) : null,
-                  });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(l10n.userUpdatedSuccess ??
-                            'User updated successfully')),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e')),
-                  );
-                }
-              }
-            },
-          ),
-        ],
       ),
-    );
-  }
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        CustomButton(
+          text: l10n.update,
+          onPressed: () async {
+            if (formKey.currentState?.validate() ?? false) {
+              try {
+                await ref.read(usersProvider.notifier).updateUser(user.id, {
+                  'id': user.id,
+                  'name': name,
+                  'email': email,
+                  'phone_number': phoneNumber,
+                  'role': role,
+                  'department_id':
+                      departmentId != null ? int.tryParse(departmentId!) : null,
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(l10n.userUpdatedSuccess ??
+                          'User updated successfully')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e')),
+                );
+              }
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
 
   Future<void> _confirmDeleteUser(int userId) async {
     final l10n = AppLocalizations.of(context)!;

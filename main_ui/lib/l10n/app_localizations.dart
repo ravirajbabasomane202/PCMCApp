@@ -1029,6 +1029,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get clearFilters;
+
+  /// No description provided for @addAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Announcement'**
+  String get addAnnouncement;
+
+  /// No description provided for @noAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements available'**
+  String get noAnnouncements;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @message.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get message;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @targetRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Role'**
+  String get targetRole;
+
+  /// No description provided for @selectExpiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Expiration'**
+  String get selectExpiration;
+
+  /// No description provided for @announcementAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement added successfully'**
+  String get announcementAdded;
 }
 
 class _AppLocalizationsDelegate

@@ -148,9 +148,16 @@ class AnnouncementSchema(Schema):
     message = fields.Str(required=True)
     type = fields.Str(required=True, validate=validate.OneOf(["general", "emergency"]))
     created_at = fields.DateTime(dump_only=True)
-    expires_at = fields.DateTime(allow_none=True, dump_only=True)  # New field
-    target_role = EnumField(Role, by_value=True, allow_none=True)  # New field
-    is_active = fields.Boolean(dump_only=True)  # New field
+    expires_at = fields.DateTime(allow_none=True)  # New field
+    target_role = fields.Str(allow_none=True, validate=validate.OneOf([r.value for r in Role]))
+    is_active = fields.Boolean()  # New field
+    @validates("target_role")
+    def validate_role(self, value):
+        if value is None:
+            return  # allow nulls
+        allowed = ["CITIZEN", "MEMBER_HEAD", "FIELD_STAFF", "ADMIN"]
+        if value.upper() not in allowed:
+            raise ValidationError(f"Invalid target_role. Must be one of {allowed}")
 
 class UserPreferenceSchema(Schema):
     id = fields.Int(dump_only=True)

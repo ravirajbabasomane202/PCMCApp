@@ -1273,6 +1273,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get clearFilters;
+
+  /// No description provided for @addAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Announcement'**
+  String get addAnnouncement;
+
+  /// No description provided for @noAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements available'**
+  String get noAnnouncements;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @message.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get message;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @targetRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Role'**
+  String get targetRole;
+
+  /// No description provided for @selectExpiration.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Expiration'**
+  String get selectExpiration;
+
+  /// No description provided for @announcementAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement added successfully'**
+  String get announcementAdded;
 }
 
 class _AppLocalizationsDelegate
@@ -1790,6 +1844,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get clearFilters => 'Clear Filters';
+
+  @override
+  String get addAnnouncement => 'Add Announcement';
+
+  @override
+  String get noAnnouncements => 'No announcements available';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get message => 'Message';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get targetRole => 'Target Role';
+
+  @override
+  String get selectExpiration => 'Select Expiration';
+
+  @override
+  String get announcementAdded => 'Announcement added successfully';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2034,7 +2115,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get role => 'भूमिका';
 
   @override
-  String get add => 'जोड़ें';
+  String get add => 'जोडा';
 
   @override
   String get userAddedSuccess => 'उपयोगकर्ता सफलतापूर्वक जोड़ा गया';
@@ -2271,6 +2352,33 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get clearFilters => 'फ़िल्टर साफ़ करें';
+
+  @override
+  String get addAnnouncement => 'जाहिरात जोडा';
+
+  @override
+  String get noAnnouncements => 'कोणत्याही जाहिराती उपलब्ध नाहीत';
+
+  @override
+  String get title => 'शीर्षक';
+
+  @override
+  String get message => 'संदेश';
+
+  @override
+  String get type => 'प्रकार';
+
+  @override
+  String get targetRole => 'लक्ष्य भूमिका';
+
+  @override
+  String get selectExpiration => 'कालावधी निवडा';
+
+  @override
+  String get announcementAdded => 'जाहिरात यशस्वीरीत्या जोडली गेली';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2753,11 +2861,87 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'गोपनीयता धोरण';
+
+  @override
+  String get clearFilters => 'फिल्टर साफ करा';
+
+  @override
+  String get addAnnouncement => 'Add Announcement';
+
+  @override
+  String get noAnnouncements => 'No announcements available';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get message => 'Message';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get targetRole => 'Target Role';
+
+  @override
+  String get selectExpiration => 'Select Expiration';
+
+  @override
+  String get announcementAdded => 'Announcement added successfully';
 }
 
 
 === Folder: models ===
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\models\announcement_model.dart ---
+// D:\Company_Data\PCMCApp\main_ui\lib\models\announcement_model.dart
+class Announcement {
+  final int id;
+  final String title;
+  final String message;
+  final String type;
+  final DateTime createdAt;
+  final DateTime? expiresAt;
+  final String? targetRole;
+  final bool isActive;
+
+  Announcement({
+    required this.id,
+    required this.title,
+    required this.message,
+    required this.type,
+    required this.createdAt,
+    this.expiresAt,
+    this.targetRole,
+    required this.isActive,
+  });
+
+  factory Announcement.fromJson(Map<String, dynamic> json) {
+    return Announcement(
+      id: json['id'] as int,
+      title: json['title'] as String,
+      message: json['message'] as String,
+      type: json['type'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      expiresAt: json['expires_at'] != null ? DateTime.parse(json['expires_at'] as String) : null,
+      targetRole: json['target_role'] as String?,
+      isActive: json['is_active'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'message': message,
+      'type': type,
+      'created_at': createdAt.toIso8601String(),
+      'expires_at': expiresAt?.toIso8601String(),
+      'target_role': targetRole,
+      'is_active': isActive,
+    };
+  }
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\models\comment_model.dart ---
 // lib/models/comment_model.dart
 class Comment {
@@ -3280,9 +3464,13 @@ class AdminNotifier extends StateNotifier<AdminState> {
     }
   }
 
-  Future<List<Grievance>> getAllGrievances({String? status}) async {
+  Future<List<Grievance>> getAllGrievances({
+    String? status ,
+    String? priority,
+    int? areaId,
+    int? subjectId,}) async {
     try {
-      final response = await ApiService.get('/admins/grievances/all');
+      final response = await ApiService.get('/admins/grievances/all' );
       final grievances =
           (response.data as List).map((g) => Grievance.fromJson(g)).toList();
       state = state.copyWith(grievances: grievances, error: null);
@@ -3295,31 +3483,47 @@ class AdminNotifier extends StateNotifier<AdminState> {
     }
   }
 
-  Future<void> escalateGrievance(int grievanceId) async {
-    try {
-      await ApiService.post('/admins/grievances/$grievanceId/escalate', {});
-      state = state.copyWith(error: null);
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
+  Future<void> escalateGrievance(int grievanceId, int newAssigneeId, int userId ) async {
+  try {
+    print("Called Escalate");
+    await ApiService.post(
+      '/admins/grievances/$grievanceId/escalate', 
+      {'escalated_by': userId,
+      'assignee_id': newAssigneeId},
+    );
+    state = state.copyWith(error: null);
+    await getAllGrievances();
+  } catch (e) {
+    state = state.copyWith(error: e.toString());
+    print(state.error);
   }
+}
 
   Future<void> reassignGrievance(int grievanceId, int assigneeId) async {
     try {
       await ApiService
           .post('/admins/reassign/$grievanceId', {'assigned_to': assigneeId});
       state = state.copyWith(error: null);
+      
+       print("Escalation failed: ${state.error} "); 
+      await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
+      
+      print("Unexpected error: ${state.error}");
     }
   }
 
   Future<void> updateGrievanceStatus(int grievanceId, String status) async {
     try {
+      print("Called Update states");
       await ApiService.post('/grievances/$grievanceId/status', {'status': status});
       state = state.copyWith(error: null);
+      print(state.error);
+      await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
+      print(state.error);
     }
   }
 
@@ -3490,7 +3694,7 @@ final citizenHistoryProvider = FutureProvider.family<List<Grievance>, int>((ref,
 });
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\comment_provider.dart ---
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart';
+
 import 'package:main_ui/services/grievance_service.dart';
 import 'package:main_ui/models/comment_model.dart';
 class CommentNotifier extends StateNotifier<List<Comment>> {
@@ -3711,23 +3915,27 @@ class UsersNotifier extends StateNotifier<List<User>> {
 
   // Update an existing user
   Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
-    try {
-      // Include user ID in the data map and convert values to strings
-      final stringUserData = {
-        'id': userId.toString(),
-        ...userData.map((key, value) => MapEntry(key, value.toString())),
-      };
-      await ApiService.addUpdateUser(stringUserData);
-      await fetchUsers(); // Refresh the user list
-      // If the updated user is the current user, refresh userNotifierProvider
-      if (ref.read(userNotifierProvider)?.id == userId) {
-        await ref.read(userNotifierProvider.notifier).refreshUser();
-      }
-    } catch (e) {
-      print('Error updating user: $e');
-      throw e;
-    }
+  try {
+    final cleanData = {
+      'id': userId.toString(),
+      ...userData.map((key, value) => MapEntry(
+            key,
+            key == 'department_id' && value != null
+                ? value.toString() // always send as string
+                : key == 'role'
+                    ? value.toString().toLowerCase() // lowercase role
+                    : value.toString(),
+          )),
+    };
+
+    await ApiService.addUpdateUser(cleanData); // expects Map<String, String>
+    await fetchUsers();
+  } catch (e) {
+    print("Error updating user: $e");
+    rethrow;
   }
+}
+
 
   // Delete a user
   Future<void> deleteUser(int userId) async {
@@ -3946,6 +4154,7 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\complaint_management.dart ---
+// lib/screens/admin/complaint_management.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
@@ -3990,22 +4199,19 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       _errorMessage = null;
     });
     try {
-      // Fetch grievances using adminProvider
+      // Fetch grievances using adminProvider with proper parameters
       final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
             status: _selectedStatus,
+            priority: _selectedPriority,
+            areaId: _selectedAreaId,
+            subjectId: _selectedSubjectId,
           );
       final assignees = await UserService.getUsers();
       final areas = await MasterDataService.getAreas();
       final subjects = await MasterDataService.getSubjects();
       setState(() {
-        _grievances = grievances.where((g) {
-          if (_selectedStatus != null && g.status != _selectedStatus) return false;
-          if (_selectedPriority != null && g.priority != _selectedPriority) return false;
-          if (_selectedAreaId != null && g.area?.id != _selectedAreaId) return false;
-          if (_selectedSubjectId != null && g.subject?.id != _selectedSubjectId) return false;
-          return true;
-        }).toList();
-        _assignees = assignees.where((u) => u.role == 'employer').toList();
+        _grievances = grievances;
+        _assignees = assignees.where((u) => u.role?.toLowerCase() == 'field_staff').toList();
         _areas = areas;
         _subjects = subjects;
         _isLoading = false;
@@ -4132,6 +4338,20 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                     _fetchData();
                   },
                 ),
+                // Add a clear filters button
+                CustomButton(
+                  text: l10n.clearFilters,
+                  onPressed: () {
+                    setState(() {
+                      _selectedStatus = null;
+                      _selectedPriority = null;
+                      _selectedAreaId = null;
+                      _selectedSubjectId = null;
+                    });
+                    _fetchData();
+                  },
+                  icon: Icons.clear,
+                ),
               ],
             ),
           ),
@@ -4164,7 +4384,12 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   text: l10n.escalateComplaint,
                                   onPressed: () async {
                                     try {
-                                      await ref.read(adminProvider.notifier).escalateGrievance(grievance.id);
+                                      int newAssigneeId = 13;
+                                      int admin=4;
+                                      await ref.read(adminProvider.notifier).escalateGrievance(grievance.id,newAssigneeId,admin);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('${l10n.escalateComplaint} Successful')),
+                                      );
                                       _fetchData();
                                     } catch (e) {
                                       ScaffoldMessenger.of(context).showSnackBar(
@@ -4220,47 +4445,61 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
   void _showReassignDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
+    int? selectedAssigneeId;
     showDialog(
       context: context,
       builder: (ctx) {
-        int? selectedAssigneeId;
-        return AlertDialog(
-          title: Text(l10n.reassignComplaint),
-          content: DropdownButton<int>(
-            hint: Text(l10n.selectAssignee),
-            value: selectedAssigneeId,
-            isExpanded: true,
-            items: _assignees
-                .map((u) => DropdownMenuItem(value: u.id, child: Text(u.name ?? "Names Not Found")))
-                .toList(),
-            onChanged: (value) => setState(() => selectedAssigneeId = value),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (selectedAssigneeId != null) {
-                  try {
-                    await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
-                    Navigator.pop(ctx);
-                    _fetchData();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.selectAssignee)),
-                  );
-                }
-              },
-              child: Text(l10n.reassignComplaint),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.reassignComplaint),
+              content: _assignees.isEmpty
+                  ? Text('No field staff available')
+                  : DropdownButton<int>(
+                      hint: Text(l10n.selectAssignee),
+                      value: selectedAssigneeId,
+                      isExpanded: true,
+                      items: _assignees
+                          .map((u) => DropdownMenuItem(
+                                value: u.id,
+                                child: Text(u.name ?? "Unknown User"),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => selectedAssigneeId = value);
+                      },
+                    ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (selectedAssigneeId != null) {
+                      try {
+                        await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${l10n.reassignComplaint} Successful')),
+                        );
+                        _fetchData();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.selectAssignee)),
+                      );
+                    }
+                  },
+                  child: Text(l10n.reassign),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -4268,47 +4507,56 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
   void _showStatusDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
+    String? selectedStatus;
     showDialog(
       context: context,
       builder: (ctx) {
-        String? selectedStatus;
-        return AlertDialog(
-          title: Text(l10n.updateStatus),
-          content: DropdownButton<String>(
-            hint: Text(l10n.selectStatus),
-            value: selectedStatus,
-            isExpanded: true,
-            items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                .toList(),
-            onChanged: (value) => setState(() => selectedStatus = value),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (selectedStatus != null) {
-                  try {
-                    await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
-                    Navigator.pop(ctx);
-                    _fetchData();
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(e.toString())),
-                    );
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.selectStatus)),
-                  );
-                }
-              },
-              child: Text(l10n.updateStatus),
-            ),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.updateStatus),
+              content: DropdownButton<String>(
+                hint: Text(l10n.selectStatus),
+                value: selectedStatus,
+                isExpanded: true,
+                items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
+                    .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => selectedStatus = value);
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (selectedStatus != null) {
+                      try {
+                        await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${l10n.updateStatus} Successful')),
+                        );
+                        _fetchData();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(l10n.selectStatus)),
+                      );
+                    }
+                  },
+                  child: Text(l10n.update),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -5343,14 +5591,13 @@ class _ManageConfigsState extends ConsumerState<ManageConfigs> {
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_subjects.dart ---
-// lib/screens/admin/manage_subjects.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/master_data_model.dart';
 import '../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/empty_state.dart';
-import '../../services/master_data_service.dart'; // Import MasterDataService for subjectsProvider
+import '../../services/master_data_service.dart';
 
 class ManageSubjects extends ConsumerStatefulWidget {
   const ManageSubjects({super.key});
@@ -5361,6 +5608,9 @@ class ManageSubjects extends ConsumerStatefulWidget {
 
 class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
   void _showSubjectDialog({MasterSubject? subject}) {
+    final nameController = TextEditingController(text: subject?.name ?? '');
+    final descriptionController = TextEditingController(text: subject?.description ?? '');
+
     showDialog(
       context: context,
       builder: (context) {
@@ -5371,23 +5621,40 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
             children: [
               TextField(
                 decoration: const InputDecoration(labelText: 'Name'),
-                controller: TextEditingController(text: subject?.name ?? ''),
+                controller: nameController,
               ),
               TextField(
                 decoration: const InputDecoration(labelText: 'Description'),
-                controller: TextEditingController(text: subject?.description ?? ''),
+                controller: descriptionController,
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
             CustomButton(
               text: 'Save',
               onPressed: () async {
-                // TODO: Implement actual save logic with form data
-                await ApiService.post('/admin/subjects', {/* form data */});
-                ref.invalidate(subjectsProvider); // Refresh subjectsProvider
-                Navigator.pop(context);
+                final data = {
+                  "name": nameController.text.trim(),
+                  "description": descriptionController.text.trim(),
+                };
+
+                try {
+                  final response = subject == null
+                      ? await ApiService.post('/admins/subjects', data)
+                      : await ApiService.put('/admins/subjects/${subject.id}', data);
+                  print(response); // debug
+                  ref.invalidate(subjectsProvider); // refresh list
+                  Navigator.pop(context);
+                } catch (e) {
+                  print("Error: $e");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
               },
             ),
           ],
@@ -5398,7 +5665,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectsAsync = ref.watch(subjectsProvider); // Use subjectsProvider
+    final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -5418,7 +5685,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
           message: error.toString(),
           actionButton: CustomButton(
             text: 'Retry',
-            onPressed: () => ref.refresh(subjectsProvider), // Refresh provider
+            onPressed: () => ref.refresh(subjectsProvider),
           ),
         ),
         data: (subjects) {
@@ -5614,137 +5881,143 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
   }
 
   Future<void> _showEditUserDialog(User user) async {
-    final l10n = AppLocalizations.of(context)!;
-    final formKey = GlobalKey<FormState>();
-    String name = user.name ?? "";
-    String email = user.email ?? '';
-    String phoneNumber = user.phoneNumber ?? '';
-    String role = user.role ?? "";
-    String? departmentId = user.departmentId?.toString();
+  final l10n = AppLocalizations.of(context)!;
+  final formKey = GlobalKey<FormState>();
+  String name = user.name ?? "";
+  String email = user.email ?? '';
+  String phoneNumber = user.phoneNumber ?? '';
+  // Normalize role to match dropdown items
+  String role = ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+      .contains(user.role?.toUpperCase())
+      ? user.role!.toUpperCase()
+      : 'CITIZEN'; // Default to 'CITIZEN' if invalid
+  String? departmentId = user.departmentId?.toString();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.editUser ?? 'Edit User'),
-        content: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: name,
-                  decoration: InputDecoration(
-                    labelText: l10n.name,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(l10n.editUser ?? 'Edit User'),
+      content: SingleChildScrollView(
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                initialValue: name,
+                decoration: InputDecoration(
+                  labelText: l10n.name,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: validateRequired,
-                  onChanged: (value) => name = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: email,
-                  decoration: InputDecoration(
-                    labelText: l10n.email,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: validateRequired,
+                onChanged: (value) => name = value,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: email,
+                decoration: InputDecoration(
+                  labelText: l10n.email,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: validateEmail,
-                  onChanged: (value) => email = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: phoneNumber,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: validateEmail,
+                onChanged: (value) => email = value,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: phoneNumber,
+                decoration: InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Phone number is required';
-                    }
-                    if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                      return 'Invalid phone number';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => phoneNumber = value,
                 ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: role,
-                  decoration: InputDecoration(
-                    labelText: l10n.role,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Phone number is required';
+                  }
+                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                    return 'Invalid phone number';
+                  }
+                  return null;
+                },
+                onChanged: (value) => phoneNumber = value,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: role,
+                decoration: InputDecoration(
+                  labelText: l10n.role,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                      .toList(),
-                  onChanged: (value) => role = value ?? 'CITIZEN',
-                  validator: validateRequired,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: departmentId,
-                  decoration: InputDecoration(
-                    labelText: 'Department ID (Optional)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                    .toList(),
+                onChanged: (value) => setState(() {
+                  role = value ?? 'CITIZEN';
+                }),
+                validator: validateRequired,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                initialValue: departmentId,
+                decoration: InputDecoration(
+                  labelText: 'Department ID (Optional)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => departmentId = value.isEmpty ? null : value,
                 ),
-              ],
-            ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) => departmentId = value.isEmpty ? null : value,
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CustomButton(
-            text: l10n.update,
-            onPressed: () async {
-              if (formKey.currentState?.validate() ?? false) {
-                try {
-                  await ref.read(usersProvider.notifier).updateUser(user.id, {
-                    'id': user.id,
-                    'name': name,
-                    'email': email,
-                    'phone_number': phoneNumber,
-                    'role': role,
-                    'department_id':
-                        departmentId != null ? int.tryParse(departmentId!) : null,
-                  });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(l10n.userUpdatedSuccess ??
-                            'User updated successfully')),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e')),
-                  );
-                }
-              }
-            },
-          ),
-        ],
       ),
-    );
-  }
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        CustomButton(
+          text: l10n.update,
+          onPressed: () async {
+            if (formKey.currentState?.validate() ?? false) {
+              try {
+                await ref.read(usersProvider.notifier).updateUser(user.id, {
+                  'id': user.id,
+                  'name': name,
+                  'email': email,
+                  'phone_number': phoneNumber,
+                  'role': role,
+                  'department_id':
+                      departmentId != null ? int.tryParse(departmentId!) : null,
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(l10n.userUpdatedSuccess ??
+                          'User updated successfully')),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(
+                          '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e')),
+                );
+              }
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
 
   Future<void> _confirmDeleteUser(int userId) async {
     final l10n = AppLocalizations.of(context)!;
@@ -7390,42 +7663,214 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
 === Folder: screens\common ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\announcements_screen.dart ---
+// D:\Company_Data\PCMCApp\main_ui\lib\screens\common\announcements_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/models/announcement_model.dart';
+import 'package:main_ui/providers/user_provider.dart';
+import 'package:main_ui/services/api_service.dart';
 
-class AnnouncementsScreen extends StatelessWidget {
+final announcementsProvider = FutureProvider<List<Announcement>>((ref) async {
+  final response = await ApiService.get('/admins/announcements');
+  return (response.data as List).map((json) => Announcement.fromJson(json)).toList();
+});
+
+class AnnouncementsScreen extends ConsumerStatefulWidget {
   const AnnouncementsScreen({super.key});
 
   @override
+  _AnnouncementsScreenState createState() => _AnnouncementsScreenState();
+}
+
+class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _messageController = TextEditingController();
+  String _type = 'general';
+  DateTime? _expiresAt;
+  String? _targetRole;
+
+  void _showAddAnnouncementDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.addAnnouncement ?? 'Add Announcement'),
+          content: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title ?? 'Title'),
+                    validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                  ),
+                  TextFormField(
+                    controller: _messageController,
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.message ?? 'Message'),
+                    validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                    maxLines: 3,
+                  ),
+                  DropdownButtonFormField<String>(
+                    value: _type,
+                    items: ['general', 'emergency'].map((t) => DropdownMenuItem(value: t, child: Text(t.capitalize()))).toList(),
+                    onChanged: (value) => setState(() => _type = value!),
+                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.type ?? 'Type'),
+                  ),
+                  ListTile(
+                    title: Text(_expiresAt == null
+                        ? AppLocalizations.of(context)!.selectExpiration ?? 'Select Expiration'
+                        : DateFormat('yyyy-MM-dd').format(_expiresAt!)),
+                    trailing: const Icon(Icons.calendar_today),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 365)),
+                      );
+                      if (picked != null) setState(() => _expiresAt = picked);
+                    },
+                  ),
+                  DropdownButtonFormField<String>(
+                    initialValue: _targetRole,
+                    items: [
+    {'label': 'CITIZEN', 'value': 'citizen'},
+    {'label': 'MEMBER_HEAD', 'value': 'member_head'},
+    {'label': 'FIELD_STAFF', 'value': 'field_staff'},
+    {'label': 'ADMIN', 'value': 'admin'},
+  ].map((role) => DropdownMenuItem(
+        value: role['value'], // 👈 send lowercase to backend
+        child: Text(role['label']!), // 👈 display uppercase to user
+      ))
+      .toList(),
+                    onChanged: (value) => setState(() => _targetRole = value),
+                    decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.targetRole ?? 'Target Role (Optional)'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(AppLocalizations.of(context)!.cancel ?? 'Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  final data = {
+                    'title': _titleController.text,
+                    'message': _messageController.text,
+                    'type': _type,
+                    'expires_at': _expiresAt?.toIso8601String(),
+                    'target_role': _targetRole,
+                    'is_active': true,
+                  };
+                  try {
+                    await ApiService.post('/admins/announcements', data);
+                    ref.refresh(announcementsProvider);
+                    Navigator.pop(context);
+                    _titleController.clear();
+                    _messageController.clear();
+                    _type = 'general';
+                    _expiresAt = null;
+                    _targetRole = null;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text(AppLocalizations.of(context)!.announcementAdded ?? 'Announcement added')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+                  }
+                }
+              },
+              child: Text(AppLocalizations.of(context)!.submit ?? 'Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Later connect with backend: GET /admin/announcements
-    final announcements = [
-      {"title": "Emergency Notice", "message": "Water supply disruption in area.", "type": "emergency"},
-      {"title": "General Info", "message": "Ward office timings updated.", "type": "general"},
-    ];
+    final localizations = AppLocalizations.of(context)!;
+    final user = ref.watch(userNotifierProvider);
+    final isAdmin = user?.role?.toUpperCase() == 'ADMIN';
+    final announcementsAsync = ref.watch(announcementsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Announcements")),
-      body: ListView.builder(
-        itemCount: announcements.length,
-        itemBuilder: (context, index) {
-          final ann = announcements[index];
-          return Card(
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              leading: Icon(
-                ann['type'] == "emergency" ? Icons.warning : Icons.info,
-                color: ann['type'] == "emergency" ? Colors.red : Colors.blue,
+      appBar: AppBar(title: Text(localizations.announcements ?? 'Announcements')),
+      floatingActionButton: isAdmin
+          ? FloatingActionButton(
+              onPressed: _showAddAnnouncementDialog,
+              child: const Icon(Icons.add),
+            )
+          : null,
+      body: announcementsAsync.when(
+        data: (announcements) => announcements.isEmpty
+            ? Center(
+                child: Text(localizations.noAnnouncements ?? 'No announcements available'),
+              )
+            : ListView.builder(
+                itemCount: announcements.length,
+                itemBuilder: (context, index) {
+                  final ann = announcements[index];
+                  return Card(
+                    margin: const EdgeInsets.all(10),
+                    child: ListTile(
+                      leading: Icon(
+                        ann.type == 'emergency' ? Icons.warning : Icons.info,
+                        color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                      ),
+                      title: Text(ann.title),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(ann.message),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Posted on ${DateFormat('dd/MM/yyyy').format(ann.createdAt)}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          if (ann.expiresAt != null)
+                            Text(
+                              'Expires on ${DateFormat('dd/MM/yyyy').format(ann.expiresAt!)}',
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                        ],
+                      ),
+                      trailing: Text(ann.type.toUpperCase()),
+                    ),
+                  );
+                },
               ),
-              title: Text(ann['title']!),
-              subtitle: Text(ann['message']!),
-            ),
-          );
-        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('${localizations.error}: $err')),
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
 }
 
+// Extension to capitalize strings
+extension StringExtension on String {
+  String capitalize() {
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\app_version_screen.dart ---
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -8977,11 +9422,16 @@ class ApiService {
     ResponseType? responseType,
   }) async {
     try {
+
+      final defaultHeaders = {
+      'Content-Type': 'application/json',
+      if (AuthService.getToken() != null) 'Authorization': 'Bearer ${AuthService.getToken()}',
+    };
       return await _dio.post(
         path,
         data: data,
         options: Options(
-          headers: headers,
+          headers: {...?headers, ...defaultHeaders},
           responseType: responseType,
         ),
       );
@@ -9048,7 +9498,7 @@ class ApiService {
   // Add or update a user
   static Future<Map<String, dynamic>> addUpdateUser(Map<String, String> userData) async {
     try {
-      final response = await _dio.post('/users', data: userData);
+      final response = await _dio.put('admins/users', data: userData);
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       _logger.severe('Failed to add/update user: ${e.message}');
@@ -9084,7 +9534,7 @@ class ApiService {
   // Delete a user
   static Future<void> deleteUser(int userId) async {
     try {
-      await _dio.delete('/users/$userId/');
+      await _dio.delete('/admins/users/$userId');
     } on DioException catch (e) {
       _logger.severe('Failed to delete user $userId: ${e.message}');
       throw Exception('Failed to delete user: ${e.message}');

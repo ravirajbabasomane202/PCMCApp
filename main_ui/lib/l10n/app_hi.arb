@@ -176,7 +176,27 @@
   "reports": "रिपोर्ट्स",
   "assignedList": "निर्धारित शिकायतें",
   "announcements": "सूचनाएँ",
-  "privacyPolicy": "गोपनीयता नीति"
+  "privacyPolicy": "गोपनीयता नीति",
+  "@@locale": "hi",
+  "clearFilters": "फ़िल्टर साफ़ करें",
+  "addAnnouncement": "घोषणा जोड़ें",
+  "noAnnouncements": "कोई घोषणाएँ उपलब्ध नहीं हैं",
+  "title": "शीर्षक",
+  "message": "संदेश",
+  "add": "जोड़ें",
+  "type": "प्रकार",
+  "targetRole": "लक्षित भूमिका",
+  "selectExpiration": "समाप्ति तिथि चुनें",
+  "announcementAdded": "घोषणा सफलतापूर्वक जोड़ी गई",
+  "addAnnouncement": "जाहिरात जोडा",
+  "noAnnouncements": "कोणत्याही जाहिराती उपलब्ध नाहीत",
+  "title": "शीर्षक",
+  "message": "संदेश",
+  "add": "जोडा",
+  "type": "प्रकार",
+  "targetRole": "लक्ष्य भूमिका",
+  "selectExpiration": "कालावधी निवडा",
+  "announcementAdded": "जाहिरात यशस्वीरीत्या जोडली गेली"
 }
 
 

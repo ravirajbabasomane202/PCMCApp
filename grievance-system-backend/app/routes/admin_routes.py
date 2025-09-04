@@ -18,6 +18,11 @@ from ..services.grievance_service import reassign_grievance
 from ..services.user_service import add_update_user
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required
+import logging
+from datetime import datetime, timezone
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 admin_bp = Blueprint('admin', __name__)
 
 @admin_bp.route('/dashboard', methods=['GET'])
@@ -30,18 +35,75 @@ def dashboard(user):
     }
     return jsonify(kpis), 200
 
+@admin_bp.route('/users/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_user(user, id):
+    """Delete a specific user by ID."""
+    try:
+        user_to_delete = User.query.get(id)
+        if not user_to_delete:
+            return jsonify({"msg": "User not found"}), 404
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return jsonify({"msg": "User deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Failed to delete user", "error": str(e)}), 500
+
+
+
+
+
 @admin_bp.route('/subjects', methods=['POST'])
 @admin_required
 def manage_subjects(user):
     data = request.json
+    print(f"Received data: {data}")
     schema = MasterSubjectsSchema()
     errors = schema.validate(data)
     if errors:
+        print(f"Validation errors: {errors}")
         return jsonify(errors), 400
-    subject = MasterSubjects(**data)
-    db.session.add(subject)
-    db.session.commit()
-    return schema.dump(subject), 201
+    try:
+        subject = MasterSubjects(**data)
+        db.session.add(subject)
+        db.session.commit()
+        print(f"Subject {subject.name} added successfully")
+        return schema.dump(subject), 201
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to save subject"}), 500
+
+
+@admin_bp.route('/subjects/<int:id>', methods=['PUT'])
+@admin_required
+def update_subject(user, id):
+    data = request.json
+    print(f"Update request for subject {id}: {data}")
+
+    schema = MasterSubjectsSchema()
+    errors = schema.validate(data, partial=True)  # allow partial updates
+    if errors:
+        return jsonify(errors), 400
+
+    try:
+        subject = db.session.get(MasterSubjects, id)
+        if not subject:
+            return jsonify({"error": "Subject not found"}), 404
+
+        # Update fields
+        subject.name = data.get("name", subject.name)
+        subject.description = data.get("description", subject.description)
+
+        db.session.commit()
+        print(f"Subject {subject.id} updated successfully")
+        return schema.dump(subject), 200
+    except Exception as e:
+        db.session.rollback()
+        print(f"Database error: {e}")
+        return jsonify({"error": "Failed to update subject"}), 500
+
 
 @admin_bp.route('/areas', methods=['POST'])
 @admin_required
@@ -58,13 +120,14 @@ def manage_areas(user):
 
 @admin_bp.route('/reassign/<int:grievance_id>', methods=['POST'])
 @admin_required
-def reassign_grievance(grievance_id, user):
+def reassign_grievance(user, grievance_id):
     """
     Reassign a grievance to a new field staff member.
     """
     try:
         data = request.get_json()
-        new_assignee_id = data.get('assignee_id')
+        # The frontend code is sending 'assigned_to', not 'assignee_id'.
+        new_assignee_id = data.get('assigned_to')
         if not new_assignee_id:
             return jsonify({"success": False, "message": "Assignee ID is required"}), 400
         
@@ -195,34 +258,72 @@ def get_all_grievances(user):
 def escalate(user, id):
     try:
         data = request.json or {}
+        print("Incoming escalate request:", data)
+
         new_assignee_id = data.get('assignee_id')
-        result = escalate_grievance(id, user.id, new_assignee_id)
-        return jsonify(result), 200 if result["success"] else 400
+
+        # Escalate grievance
+        result = escalate_grievance(
+            grievance_id=id,
+            escalated_by=user.id,   # always take from current logged-in user
+            new_assignee_id=new_assignee_id
+        )
+
+        status_code = 200 if result.get("success") else 400
+        return jsonify(result), status_code
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 
 @admin_bp.route('/configs', methods=['GET', 'POST', 'OPTIONS'])
 def manage_configs():
     if request.method == 'OPTIONS':
         # Respond to preflight without JWT
-        return jsonify({}), 200  
+        return jsonify({}), 200
 
     return _manage_configs_protected()
 
 
 @jwt_required()
 @admin_required
-def _manage_configs_protected(user):  # <-- user comes from @admin_required
+def _manage_configs_protected(user):
     if request.method == 'POST':
         data = request.json
-        config = MasterConfig(key=data['key'], value=data['value'])
-        db.session.add(config)
+
+        # Check if config already exists (upsert)
+        config = MasterConfig.query.filter_by(key=data['key']).first()
+        if config:
+            # Update existing
+            config.value = data['value']
+            config.updated_at = datetime.now(timezone.utc)
+            if 'description' in data:
+                config.description = data['description']
+        else:
+            # Insert new
+            config = MasterConfig(
+                key=data['key'],
+                value=data['value'],
+                description=data.get('description')
+            )
+            db.session.add(config)
+
         db.session.commit()
 
+    # Always return configs
     configs = MasterConfig.query.all()
-    return jsonify([{'key': c.key, 'value': c.value} for c in configs]), 200
-
+    return jsonify([
+        {
+            'id': c.id,
+            'key': c.key,
+            'value': c.value,
+            'description': c.description,
+            'created_at': c.created_at,
+            'updated_at': c.updated_at,
+        }
+        for c in configs
+    ]), 200
 
 # In app/routes/admin_routes.py
 @admin_bp.route('/configs/<string:key>', methods=['PUT'])
@@ -280,31 +381,24 @@ def list_users(user):
 @admin_bp.route('/users/<int:id>', methods=['PUT'])
 @admin_required
 def update_user(user, id):
-    """Update a specific user by ID."""
-    data = request.json
-    if 'role' in data:
-        try:
-            role_mapping = {
-                'citizen': Role.CITIZEN,
-                'member_head': Role.MEMBER_HEAD,
-                'field_staff': Role.FIELD_STAFF,
-                'admin': Role.ADMIN
-            }
-            if data['role'] in role_mapping:
-                data['role'] = role_mapping[data['role']]
-            else:
-                return jsonify({"msg": f"Invalid role: {data['role']}"}), 400
-        except Exception as e:
-            return jsonify({"msg": f"Error processing role: {str(e)}"}), 400
-    
     try:
-        result = add_update_user({**data, 'id': id})
+        data = request.json
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+        
+        result = add_update_user({**data, "id": id})
         return jsonify(result), 200
-    except ValueError as e:
-        return jsonify({"msg": str(e)}), 400
+
     except Exception as e:
-        return jsonify({"msg": "Failed to update user", "error": str(e)}), 500
-    
+        # fallback if str(e) is empty/null
+        return jsonify({
+            "msg": "Failed to update user",
+            "error": str(e) or "Unknown error"
+        }), 500
+
+
+
+
 @admin_bp.route('/reports/staff-performance', methods=['GET'])
 @admin_required
 def staff_performance(user):
@@ -319,11 +413,19 @@ def location_reports(user):
 @admin_required
 def create_announcement(user):
     data = request.json
+    print("DEBUG incoming:", data)
     schema = AnnouncementSchema()
     errors = schema.validate(data)
+    print("DEBUG errors:", errors)
     if errors:
         return jsonify(errors), 400
-    
+    data["target_role"] = data["target_role"].upper() if data.get("target_role") else None
+    if data.get("expires_at"):
+        try:
+            # Handle ISO 8601 format from frontend
+            data["expires_at"] = datetime.fromisoformat(data["expires_at"].replace("Z", ""))
+        except ValueError:
+            return jsonify({"error": "Invalid date format for expires_at"}), 400
     announcement = Announcement(**data)
     db.session.add(announcement)
     db.session.commit()
@@ -331,6 +433,8 @@ def create_announcement(user):
     # Broadcast via email/FCM
     users = User.query.all()
     for u in users:
+        if not u.email:  # skip users without email
+            continue
         token = NotificationToken.query.filter_by(user_id=u.id).first()
         send_notification(
             to=u.email,
@@ -341,11 +445,15 @@ def create_announcement(user):
     return schema.dump(announcement), 201
 
 @admin_bp.route('/announcements', methods=['GET'])
-@admin_required
-def list_announcements(user):
-    announcements = Announcement.query.order_by(Announcement.created_at.desc()).all()
-    schema = AnnouncementSchema(many=True)
-    return jsonify(schema.dump(announcements)), 200
+def get_announcements():
+    # This could be moved to a public blueprint if needed, but for now under admin
+    # Optionally filter by active, non-expired, etc.
+    now = datetime.now(timezone.utc)
+    announcements = Announcement.query.filter(
+        Announcement.is_active == True,
+        db.or_(Announcement.expires_at > now, Announcement.expires_at == None)
+    ).order_by(Announcement.created_at.desc()).all()
+    return AnnouncementSchema(many=True).dump(announcements), 200
 
 @admin_bp.route('/reports/kpis/advanced', methods=['GET', 'OPTIONS'])
 def get_advanced_kpis_route():

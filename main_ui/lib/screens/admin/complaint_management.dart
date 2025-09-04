@@ -43,7 +43,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       _errorMessage = null;
     });
     try {
-      // Fetch grievances using adminProvider
+      // Fetch grievances using adminProvider with proper parameters
       final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
             status: _selectedStatus,
             priority: _selectedPriority,
@@ -182,6 +182,20 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                     _fetchData();
                   },
                 ),
+                // Add a clear filters button
+                CustomButton(
+                  text: l10n.clearFilters,
+                  onPressed: () {
+                    setState(() {
+                      _selectedStatus = null;
+                      _selectedPriority = null;
+                      _selectedAreaId = null;
+                      _selectedSubjectId = null;
+                    });
+                    _fetchData();
+                  },
+                  icon: Icons.clear,
+                ),
               ],
             ),
           ),
@@ -214,9 +228,11 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   text: l10n.escalateComplaint,
                                   onPressed: () async {
                                     try {
-                                      await ref.read(adminProvider.notifier).escalateGrievance(grievance.id);
+                                      int newAssigneeId = 13;
+                                      int admin=4;
+                                      await ref.read(adminProvider.notifier).escalateGrievance(grievance.id,newAssigneeId,admin);
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(l10n.escalateComplaint + ' Successful')),
+                                        SnackBar(content: Text('${l10n.escalateComplaint} Successful')),
                                       );
                                       _fetchData();
                                     } catch (e) {
@@ -309,7 +325,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.reassignComplaint + ' Successful')),
+                          SnackBar(content: Text('${l10n.reassignComplaint} Successful')),
                         );
                         _fetchData();
                       } catch (e) {
@@ -366,7 +382,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.updateStatus + ' Successful')),
+                          SnackBar(content: Text('${l10n.updateStatus} Successful')),
                         );
                         _fetchData();
                       } catch (e) {

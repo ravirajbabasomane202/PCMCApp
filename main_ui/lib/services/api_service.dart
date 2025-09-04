@@ -73,11 +73,16 @@ class ApiService {
     ResponseType? responseType,
   }) async {
     try {
+
+      final defaultHeaders = {
+      'Content-Type': 'application/json',
+      if (AuthService.getToken() != null) 'Authorization': 'Bearer ${AuthService.getToken()}',
+    };
       return await _dio.post(
         path,
         data: data,
         options: Options(
-          headers: headers,
+          headers: {...?headers, ...defaultHeaders},
           responseType: responseType,
         ),
       );
@@ -144,7 +149,7 @@ class ApiService {
   // Add or update a user
   static Future<Map<String, dynamic>> addUpdateUser(Map<String, String> userData) async {
     try {
-      final response = await _dio.post('/users', data: userData);
+      final response = await _dio.put('admins/users', data: userData);
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       _logger.severe('Failed to add/update user: ${e.message}');
@@ -180,7 +185,7 @@ class ApiService {
   // Delete a user
   static Future<void> deleteUser(int userId) async {
     try {
-      await _dio.delete('/users/$userId/');
+      await _dio.delete('/admins/users/$userId');
     } on DioException catch (e) {
       _logger.severe('Failed to delete user $userId: ${e.message}');
       throw Exception('Failed to delete user: ${e.message}');

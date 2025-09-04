@@ -1,11 +1,10 @@
-// lib/screens/admin/manage_subjects.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/master_data_model.dart';
 import '../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/empty_state.dart';
-import '../../services/master_data_service.dart'; // Import MasterDataService for subjectsProvider
+import '../../services/master_data_service.dart';
 
 class ManageSubjects extends ConsumerStatefulWidget {
   const ManageSubjects({super.key});
@@ -16,6 +15,9 @@ class ManageSubjects extends ConsumerStatefulWidget {
 
 class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
   void _showSubjectDialog({MasterSubject? subject}) {
+    final nameController = TextEditingController(text: subject?.name ?? '');
+    final descriptionController = TextEditingController(text: subject?.description ?? '');
+
     showDialog(
       context: context,
       builder: (context) {
@@ -26,23 +28,40 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
             children: [
               TextField(
                 decoration: const InputDecoration(labelText: 'Name'),
-                controller: TextEditingController(text: subject?.name ?? ''),
+                controller: nameController,
               ),
               TextField(
                 decoration: const InputDecoration(labelText: 'Description'),
-                controller: TextEditingController(text: subject?.description ?? ''),
+                controller: descriptionController,
               ),
             ],
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
             CustomButton(
               text: 'Save',
               onPressed: () async {
-                // TODO: Implement actual save logic with form data
-                await ApiService.post('/admin/subjects', {/* form data */});
-                ref.invalidate(subjectsProvider); // Refresh subjectsProvider
-                Navigator.pop(context);
+                final data = {
+                  "name": nameController.text.trim(),
+                  "description": descriptionController.text.trim(),
+                };
+
+                try {
+                  final response = subject == null
+                      ? await ApiService.post('/admins/subjects', data)
+                      : await ApiService.put('/admins/subjects/${subject.id}', data);
+                  print(response); // debug
+                  ref.invalidate(subjectsProvider); // refresh list
+                  Navigator.pop(context);
+                } catch (e) {
+                  print("Error: $e");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                }
               },
             ),
           ],
@@ -53,7 +72,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
 
   @override
   Widget build(BuildContext context) {
-    final subjectsAsync = ref.watch(subjectsProvider); // Use subjectsProvider
+    final subjectsAsync = ref.watch(subjectsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +92,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
           message: error.toString(),
           actionButton: CustomButton(
             text: 'Retry',
-            onPressed: () => ref.refresh(subjectsProvider), // Refresh provider
+            onPressed: () => ref.refresh(subjectsProvider),
           ),
         ),
         data: (subjects) {

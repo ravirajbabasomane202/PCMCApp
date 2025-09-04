@@ -476,4 +476,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get clearFilters => 'Clear Filters';
+
+  @override
+  String get addAnnouncement => 'Add Announcement';
+
+  @override
+  String get noAnnouncements => 'No announcements available';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get message => 'Message';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get targetRole => 'Target Role';
+
+  @override
+  String get selectExpiration => 'Select Expiration';
+
+  @override
+  String get announcementAdded => 'Announcement added successfully';
 }

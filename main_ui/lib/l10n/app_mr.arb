@@ -176,5 +176,7 @@
   "reports": "अहवाल",
   "assignedList": "निर्धारित तक्रारी",
   "announcements": "जाहिराती",
-  "privacyPolicy": "गोपनीयता धोरण"
+  "privacyPolicy": "गोपनीयता धोरण",
+  "@@locale": "mr",
+  "clearFilters": "फिल्टर साफ करा"
 }

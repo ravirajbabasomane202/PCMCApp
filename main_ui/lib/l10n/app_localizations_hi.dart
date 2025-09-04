@@ -239,7 +239,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get role => 'भूमिका';
 
   @override
-  String get add => 'जोड़ें';
+  String get add => 'जोडा';
 
   @override
   String get userAddedSuccess => 'उपयोगकर्ता सफलतापूर्वक जोड़ा गया';
@@ -476,4 +476,31 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
+  String get clearFilters => 'फ़िल्टर साफ़ करें';
+
+  @override
+  String get addAnnouncement => 'जाहिरात जोडा';
+
+  @override
+  String get noAnnouncements => 'कोणत्याही जाहिराती उपलब्ध नाहीत';
+
+  @override
+  String get title => 'शीर्षक';
+
+  @override
+  String get message => 'संदेश';
+
+  @override
+  String get type => 'प्रकार';
+
+  @override
+  String get targetRole => 'लक्ष्य भूमिका';
+
+  @override
+  String get selectExpiration => 'कालावधी निवडा';
+
+  @override
+  String get announcementAdded => 'जाहिरात यशस्वीरीत्या जोडली गेली';
 }

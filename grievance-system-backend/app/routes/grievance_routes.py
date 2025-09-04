@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required
+from ..utils.auth_utils import citizen_required, jwt_required_with_role, admin_required, member_head_required, field_staff_required, citizen_or_admin_required, field_staff_or_admin_required
 from ..models import Grievance, GrievanceStatus, Role, User, GrievanceComment, MasterConfig
 from ..schemas import GrievanceSchema, GrievanceCommentSchema
 from ..services.grievance_service import (
@@ -180,8 +180,8 @@ def get_assigned_grievances_by_user(user, user_id):
 
 
 
-@grievance_bp.route('/<int:id>/status', methods=['PUT'])
-@field_staff_required
+@grievance_bp.route('/<int:id>/status', methods=['PUT','POST'])
+@field_staff_or_admin_required
 def update_grievance_status(user, id):
     data = request.json
     new_status = data.get('status')
@@ -189,8 +189,11 @@ def update_grievance_status(user, id):
         grievance = db.session.get(Grievance, id)
         if not grievance:
             return jsonify({"error": "Grievance not found"}), 404
-        if grievance.assigned_to != user.id:
+        
+        # Check if the user is the assigned staff OR an ADMIN
+        if grievance.assigned_to != user.id and user.role != Role.ADMIN:
             return jsonify({"error": "Not authorized to update this grievance"}), 403
+        
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:

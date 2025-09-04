@@ -68,7 +68,8 @@ class AdminNotifier extends StateNotifier<AdminState> {
     }
   }
 
-  Future<List<Grievance>> getAllGrievances({String? status ,
+  Future<List<Grievance>> getAllGrievances({
+    String? status ,
     String? priority,
     int? areaId,
     int? subjectId,}) async {
@@ -86,33 +87,47 @@ class AdminNotifier extends StateNotifier<AdminState> {
     }
   }
 
-  Future<void> escalateGrievance(int grievanceId) async {
-    try {
-      await ApiService.post('/admins/grievances/$grievanceId/escalate', {});
-      state = state.copyWith(error: null);
-      await getAllGrievances();
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
+  Future<void> escalateGrievance(int grievanceId, int newAssigneeId, int userId ) async {
+  try {
+    print("Called Escalate");
+    await ApiService.post(
+      '/admins/grievances/$grievanceId/escalate', 
+      {'escalated_by': userId,
+      'assignee_id': newAssigneeId},
+    );
+    state = state.copyWith(error: null);
+    await getAllGrievances();
+  } catch (e) {
+    state = state.copyWith(error: e.toString());
+    print(state.error);
   }
+}
 
   Future<void> reassignGrievance(int grievanceId, int assigneeId) async {
     try {
       await ApiService
           .post('/admins/reassign/$grievanceId', {'assigned_to': assigneeId});
       state = state.copyWith(error: null);
+      
+       print("Escalation failed: ${state.error} "); 
+      await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
+      
+      print("Unexpected error: ${state.error}");
     }
   }
 
   Future<void> updateGrievanceStatus(int grievanceId, String status) async {
     try {
+      print("Called Update states");
       await ApiService.post('/grievances/$grievanceId/status', {'status': status});
       state = state.copyWith(error: null);
+      print(state.error);
       await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
+      print(state.error);
     }
   }
 

@@ -86,23 +86,27 @@ class UsersNotifier extends StateNotifier<List<User>> {
 
   // Update an existing user
   Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
-    try {
-      // Include user ID in the data map and convert values to strings
-      final stringUserData = {
-        'id': userId.toString(),
-        ...userData.map((key, value) => MapEntry(key, value.toString())),
-      };
-      await ApiService.addUpdateUser(stringUserData);
-      await fetchUsers(); // Refresh the user list
-      // If the updated user is the current user, refresh userNotifierProvider
-      if (ref.read(userNotifierProvider)?.id == userId) {
-        await ref.read(userNotifierProvider.notifier).refreshUser();
-      }
-    } catch (e) {
-      print('Error updating user: $e');
-      throw e;
-    }
+  try {
+    final cleanData = {
+      'id': userId.toString(),
+      ...userData.map((key, value) => MapEntry(
+            key,
+            key == 'department_id' && value != null
+                ? value.toString() // always send as string
+                : key == 'role'
+                    ? value.toString().toLowerCase() // lowercase role
+                    : value.toString(),
+          )),
+    };
+
+    await ApiService.addUpdateUser(cleanData); // expects Map<String, String>
+    await fetchUsers();
+  } catch (e) {
+    print("Error updating user: $e");
+    rethrow;
   }
+}
+
 
   // Delete a user
   Future<void> deleteUser(int userId) async {
