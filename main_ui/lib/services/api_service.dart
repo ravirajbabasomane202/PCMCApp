@@ -73,16 +73,11 @@ class ApiService {
     ResponseType? responseType,
   }) async {
     try {
-
-      final defaultHeaders = {
-      'Content-Type': 'application/json',
-      if (AuthService.getToken() != null) 'Authorization': 'Bearer ${AuthService.getToken()}',
-    };
       return await _dio.post(
         path,
         data: data,
         options: Options(
-          headers: {...?headers, ...defaultHeaders},
+          headers: headers,
           responseType: responseType,
         ),
       );
@@ -91,6 +86,34 @@ class ApiService {
       rethrow;
     }
   }
+
+  // Generic POST method for multipart data (file uploads)
+// Generic POST method for multipart data (file uploads)
+static Future<Response> postMultipart(
+  String path, {
+  required List<PlatformFile> files,
+  Map<String, dynamic>? data,
+  String fieldName = 'files', // ✅ default field name
+}) async {
+  try {
+    final formData = FormData.fromMap({
+      ...?data,
+      fieldName: files.length == 1
+          ? await MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
+          : files
+              .map((file) => MultipartFile.fromBytes(file.bytes!, filename: file.name))
+              .toList(),
+    });
+
+    return await _dio.post(
+      path,
+      data: formData,
+    );
+  } on DioException catch (e) {
+    _logger.severe('Multipart POST request failed: $path, Error: ${e.message}');
+    rethrow;
+  }
+}
 
   // Generic PUT method
   static Future<Response> put(
@@ -191,6 +214,11 @@ class ApiService {
       throw Exception('Failed to delete user: ${e.message}');
     }
   }
+
+
+
+
+
 
   // Fetch a specific grievance by ID
   static Future<Response> getGrievance(int id) async {

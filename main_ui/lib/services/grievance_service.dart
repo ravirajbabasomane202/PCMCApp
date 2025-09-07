@@ -78,6 +78,46 @@ class GrievanceService {
   }
 }
 
+
+
+
+
+
+
+Future<Grievance> GGDBID(int id) async {
+  try {
+    print('GrievanceService: Sending GET /grievances/$id');
+    final response = await _dio.get('/grievances/$id');
+    
+    // Check if response.data is a List
+    if (response.data is List) {
+      final grievances = (response.data as List)
+          .map((json) => Grievance.fromJson(json as Map<String, dynamic>))
+          .toList();
+      
+      // Find the grievance with the matching id
+      final grievance = grievances.firstWhere(
+        (g) => g.id == id,
+        orElse: () => throw Exception('Grievance with id $id not found'),
+      );
+      
+      return grievance;
+    } else {
+      // If response.data is already a single object
+      return Grievance.fromJson(response.data as Map<String, dynamic>);
+    }
+  } on DioException catch (e) {
+    print('GrievanceService: DioError fetching grievance details: ${e.response?.statusCode} - ${e.response?.data}');
+    throw _handleDioException(e, 'fetch grievance details');
+  } catch (e) {
+    print('GrievanceService: Unexpected error fetching grievance details: $e');
+    rethrow;
+  }
+}
+
+
+
+
   Future<List<Grievance>> getAllGrievances() async {
   try {
     print('GrievanceService: Sending GET /admin/grievances/all');

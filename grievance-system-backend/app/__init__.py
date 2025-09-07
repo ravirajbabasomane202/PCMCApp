@@ -59,6 +59,8 @@ def create_app():
     from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
     from .routes.settings_routes import settings_bp
+    from .routes.field_routes import fieldStaff
+    app.register_blueprint(fieldStaff)
     app.register_blueprint(public_bp)
     app.register_blueprint(notification_bp, url_prefix='/notifications')
 

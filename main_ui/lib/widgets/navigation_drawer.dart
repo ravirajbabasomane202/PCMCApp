@@ -116,18 +116,18 @@ class CustomNavigationDrawer extends ConsumerWidget {
           ],
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.update,
-              title: localizations.updateStatus ?? 'Update Status',
-              route: '/employer/update',
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.upload_file,
-              title: localizations.uploadWorkproof ?? 'Upload Work Proof',
-              route: '/employer/upload',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.update,
+            //   title: localizations.updateStatus ?? 'Update Status',
+            //   route: '/employer/update',
+            // ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.upload_file,
+            //   title: localizations.uploadWorkproof ?? 'Upload Work Proof',
+            //   route: '/employer/upload',
+            // ),
           ],
           _buildDrawerItem(
             context: context,

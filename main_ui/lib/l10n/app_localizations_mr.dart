@@ -504,4 +504,10 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get announcementAdded => 'Announcement added successfully';
+
+  @override
+  String get takeAction => 'कारवाई करा';
+
+  @override
+  String get refresh => 'रिफ्रेश करा';
 }

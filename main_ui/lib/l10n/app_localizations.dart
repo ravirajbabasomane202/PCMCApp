@@ -1083,6 +1083,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Announcement added successfully'**
   String get announcementAdded;
+
+  /// No description provided for @takeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Action'**
+  String get takeAction;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
 }
 
 class _AppLocalizationsDelegate

@@ -503,4 +503,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get announcementAdded => 'Announcement added successfully';
+
+  @override
+  String get takeAction => 'Take Action';
+
+  @override
+  String get refresh => 'Refresh';
 }

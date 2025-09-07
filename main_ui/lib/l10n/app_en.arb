@@ -201,5 +201,7 @@
   "type":"Type",
   "targetRole":"Target Role",
   "selectExpiration":"Select Expiration",
-  "announcementAdded":"Announcement added successfully"
+  "announcementAdded":"Announcement added successfully",
+  "takeAction":"Take Action",
+  "refresh":"Refresh"
 }

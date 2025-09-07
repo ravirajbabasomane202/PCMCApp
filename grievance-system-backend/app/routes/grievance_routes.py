@@ -8,7 +8,7 @@ from ..services.grievance_service import (
     add_comment, confirm_closure, get_rejection_reason,
     get_new_grievances, accept_grievance, reject_grievance,
     get_assigned_grievances, update_status, upload_workproof,
-    escalate_grievance
+    escalate_grievance, save_workproof_record
 )
 from ..services.notification_service import send_notification
 from .. import db
@@ -103,14 +103,15 @@ def rejection_reason(user, id):
         current_app.logger.error(f"Error fetching rejection reason for grievance {id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
 
-@grievance_bp.route('/new', methods=['GET'])
+@grievance_bp.route('/all', methods=['GET'])
 @member_head_required
 def new_grievances(user):
     try:
-        result = get_new_grievances(user.department_id)
+        result = get_new_grievances()
+        print(f"New grievances for department: {result}")
         return jsonify(result), 200
     except Exception as e:
-        current_app.logger.error(f"Error fetching new grievances for department {user.department_id}: {str(e)}")
+        current_app.logger.error(f"Error fetching new grievances for department : {str(e)}")
         return jsonify({"msg": str(e)}), 400
 
 @grievance_bp.route('/<int:id>/accept', methods=['POST'])
@@ -130,10 +131,14 @@ def accept(user, id):
 def reject(user, id):
     try:
         data = request.get_json()
+        print(f"Rejecting grievance {id} with data: {data}")
         reason = data.get('reason')
+        print(f"Rejection reason: {reason}")
         if not reason:
+            print("Rejection reason is required")
             return jsonify({"msg": "Rejection reason is required"}), 400
         result = reject_grievance(id, user.id, reason)
+        print(f"Result of rejection: {result}")
         log_audit(f"Grievance {id} rejected by user {user.id}", user.id, id)
         return jsonify(result), 200
     except Exception as e:
@@ -185,20 +190,24 @@ def get_assigned_grievances_by_user(user, user_id):
 def update_grievance_status(user, id):
     data = request.json
     new_status = data.get('status')
+    print(f"Updating status for grievance {id} to {new_status} by user {user.id}")
     try:
+        print("Fetching grievance...")
         grievance = db.session.get(Grievance, id)
         if not grievance:
             return jsonify({"error": "Grievance not found"}), 404
-        
+        print(f"Grievance found: {grievance}")
         # Check if the user is the assigned staff OR an ADMIN
-        if grievance.assigned_to != user.id and user.role != Role.ADMIN:
+        if grievance.assigned_to != user.id and user.role not in [Role.ADMIN, Role.MEMBER_HEAD]:
             return jsonify({"error": "Not authorized to update this grievance"}), 403
         
+        print("Updating grievance status...")
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
             grievance.resolved_at = datetime.utcnow()
         db.session.commit()
+        print(f"Status updated from {old_status} to {grievance.status}")
         log_audit(f'Status updated from {old_status} to {grievance.status}', user.id, id)
         send_notification(
             grievance.citizen.email,
@@ -222,8 +231,10 @@ def upload_grievance_workproof(user, id):
         file = request.files.get('file')
         if not file:
             return jsonify({"msg": "File is required"}), 400
+        
         data = request.form
-        result = upload_workproof(id, user.id, file, data.get('notes'))
+        result = save_workproof_record(id, user.id, file, data.get('notes'))
+        
         log_audit(f"Workproof uploaded for grievance {id}", user.id, id)
         return jsonify(result), 201
     except Exception as e:
@@ -274,16 +285,20 @@ def get_all_grievances(user):
         return jsonify({"msg": str(e)}), 400
 
 @grievance_bp.route('/<int:id>/reassign', methods=['PUT'])
-@admin_required
+@field_staff_or_admin_required
 def reassign_grievance(user, id):
     try:
+        print(f"Reassigning grievance {id} to user {user.id}")
         data = request.get_json()
         assignee_id = data.get('assignee_id')
+        print(f"Assignee ID: {assignee_id}")
         if not assignee_id:
+            print("Assignee ID is required")
             return jsonify({"msg": "Assignee ID is required"}), 400
         grievance = Grievance.query.get_or_404(id)
         assignee = User.query.get_or_404(assignee_id)
         if assignee.role != Role.FIELD_STAFF:
+            print("Assignee must have field staff role")
             return jsonify({"msg": "Assignee must have field staff role"}), 400
         grievance.assigned_to = assignee_id
         db.session.commit()

@@ -76,51 +76,52 @@ class Grievance {
   });
 
   factory Grievance.fromJson(Map<String, dynamic> json) {
-    return Grievance(
-      id: json['id'] as int,
-      complaintId: json['complaint_id'] as String,
-      citizenId: json['citizen_id'] as int?,
-      subjectId: json['subject_id'] as int?,
-      areaId: json['area_id'] as int?,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      wardNumber: json['ward_number'] as String?,
-      status: json['status'] as String?,
-      priority: json['priority'] as String?,
-      assignedTo: json['assigned_to'] != null ? json['assigned_to'] as int : null, // Handle null
-      assignedBy: json['assigned_by'] != null ? json['assigned_by'] as int : null, // Handle null
-      rejectionReason: json['rejection_reason'] as String?,
-      resolvedAt: json['resolved_at'] != null
-          ? DateTime.parse(json['resolved_at'] as String)
-          : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      latitude: json['latitude'] is double ? json['latitude'] : null,
-      longitude: json['longitude'] is double ? json['longitude'] : null,
-      address: json['address'] as String?,
-      escalationLevel: json['escalation_level'] as int? ?? 0,
-      feedbackRating: json['feedback_rating'] as int?,
-      feedbackText: json['feedback_text'] as String?,
-      citizen: json['citizen'] != null
-          ? User.fromJson(json['citizen'] as Map<String, dynamic>)
-          : null,
-      assignee: json['assignee'] != null
-          ? User.fromJson(json['assignee'] as Map<String, dynamic>)
-          : null,
-      subject: json['subject'] != null
-          ? MasterSubject.fromJson(json['subject'] as Map<String, dynamic>)
-          : null,
-      area: json['area'] != null
-          ? MasterArea.fromJson(json['area'] as Map<String, dynamic>)
-          : null,
-      attachments: json['attachments'] != null
-          ? (json['attachments'] as List).map((a) => GrievanceAttachment.fromJson(a)).toList()
-          : null,
-      comments: json['comments'] != null
-          ? (json['comments'] as List).map((c) => Comment.fromJson(c)).toList()
-          : null,
-    );
-  }
+  print("🔍 Parsing JSON: $json");
+  return Grievance(
+    id: json['id'] as int,
+    complaintId: json['complaint_id'] as String,
+    citizenId: json['citizen'] != null ? json['citizen']['id'] as int? : null,
+    subjectId: json['subject'] != null ? json['subject']['id'] as int? : null,
+    areaId: json['area'] != null ? json['area']['id'] as int? : null,
+    title: json['title'] as String? ?? 'Untitled', // Provide default if null
+    description: json['description'] as String? ?? '', // Provide default if null
+    wardNumber: json['ward_number'] as String?,
+    status: json['status'] as String?,
+    priority: json['priority'] as String?,
+    assignedTo: json['assignee'] != null ? json['assignee']['id'] as int? : null,
+    assignedBy: json['assigner'] != null ? json['assigner']['id'] as int? : null,
+    rejectionReason: json['rejection_reason'] as String?,
+    resolvedAt: json['resolved_at'] != null
+        ? DateTime.parse(json['resolved_at'] as String)
+        : null,
+    createdAt: DateTime.parse(json['created_at'] as String),
+    updatedAt: DateTime.parse(json['updated_at'] as String),
+    latitude: json['latitude'] is double ? json['latitude'] : null,
+    longitude: json['longitude'] is double ? json['longitude'] : null,
+    address: json['address'] as String?,
+    escalationLevel: json['escalation_level'] as int? ?? 0,
+    feedbackRating: json['feedback_rating'] as int?,
+    feedbackText: json['feedback_text'] as String?,
+    citizen: json['citizen'] != null
+        ? User.fromJson(json['citizen'] as Map<String, dynamic>)
+        : null,
+    assignee: json['assignee'] != null
+        ? User.fromJson(json['assignee'] as Map<String, dynamic>)
+        : null,
+    subject: json['subject'] != null
+        ? MasterSubject.fromJson(json['subject'] as Map<String, dynamic>)
+        : null,
+    area: json['area'] != null
+        ? MasterArea.fromJson(json['area'] as Map<String, dynamic>)
+        : null,
+    attachments: json['attachments'] != null
+        ? (json['attachments'] as List).map((a) => GrievanceAttachment.fromJson(a)).toList()
+        : null,
+    comments: json['comments'] != null
+        ? (json['comments'] as List).map((c) => Comment.fromJson(c)).toList()
+        : null,
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {

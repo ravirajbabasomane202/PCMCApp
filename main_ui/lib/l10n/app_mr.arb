@@ -178,5 +178,7 @@
   "announcements": "जाहिराती",
   "privacyPolicy": "गोपनीयता धोरण",
   "@@locale": "mr",
-  "clearFilters": "फिल्टर साफ करा"
+  "clearFilters": "फिल्टर साफ करा",
+  "takeAction":"कारवाई करा",
+  "refresh":"रिफ्रेश करा"
 }

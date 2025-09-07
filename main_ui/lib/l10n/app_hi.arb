@@ -196,7 +196,9 @@
   "type": "प्रकार",
   "targetRole": "लक्ष्य भूमिका",
   "selectExpiration": "कालावधी निवडा",
-  "announcementAdded": "जाहिरात यशस्वीरीत्या जोडली गेली"
+  "announcementAdded": "जाहिरात यशस्वीरीत्या जोडली गेली",
+  "takeAction":"कार्रवाई करें",
+  "refresh":"ताज़ा करें"
 }
 
 

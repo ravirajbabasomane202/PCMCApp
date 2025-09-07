@@ -162,11 +162,11 @@ import 'screens/citizen/submit_grievance.dart';
 import 'screens/citizen/track_grievance.dart';
 import 'screens/citizen/grievance_detail.dart';
 import 'screens/member_head/view_grievances.dart';
-import 'screens/member_head/assign_grievance.dart';
-import 'screens/member_head/reject_grievance.dart';
-import 'screens/field_staff/assigned_list.dart';
-import 'screens/field_staff/update_status.dart';
-import 'screens/field_staff/upload_workproof.dart';
+// import 'screens/member_head/assign_grievance.dart';
+// import 'screens/member_head/reject_grievance.dart';
+// import 'screens/field_staff/assigned_list.dart';
+// import 'screens/field_staff/update_status.dart';
+// import 'screens/field_staff/upload_workproof.dart';
 import 'screens/admin/dashboard.dart';
 import 'screens/admin/manage_users.dart';
 import 'screens/admin/manage_subjects.dart';
@@ -201,11 +201,11 @@ Map<String, WidgetBuilder> appRoutes = {
     return GrievanceDetail(id: args);
   },
   '/member_head/view': (context) => const ViewGrievances(),
-  '/member_head/assign': (context) => const AssignGrievance(),
-  '/member_head/reject': (context) => const RejectGrievance(),
-  '/employer/assigned': (context) => const AssignedList(),
-  '/employer/update': (context) => const UpdateStatus(),
-  '/employer/upload': (context) => const UploadWorkproof(),
+  // '/member_head/assign': (context) => const AssignGrievance(),
+  // '/member_head/reject': (context) => const RejectGrievance(),
+  // '/employer/assigned': (context) => const AssignedList(),
+  // '/employer/update': (context) => const UpdateStatus(),
+  // '/employer/upload': (context) => const UploadWorkproof(),
   '/admin/dashboard': (context) => const Dashboard(),
   '/admin/users': (context) => const ManageUsers(),
   '/admin/subjects': (context) => const ManageSubjects(),
@@ -223,8 +223,8 @@ Map<String, WidgetBuilder> appRoutes = {
   '/settings': (context) => const SettingsScreen(),
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
-  '/employer/home': (context) => const AssignedList(),
-  '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
+  // '/employer/home': (context) => const AssignedList(),
+  // '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
@@ -1327,6 +1327,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Announcement added successfully'**
   String get announcementAdded;
+
+  /// No description provided for @takeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Action'**
+  String get takeAction;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
 }
 
 class _AppLocalizationsDelegate
@@ -1871,6 +1883,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get announcementAdded => 'Announcement added successfully';
+
+  @override
+  String get takeAction => 'Take Action';
+
+  @override
+  String get refresh => 'Refresh';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2379,6 +2397,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get announcementAdded => 'जाहिरात यशस्वीरीत्या जोडली गेली';
+
+  @override
+  String get takeAction => 'कार्रवाई करें';
+
+  @override
+  String get refresh => 'ताज़ा करें';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2888,6 +2912,12 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get announcementAdded => 'Announcement added successfully';
+
+  @override
+  String get takeAction => 'कारवाई करा';
+
+  @override
+  String get refresh => 'रिफ्रेश करा';
 }
 
 
@@ -2961,8 +2991,8 @@ class Comment {
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      id: json['id'],
-      grievanceId: json['grievance_id'],
+      id: json['id'] as int,
+      grievanceId: json['grievance_id'] ,
       userId: json['user_id'],
       commentText: json['comment_text'] ?? '',
       createdAt: DateTime.parse(json['created_at']),
@@ -3058,51 +3088,52 @@ class Grievance {
   });
 
   factory Grievance.fromJson(Map<String, dynamic> json) {
-    return Grievance(
-      id: json['id'] as int,
-      complaintId: json['complaint_id'] as String,
-      citizenId: json['citizen_id'] as int?,
-      subjectId: json['subject_id'] as int?,
-      areaId: json['area_id'] as int?,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      wardNumber: json['ward_number'] as String?,
-      status: json['status'] as String?,
-      priority: json['priority'] as String?,
-      assignedTo: json['assigned_to'] != null ? json['assigned_to'] as int : null, // Handle null
-      assignedBy: json['assigned_by'] != null ? json['assigned_by'] as int : null, // Handle null
-      rejectionReason: json['rejection_reason'] as String?,
-      resolvedAt: json['resolved_at'] != null
-          ? DateTime.parse(json['resolved_at'] as String)
-          : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      latitude: json['latitude'] is double ? json['latitude'] : null,
-      longitude: json['longitude'] is double ? json['longitude'] : null,
-      address: json['address'] as String?,
-      escalationLevel: json['escalation_level'] as int? ?? 0,
-      feedbackRating: json['feedback_rating'] as int?,
-      feedbackText: json['feedback_text'] as String?,
-      citizen: json['citizen'] != null
-          ? User.fromJson(json['citizen'] as Map<String, dynamic>)
-          : null,
-      assignee: json['assignee'] != null
-          ? User.fromJson(json['assignee'] as Map<String, dynamic>)
-          : null,
-      subject: json['subject'] != null
-          ? MasterSubject.fromJson(json['subject'] as Map<String, dynamic>)
-          : null,
-      area: json['area'] != null
-          ? MasterArea.fromJson(json['area'] as Map<String, dynamic>)
-          : null,
-      attachments: json['attachments'] != null
-          ? (json['attachments'] as List).map((a) => GrievanceAttachment.fromJson(a)).toList()
-          : null,
-      comments: json['comments'] != null
-          ? (json['comments'] as List).map((c) => Comment.fromJson(c)).toList()
-          : null,
-    );
-  }
+  print("🔍 Parsing JSON: $json");
+  return Grievance(
+    id: json['id'] as int,
+    complaintId: json['complaint_id'] as String,
+    citizenId: json['citizen'] != null ? json['citizen']['id'] as int? : null,
+    subjectId: json['subject'] != null ? json['subject']['id'] as int? : null,
+    areaId: json['area'] != null ? json['area']['id'] as int? : null,
+    title: json['title'] as String? ?? 'Untitled', // Provide default if null
+    description: json['description'] as String? ?? '', // Provide default if null
+    wardNumber: json['ward_number'] as String?,
+    status: json['status'] as String?,
+    priority: json['priority'] as String?,
+    assignedTo: json['assignee'] != null ? json['assignee']['id'] as int? : null,
+    assignedBy: json['assigner'] != null ? json['assigner']['id'] as int? : null,
+    rejectionReason: json['rejection_reason'] as String?,
+    resolvedAt: json['resolved_at'] != null
+        ? DateTime.parse(json['resolved_at'] as String)
+        : null,
+    createdAt: DateTime.parse(json['created_at'] as String),
+    updatedAt: DateTime.parse(json['updated_at'] as String),
+    latitude: json['latitude'] is double ? json['latitude'] : null,
+    longitude: json['longitude'] is double ? json['longitude'] : null,
+    address: json['address'] as String?,
+    escalationLevel: json['escalation_level'] as int? ?? 0,
+    feedbackRating: json['feedback_rating'] as int?,
+    feedbackText: json['feedback_text'] as String?,
+    citizen: json['citizen'] != null
+        ? User.fromJson(json['citizen'] as Map<String, dynamic>)
+        : null,
+    assignee: json['assignee'] != null
+        ? User.fromJson(json['assignee'] as Map<String, dynamic>)
+        : null,
+    subject: json['subject'] != null
+        ? MasterSubject.fromJson(json['subject'] as Map<String, dynamic>)
+        : null,
+    area: json['area'] != null
+        ? MasterArea.fromJson(json['area'] as Map<String, dynamic>)
+        : null,
+    attachments: json['attachments'] != null
+        ? (json['attachments'] as List).map((a) => GrievanceAttachment.fromJson(a)).toList()
+        : null,
+    comments: json['comments'] != null
+        ? (json['comments'] as List).map((c) => Comment.fromJson(c)).toList()
+        : null,
+  );
+}
 
   Map<String, dynamic> toJson() {
     return {
@@ -8701,622 +8732,862 @@ class PrivacyPolicyScreen extends StatelessWidget {
 === Folder: screens\field_staff ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\assigned_list.dart ---
-// lib/screens/field_staff/assigned_list.dart
+import 'dart:io'
+    if (dart.library.html) 'dart:html'; // Conditional import for web
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart';
-import 'package:main_ui/widgets/empty_state.dart';
-import 'package:main_ui/widgets/navigation_drawer.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/models/grievance_model.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 import 'package:main_ui/services/api_service.dart';
-import 'package:main_ui/providers/user_provider.dart';
+import 'package:main_ui/widgets/empty_state.dart';
+import 'package:main_ui/widgets/loading_indicator.dart';
+import 'package:intl/intl.dart'; // For formatting dates
 
-// Define a provider for fetching assigned grievances
-final assignedGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
-  final user = ref.watch(userNotifierProvider);
-  if (user == null || user.role != 'field_staff') {
-    return [];
-  }
-  final response = await ApiService.get('/grievances/assigned');
-  return (response.data as List)
-      .map((json) => Grievance.fromJson(json))
-      .toList();
-});
-
-// Separate card widget for field staff grievances
-class FieldStaffGrievanceCard extends StatelessWidget {
-  final Grievance grievance;
-  const FieldStaffGrievanceCard({super.key, required this.grievance});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: theme.colorScheme.surfaceVariant,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => Navigator.pushNamed(
-          context,
-          '/employer/detail',
-          arguments: grievance.id,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      grievance.title ?? 'Untitled Grievance',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      _buildStatusBadge(grievance.status ?? 'new', theme),
-                      const SizedBox(width: 8),
-                      Text(
-                        grievance.priority?.toUpperCase() ?? 'N/A',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.secondary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                grievance.description ?? 'No description provided',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today_rounded,
-                        size: 16,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        grievance.createdAt != null
-                            ? _formatDate(grievance.createdAt!)
-                            : 'Unknown date',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.6),
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (grievance.escalationLevel != null &&
-                      grievance.escalationLevel! > 0)
-                    Chip(
-                      label: Text('Escalated: Level ${grievance.escalationLevel}'),
-                      backgroundColor: Colors.orange.withOpacity(0.2),
-                      labelStyle: const TextStyle(color: Colors.orange),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              // Quick action buttons specific to field staff
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton.icon(
-                    onPressed: () => Navigator.pushNamed(
-                      context,
-                      '/employer/update',
-                      arguments: grievance.id,
-                    ),
-                    icon: const Icon(Icons.update),
-                    label: const Text('Update Status'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme.colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton.icon(
-                    onPressed: () => Navigator.pushNamed(
-                      context,
-                      '/employer/upload',
-                      arguments: grievance.id,
-                    ),
-                    icon: const Icon(Icons.upload_file),
-                    label: const Text('Upload Proof'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: theme.colorScheme.secondary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusBadge(String status, ThemeData theme) {
-    Color color;
-    switch (status) {
-      case 'new':
-        color = Colors.blue;
-        break;
-      case 'in_progress':
-        color = Colors.orange;
-        break;
-      case 'resolved':
-        color = Colors.green;
-        break;
-      case 'rejected':
-        color = Colors.red;
-        break;
-      case 'on_hold':
-        color = Colors.yellow;
-        break;
-      case 'closed':
-        color = Colors.grey;
-        break;
-      default:
-        color = Colors.grey;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        status.toUpperCase(),
-        style: TextStyle(color: color, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-    if (difference.inDays > 1) {
-      return '${difference.inDays} days ago';
-    } else if (difference.inDays == 1) {
-      return '1 day ago';
-    } else if (difference.inHours > 1) {
-      return '${difference.inHours} hours ago';
-    } else if (difference.inMinutes > 1) {
-      return '${difference.inMinutes} minutes ago';
-    } else {
-      return 'Just now';
-    }
-  }
-}
-
-class AssignedList extends ConsumerWidget {
+class AssignedList extends ConsumerStatefulWidget {
   const AssignedList({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final grievancesAsync = ref.watch(assignedGrievancesProvider);
+  ConsumerState<AssignedList> createState() => _AssignedListState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () => Navigator.pushNamed(context, '/notifications'),
-          ),
-        ],
-      ),
-      drawer: const CustomNavigationDrawer(),
-      body: grievancesAsync.when(
-        data: (grievances) {
-          if (grievances.isEmpty) {
-            return EmptyState(
-              icon: Icons.assignment_turned_in,
-              title: l10n.noAssigned,
-              message:
-                  l10n.noAssignedMessage ?? 'No assigned grievances yet.',
-              actionButton: TextButton(
-                onPressed: () => ref.refresh(assignedGrievancesProvider),
-                child: Text(l10n.retry),
-              ),
-            );
-          }
+class _AssignedListState extends ConsumerState<AssignedList> {
+  late Future<List<Grievance>> _grievancesFuture;
 
-          return RefreshIndicator(
-            onRefresh: () => ref.refresh(assignedGrievancesProvider.future),
-            child: ListView.builder(
-              itemCount: grievances.length,
-              itemBuilder: (context, index) {
-                final grievance = grievances[index];
-                return FieldStaffGrievanceCard(grievance: grievance);
-              },
-            ),
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => EmptyState(
-          icon: Icons.error_outline,
-          title: l10n.error,
-          message: l10n.failedToLoadGrievance,
-          actionButton: TextButton(
-            onPressed: () => ref.refresh(assignedGrievancesProvider),
-            child: Text(l10n.retry),
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/employer/update');
-        },
-        child: const Icon(Icons.update),
-        tooltip: l10n.updateStatus,
-      ),
+  @override
+  void initState() {
+    super.initState();
+    _grievancesFuture = _fetchAssignedGrievances();
+  }
+
+  Future<List<Grievance>> _fetchAssignedGrievances() async {
+    try {
+      final response = await ApiService.get('/grievances/assigned');
+      
+      return (response.data as List)
+          .map((json) => Grievance.fromJson(json))
+          .toList();
+    } catch (e) {
+      throw Exception('Failed to load assigned grievances: $e');
+    }
+  }
+
+  Future<void> _acceptGrievance(int grievanceId) async {
+    try {
+      await ApiService.post('/grievances/$grievanceId/accept', {});
+      setState(() => _grievancesFuture = _fetchAssignedGrievances());
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Grievance accepted')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to accept: $e')));
+    }
+  }
+
+  Future<void> _updateStatus(int grievanceId, String newStatus) async {
+  try {
+    print("➡️ Updating grievance $grievanceId with status: $newStatus");
+
+    // Perform the API call
+    await ApiService.put('/grievances/$grievanceId/status', {
+      'status': newStatus,
+    });
+
+    // Fetch updated grievances first (async work outside setState)
+    final updatedGrievances = _fetchAssignedGrievances();
+
+    if (!mounted) return;
+
+    // Update the state synchronously
+    setState(() {
+      _grievancesFuture = updatedGrievances;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Status updated')),
+    );
+  } catch (e, stack) {
+    print("❌ Error updating status: $e");
+    print(stack);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to update status: $e')),
     );
   }
 }
 
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\update_status.dart ---
-// lib/screens/employer/update_status.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/widgets/custom_button.dart';
 
-class UpdateStatus extends ConsumerWidget {
-  const UpdateStatus({super.key});
+  Future<void> _uploadWorkproof(int grievanceId, PlatformFile file) async {
+    try {
+      await ApiService.postMultipart(
+        '/grievances/$grievanceId/workproof',
+        files: [file],
+        fieldName: 'file',
+      );
+      setState(() => _grievancesFuture = _fetchAssignedGrievances());
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Work proof uploaded')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to upload: $e')));
+    }
+  }
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    // Static dummy statuses (replace with enum/API later)
-    final List<String> dummyStatuses = ['In Progress', 'On Hold', 'Resolved'];
+  Future<void> _closeGrievance(int grievanceId) async {
+    try {
+      await ApiService.post('/grievances/$grievanceId/close', {});
+      setState(() => _grievancesFuture = _fetchAssignedGrievances());
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Grievance closed')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to close: $e')));
+    }
+  }
+
+  void _showUpdateStatusPopup(Grievance grievance) {
     String? selectedStatus;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.updateStatus),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            DropdownButtonFormField<String>(
-              value: selectedStatus,
-              hint: Text(l10n.selectStatus),
-              items: dummyStatuses.map((status) {
-                return DropdownMenuItem(value: status, child: Text(status));
-              }).toList(),
-              onChanged: (value) => selectedStatus = value,
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: l10n.update,
-              onPressed: () {
-                // Add API update logic later
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Status updated to $selectedStatus')),
-                );
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\field_staff\upload_workproof.dart ---
-// lib/screens/employer/upload_workproof.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/widgets/custom_button.dart';
-import 'package:main_ui/widgets/file_upload_widget.dart'; // Assuming this exists for file picking
-
-class UploadWorkproof extends ConsumerWidget {
-  const UploadWorkproof({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    List<dynamic> selectedFiles = []; // Static holder for selected files
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.uploadWorkproof ?? 'Upload Work Proof'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            FileUploadWidget(
-              onFilesSelected: (files) {
-                selectedFiles = files;
-              },
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: l10n.upload ?? 'Upload',
-              onPressed: () {
-                // Add API upload logic later (no real upload now)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Files selected (upload simulated)')),
-                );
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-=== Folder: screens\member_head ===
-
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\assign_grievance.dart ---
-// lib/screens/member_head/assign_grievance.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/widgets/custom_button.dart';
-
-class AssignGrievance extends ConsumerWidget {
-  const AssignGrievance({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    // Static dummy field staff list (replace with API later)
-    final List<String> dummyFieldStaff = ['Staff 1', 'Staff 2', 'Staff 3'];
-    String? selectedStaff;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.assignGrievance ?? 'Assign Grievance'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            DropdownButtonFormField<String>(
-              value: selectedStaff,
-              hint: Text(l10n.selectAssignee),
-              items: dummyFieldStaff.map((staff) {
-                return DropdownMenuItem(value: staff, child: Text(staff));
-              }).toList(),
-              onChanged: (value) => selectedStaff = value,
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: l10n.reassign ?? 'Assign',
-              onPressed: () {
-                // Add API assign logic later
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Assigned to $selectedStaff')),
-                );
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\reject_grievance.dart ---
-// lib/screens/member_head/reject_grievance.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/widgets/custom_button.dart';
-
-class RejectGrievance extends ConsumerWidget {
-  const RejectGrievance({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final TextEditingController reasonController = TextEditingController();
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.rejectGrievance ?? 'Reject Grievance'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: reasonController,
-              decoration: InputDecoration(
-                labelText: l10n.rejectionReason ?? 'Rejection Reason',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              maxLines: 3,
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              text: l10n.reject ?? 'Reject',
-              onPressed: () {
-                // Add API reject logic later
-                final reason = reasonController.text;
-                if (reason.isNotEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Rejected: $reason')),
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Update Status'),
+              content: DropdownButton<String>(
+                hint: const Text('Select New Status'),
+                value: selectedStatus,
+                items: ['in_progress', 'on_hold', 'resolved'].map((status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status.toUpperCase()),
                   );
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ],
-        ),
-      ),
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedStatus = value;
+                  });
+                },
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (selectedStatus != null) {
+                      _updateStatus(grievance.id, selectedStatus!);
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Update'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
-}
---- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\view_grievances.dart ---
-// lib/screens/member_head/view_grievances.dart
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart';
-import 'package:main_ui/widgets/empty_state.dart';
-import 'package:main_ui/widgets/grievance_card.dart';
-import 'package:main_ui/widgets/navigation_drawer.dart';
-import 'package:main_ui/widgets/custom_button.dart';
-import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/services/api_service.dart';
-import 'package:main_ui/providers/user_provider.dart';
 
-// Define a provider for fetching grievances for member_head
-final memberHeadGrievancesProvider = FutureProvider<List<Grievance>>((ref) async {
-  final user = ref.watch(userNotifierProvider);
-  if (user == null || user.role != 'member_head') {
-    return [];
+  void _showUploadWorkproofPopup(Grievance grievance) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'mp4', 'mov'],
+    );
+    if (result != null && result.files.isNotEmpty) {
+      final file = result.files.first;
+      _uploadWorkproof(grievance.id, file);
+    }
   }
-  final apiService = await ApiService.get('/grievances/department/${user.departmentId}');
-  return (apiService.data as List)
-      .map((json) => Grievance.fromJson(json))
-      .toList();
-});
 
-class ViewGrievances extends ConsumerWidget {
-  const ViewGrievances({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget _buildGrievanceItem(Grievance grievance) {
     final l10n = AppLocalizations.of(context)!;
-    final grievancesAsync = ref.watch(memberHeadGrievancesProvider);
-    final theme = Theme.of(context);
+    final dateFormat = DateFormat(
+      'yyyy-MM-dd HH:mm:ss',
+    ); // For formatting dates
 
-    // State for the priority filter slider
-    final priorityLevels = ['low', 'medium', 'high', 'urgent'];
-    final ValueNotifier<double> priorityFilter = ValueNotifier<double>(0);
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title and Complaint ID
+            Text(
+              grievance.title ?? 'No Title',
+              style: Theme.of(
+                context,
+              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Complaint ID: ${grievance.complaintId}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.viewgrievanceetails ?? 'View Grievances'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () => Navigator.pushNamed(context, '/notifications'),
-            tooltip: l10n.notifications,
-          ),
-        ],
-      ),
-      drawer: const CustomNavigationDrawer(), // Add navigation drawer for profile, settings, logout
-      body: Column(
-        children: [
-          // Slider for filtering by priority
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Divider
+            const Divider(height: 16),
+
+            // Description
+            Text(
+              'Description:',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            Text(
+              grievance.description ?? 'No Description',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+
+            // Status and Priority
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  l10n.filterByPriority,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  'Status: ${grievance.status?.toUpperCase() ?? "N/A"}',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                ValueListenableBuilder<double>(
-                  valueListenable: priorityFilter,
-                  builder: (context, value, child) {
-                    return Slider(
-                      value: value,
-                      min: 0,
-                      max: priorityLevels.length - 1,
-                      divisions: priorityLevels.length - 1,
-                      label: priorityLevels[value.toInt()],
-                      onChanged: (newValue) {
-                        priorityFilter.value = newValue;
-                      },
-                      activeColor: theme.colorScheme.primary,
-                      inactiveColor: theme.colorScheme.onSurface.withValues (alpha: 0.3),
-                    );
-                  },
+                Text(
+                  'Priority: ${grievance.priority?.toUpperCase() ?? 'N/A'}',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
-          ),
-          // Grievance list
-          Expanded(
-            child: grievancesAsync.when(
-              data: (grievances) {
-                // Filter grievances based on priority slider
-                final filteredGrievances = grievances.where((grievance) {
-                  final priorityIndex = priorityLevels.indexOf(grievance.priority?.toLowerCase() ?? 'medium');
-                  return priorityIndex >= priorityFilter.value.toInt();
-                }).toList();
 
-                if (filteredGrievances.isEmpty) {
-                  return EmptyState(
-                    icon: Icons.list_alt,
-                    title: l10n.noGrievances,
-                    message: l10n.noGrievancesMessage,
-                    actionButton: CustomButton(
-                      text: l10n.retry,
-                      onPressed: () => ref.refresh(memberHeadGrievancesProvider),
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () => ref.refresh(memberHeadGrievancesProvider.future),
-                  child: ListView.builder(
-                    itemCount: filteredGrievances.length,
-                    itemBuilder: (context, index) {
-                      final grievance = filteredGrievances[index];
-                      return GrievanceCard(grievance: grievance);
-                    },
-                  ),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => EmptyState(
-                icon: Icons.error_outline,
-                title: l10n.error,
-                message: l10n.failedToLoadGrievance,
-                actionButton: CustomButton(
-                  text: l10n.retry,
-                  onPressed: () => ref.refresh(memberHeadGrievancesProvider),
-                ),
-              ),
+            // Dates
+            const SizedBox(height: 8),
+            Text(
+              'Created: ${grievance.createdAt != null ? dateFormat.format(grievance.createdAt!) : 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/member_head/assign');
-        },
-        child: const Icon(Icons.assignment),
-        tooltip: l10n.assignGrievance,
+            Text(
+              'Updated: ${grievance.updatedAt != null ? dateFormat.format(grievance.updatedAt!) : 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            if (grievance.resolvedAt != null)
+              Text(
+                'Resolved: ${dateFormat.format(grievance.resolvedAt!)}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+
+            // Location
+            const SizedBox(height: 8),
+            Text('Location:', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Area: ${grievance.area?.name ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              'Latitude: ${grievance.latitude ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              'Longitude: ${grievance.longitude ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+
+            // People
+            // const SizedBox(height: 8),
+            // Text(
+            //   'Citizen: ${grievance.citizen?.name ?? 'N/A'}',
+            //   style: Theme.of(context).textTheme.bodyMedium,
+            // ),
+            // Text(
+            //   'Assignee: ${grievance.assignee?.name ?? 'N/A'}',
+            //   style: Theme.of(context).textTheme.bodyMedium,
+            // ),
+            // Text(
+            //   'Assigner: ${grievance.assignedBy ?? 'N/A'}',
+            //   style: Theme.of(context).textTheme.bodyMedium,
+            // ),
+
+            // Subject
+            const SizedBox(height: 8),
+            Text('Subject:', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Name: ${grievance.subject?.name ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              'Description: ${grievance.subject?.description ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+
+            // Additional Fields
+            const SizedBox(height: 8),
+            if (grievance.rejectionReason != null)
+              Text(
+                'Rejection Reason: ${grievance.rejectionReason}',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            Text(
+              'Attachments: ${grievance.attachments?.isEmpty ?? true ? 'None' : grievance.attachments!.length}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+
+            // Action Buttons
+            const Divider(height: 16),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
+              alignment: WrapAlignment.end,
+              children: [
+                if (grievance.status == 'new')
+                  ElevatedButton.icon(
+                    onPressed: () => _acceptGrievance(grievance.id),
+                    icon: const Icon(Icons.check),
+                    label: const Text('Accept'),
+                  ),
+                ElevatedButton.icon(
+                  onPressed: () => _showUpdateStatusPopup(grievance),
+                  icon: const Icon(Icons.update),
+                  label: const Text('Update Status'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _showUploadWorkproofPopup(grievance),
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Upload Proof'),
+                ),
+                if (grievance.status == 'resolved')
+                  ElevatedButton.icon(
+                    onPressed: () => _closeGrievance(grievance.id),
+                    icon: const Icon(Icons.close),
+                    label: const Text('Close'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
+      ),
+      drawer: const CustomNavigationDrawer(),
+      body: FutureBuilder<List<Grievance>>(
+        future: _grievancesFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const LoadingIndicator();
+          } else if (snapshot.hasError) {
+            return EmptyState(
+              icon: Icons.error,
+              title: l10n.error,
+              message: '${snapshot.error}',
+              actionButton: ElevatedButton(
+                onPressed: () => setState(
+                  () => _grievancesFuture = _fetchAssignedGrievances(),
+                ),
+                child: Text(l10n.retry),
+              ),
+            );
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return EmptyState(
+              icon: Icons.hourglass_empty,
+              title: l10n.noAssigned,
+              message: l10n.noAssignedMessage,
+            );
+          } else {
+            return RefreshIndicator(
+              onRefresh: () async {
+                setState(() => _grievancesFuture = _fetchAssignedGrievances());
+              },
+              child: ListView.builder(
+                padding: const EdgeInsets.all(8.0),
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  final grievance = snapshot.data![index];
+                  return _buildGrievanceItem(grievance);
+                },
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+}
+
+
+=== Folder: screens\member_head ===
+
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\member_head\view_grievances.dart ---
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/models/grievance_model.dart';
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/widgets/empty_state.dart';
+import 'package:main_ui/widgets/loading_indicator.dart';
+import 'package:main_ui/widgets/status_badge.dart';
+
+class ViewGrievances extends StatefulWidget {
+  const ViewGrievances({super.key});
+
+  @override
+  State<ViewGrievances> createState() => _ViewGrievancesState();
+}
+
+class _ViewGrievancesState extends State<ViewGrievances> {
+  List<Grievance> grievances = [];
+  List<Grievance> filteredGrievances = [];
+  bool isLoading = true;
+  String? selectedStatus;
+  String? selectedPriority;
+  String? selectedArea;
+  String? selectedSubject;
+  List<Map<String, dynamic>> areas = [];
+  List<Map<String, dynamic>> subjects = [];
+  List<Map<String, dynamic>> fieldStaff = [];
+  String errorMessage = '';
+  final CancelToken _cancelToken = CancelToken();
+
+  final List<String> statuses = [
+    'new',
+    'in_progress',
+    'on_hold',
+    'resolved',
+    'closed',
+    'rejected'
+  ];
+
+  final List<String> priorities = ['low', 'medium', 'high', 'urgent'];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  @override
+  void dispose() {
+    _cancelToken.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadData() async {
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
+
+    try {
+      final response = await ApiService.get('/grievances/all' );
+      print("📥 Raw API response: ${response.data}");
+
+      if (response.data is! List) {
+        throw Exception("Expected a list from API, got ${response.data.runtimeType}");
+      }
+
+      grievances = (response.data as List).map((e) {
+        try {
+          print("🔍 Parsing grievance: $e");
+          return Grievance.fromJson(e);
+        } catch (e) {
+          print("❌ Error parsing grievance: $e");
+          rethrow;
+        }
+      }).toList();
+
+      print("✅ Parsed grievances list: $grievances");
+      filteredGrievances = List.from(grievances);
+      print("📌 Filtered grievances initialized: $filteredGrievances");
+
+      final areasResponse = await ApiService.get('/areas' );
+      areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+      final subjectsResponse = await ApiService.get('/subjects' );
+      subjects = (subjectsResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+
+      final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff' );
+      fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+    } catch (e) {
+      print("❌ Error in _loadData: $e");
+      if (mounted) {
+        setState(() {
+          errorMessage = e.toString();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _applyFilters() {
+    filteredGrievances = grievances.where((g) {
+      return (selectedStatus == null || g.status == selectedStatus) &&
+          (selectedPriority == null || g.priority == selectedPriority) &&
+          (selectedArea == null || g.areaId.toString() == selectedArea) &&
+          (selectedSubject == null || g.subjectId.toString() == selectedSubject);
+    }).toList();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _showActionSheet(Grievance grievance) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16),
+          children: [
+            ListTile(
+              leading: const Icon(Icons.update),
+              title: Text(AppLocalizations.of(context)!.updateStatus),
+              onTap: () {
+                Navigator.pop(ctx);
+                _showUpdateStatusDialog(grievance);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.assignment_ind),
+              title: Text(AppLocalizations.of(context)!.assignGrievance),
+              onTap: () {
+                Navigator.pop(ctx);
+                _showAssignDialog(grievance);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.cancel),
+              title: Text(AppLocalizations.of(context)!.rejectGrievance),
+              onTap: () {
+                Navigator.pop(ctx);
+                _showRejectDialog(grievance);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.visibility),
+              title: Text(AppLocalizations.of(context)!.viewDetails),
+              onTap: () {
+                Navigator.pop(ctx);
+                Navigator.pushNamed(context, '/citizen/detail', arguments: grievance.id);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showUpdateStatusDialog(Grievance grievance) {
+    String? newStatus;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.updateStatus),
+        content: DropdownButtonFormField<String>(
+          value: newStatus,
+          hint: Text(AppLocalizations.of(context)!.selectStatus),
+          items: statuses.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+          onChanged: (value) => newStatus = value,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (newStatus != null) {
+                try {
+                  await ApiService.put('/grievances/${grievance.id}/status', {'status': newStatus});
+                  if (context.mounted) Navigator.pop(ctx);
+                  _loadData();
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
+                }
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.update),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAssignDialog(Grievance grievance) {
+    String? assigneeId;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.assignGrievance),
+        content: DropdownButtonFormField<String>(
+          value: assigneeId,
+          hint: Text(AppLocalizations.of(context)!.selectAssignee),
+          items: fieldStaff.map((staff) => DropdownMenuItem(value: staff['id'].toString(), child: Text(staff['name'] ?? 'Unknown'))).toList(),
+          onChanged: (value) => assigneeId = value,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (assigneeId != null) {
+                try {
+                  await ApiService.put('/grievances/${grievance.id}/reassign', {'assigned_to': assigneeId});
+                  if (context.mounted) Navigator.pop(ctx);
+                  _loadData();
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
+                }
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.assignGrievance),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRejectDialog(Grievance grievance) {
+    final TextEditingController reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.rejectGrievance),
+        content: TextField(
+          controller: reasonController,
+          decoration: InputDecoration(hintText: AppLocalizations.of(context)!.rejectionReason ?? 'Enter rejection reason'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final reason = reasonController.text;
+              if (reason.isNotEmpty) {
+                try {
+                  await ApiService.post('/grievances/${grievance.id}/reject', {'reason': reason});
+                  if (context.mounted) Navigator.pop(ctx);
+                  _loadData();
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                  }
+                }
+              }
+            },
+            child: Text(AppLocalizations.of(context)!.reject),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.viewgrievanceetails),
+      ),
+      body: isLoading
+          ? const LoadingIndicator()
+          : SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  
+                  grievances.isEmpty
+                      ? EmptyState(
+                          icon: Icons.hourglass_empty,
+                          title: l.noGrievances,
+                          message: l.noGrievancesMessage,
+                          actionButton: ElevatedButton(
+                            onPressed: _loadData,
+                            child: Text(l.retry),
+                          ),
+                        )
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _buildFilterDropdown(
+                                      l.filterByStatus,
+                                      statuses,
+                                      selectedStatus,
+                                      (v) {
+                                        selectedStatus = v;
+                                        _applyFilters();
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterDropdown(
+                                      l.filterByPriority,
+                                      priorities,
+                                      selectedPriority,
+                                      (v) {
+                                        selectedPriority = v;
+                                        _applyFilters();
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterDropdown(
+                                      l.filterByArea,
+                                      areas.map((a) => a['name'] as String).toList(),
+                                      selectedArea,
+                                      (v) {
+                                        selectedArea = v == null ? null : areas.firstWhere((a) => a['name'] == v, orElse: () => {'id': null})['id']?.toString();
+                                        _applyFilters();
+                                      },
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildFilterDropdown(
+                                      l.filterBySubject,
+                                      subjects.map((s) => s['name'] as String).toList(),
+                                      selectedSubject,
+                                      (v) {
+                                        selectedSubject = v == null ? null : subjects.firstWhere((s) => s['name'] == v, orElse: () => {'id': null})['id']?.toString();
+                                        _applyFilters();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.7,
+                              child: RefreshIndicator(
+                                onRefresh: _loadData,
+                                child: ListView.builder(
+                                  itemCount: filteredGrievances.length,
+                                  itemBuilder: (ctx, i) {
+                                    final g = filteredGrievances[i];
+                                    return Card(
+                                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(child: Text(g.title ?? 'Untitled', style: const TextStyle(fontWeight: FontWeight.bold))),
+                                                StatusBadge(status: g.status ?? 'new'),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(g.description ?? ''),
+                                            const SizedBox(height: 8),
+                                            ElevatedButton(
+                                              onPressed: () => _showActionSheet(g),
+                                              child: Text(l.takeAction ?? 'Take Action'),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                ],
+              ),
+            ),
+    );
+  }
+
+  Widget _buildFilterDropdown(
+  String label,
+  dynamic items, // Can be List<String> or List<Map<String, dynamic>>
+  String? selected,
+  ValueChanged<String?> onChanged,
+) {
+  List<DropdownMenuItem<String?>> dropdownItems = [];
+
+  // Default "All" option
+  dropdownItems.add(const DropdownMenuItem(
+    value: null,
+    child: Text("All"),
+  ));
+
+  if (items is List<String>) {
+    // Handle plain string lists (status, priority)
+    dropdownItems.addAll(
+      items.map(
+        (s) => DropdownMenuItem(
+          value: s,
+          child: Text(s),
+        ),
+      ),
+    );
+  } else if (items is List<Map<String, dynamic>>) {
+    // Handle maps with {id, name} (areas, subjects, staff)
+    dropdownItems.addAll(
+      items.map(
+        (m) => DropdownMenuItem(
+          value: m['id']?.toString(),
+          child: Text(m['name'] ?? 'Unknown'),
+        ),
+      ),
+    );
+  }
+
+  return DropdownButton<String?>(
+    hint: Text(label),
+    value: selected,
+    items: dropdownItems,
+    onChanged: onChanged,
+  );
+}
+
 }
 
 === Folder: services ===
@@ -9422,16 +9693,11 @@ class ApiService {
     ResponseType? responseType,
   }) async {
     try {
-
-      final defaultHeaders = {
-      'Content-Type': 'application/json',
-      if (AuthService.getToken() != null) 'Authorization': 'Bearer ${AuthService.getToken()}',
-    };
       return await _dio.post(
         path,
         data: data,
         options: Options(
-          headers: {...?headers, ...defaultHeaders},
+          headers: headers,
           responseType: responseType,
         ),
       );
@@ -9440,6 +9706,34 @@ class ApiService {
       rethrow;
     }
   }
+
+  // Generic POST method for multipart data (file uploads)
+// Generic POST method for multipart data (file uploads)
+static Future<Response> postMultipart(
+  String path, {
+  required List<PlatformFile> files,
+  Map<String, dynamic>? data,
+  String fieldName = 'files', // ✅ default field name
+}) async {
+  try {
+    final formData = FormData.fromMap({
+      ...?data,
+      fieldName: files.length == 1
+          ? await MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
+          : files
+              .map((file) => MultipartFile.fromBytes(file.bytes!, filename: file.name))
+              .toList(),
+    });
+
+    return await _dio.post(
+      path,
+      data: formData,
+    );
+  } on DioException catch (e) {
+    _logger.severe('Multipart POST request failed: $path, Error: ${e.message}');
+    rethrow;
+  }
+}
 
   // Generic PUT method
   static Future<Response> put(
@@ -9540,6 +9834,11 @@ class ApiService {
       throw Exception('Failed to delete user: ${e.message}');
     }
   }
+
+
+
+
+
 
   // Fetch a specific grievance by ID
   static Future<Response> getGrievance(int id) async {
@@ -9862,6 +10161,46 @@ class GrievanceService {
     rethrow;
   }
 }
+
+
+
+
+
+
+
+Future<Grievance> GGDBID(int id) async {
+  try {
+    print('GrievanceService: Sending GET /grievances/$id');
+    final response = await _dio.get('/grievances/$id');
+    
+    // Check if response.data is a List
+    if (response.data is List) {
+      final grievances = (response.data as List)
+          .map((json) => Grievance.fromJson(json as Map<String, dynamic>))
+          .toList();
+      
+      // Find the grievance with the matching id
+      final grievance = grievances.firstWhere(
+        (g) => g.id == id,
+        orElse: () => throw Exception('Grievance with id $id not found'),
+      );
+      
+      return grievance;
+    } else {
+      // If response.data is already a single object
+      return Grievance.fromJson(response.data as Map<String, dynamic>);
+    }
+  } on DioException catch (e) {
+    print('GrievanceService: DioError fetching grievance details: ${e.response?.statusCode} - ${e.response?.data}');
+    throw _handleDioException(e, 'fetch grievance details');
+  } catch (e) {
+    print('GrievanceService: Unexpected error fetching grievance details: $e');
+    rethrow;
+  }
+}
+
+
+
 
   Future<List<Grievance>> getAllGrievances() async {
   try {
@@ -11129,18 +11468,18 @@ class CustomNavigationDrawer extends ConsumerWidget {
           ],
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.update,
-              title: localizations.updateStatus ?? 'Update Status',
-              route: '/employer/update',
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.upload_file,
-              title: localizations.uploadWorkproof ?? 'Upload Work Proof',
-              route: '/employer/upload',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.update,
+            //   title: localizations.updateStatus ?? 'Update Status',
+            //   route: '/employer/update',
+            // ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.upload_file,
+            //   title: localizations.uploadWorkproof ?? 'Upload Work Proof',
+            //   route: '/employer/upload',
+            // ),
           ],
           _buildDrawerItem(
             context: context,

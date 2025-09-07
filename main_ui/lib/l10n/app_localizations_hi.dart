@@ -503,4 +503,10 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get announcementAdded => 'जाहिरात यशस्वीरीत्या जोडली गेली';
+
+  @override
+  String get takeAction => 'कार्रवाई करें';
+
+  @override
+  String get refresh => 'ताज़ा करें';
 }

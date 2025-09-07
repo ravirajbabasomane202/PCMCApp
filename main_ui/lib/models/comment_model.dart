@@ -16,8 +16,8 @@ class Comment {
 
   factory Comment.fromJson(Map<String, dynamic> json) {
     return Comment(
-      id: json['id'],
-      grievanceId: json['grievance_id'],
+      id: json['id'] as int,
+      grievanceId: json['grievance_id'] ,
       userId: json['user_id'],
       commentText: json['comment_text'] ?? '',
       createdAt: DateTime.parse(json['created_at']),
