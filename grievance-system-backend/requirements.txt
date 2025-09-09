@@ -16,3 +16,4 @@ pandas
 xlsxwriter
 reportlab
 gunicorn
+flask-cors
