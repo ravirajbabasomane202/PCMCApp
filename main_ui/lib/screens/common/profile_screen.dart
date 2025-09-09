@@ -248,7 +248,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: 24),
               // Profile details card
-              Card(
+              Card( 
+                color: const Color(0xffecf2fe),
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Padding(
@@ -293,17 +294,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         controller: _addressController,
                         enabled: _isEditing,
                       ),
-                      const Divider(),
-                      ListTile(
-                        leading: Icon(Icons.security, color: theme.colorScheme.primary),
-                        title: Text('Two-Factor Authentication'),
-                        trailing: Switch(
-                          value: _twoFactorEnabled,
-                          onChanged: _isEditing
-                              ? (value) => setState(() => _twoFactorEnabled = value)
-                              : null,
-                        ),
-                      ),
+                      // const Divider(),
+                      // ListTile(
+                      //   leading: Icon(Icons.security, color: theme.colorScheme.primary),
+                      //   title: Text('Two-Factor Authentication'),
+                      //   trailing: Switch(
+                      //     value: _twoFactorEnabled,
+                      //     onChanged: _isEditing
+                      //         ? (value) => setState(() => _twoFactorEnabled = value)
+                      //         : null,
+                      //   ),
+                      // ),
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),

@@ -510,4 +510,13 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get refresh => 'रिफ्रेश करा';
+
+  @override
+  String get exportReports => 'अहवाल निर्यात करा';
+
+  @override
+  String get filters => 'फिल्टर्स';
+
+  @override
+  String get apply => 'लागू करा';
 }

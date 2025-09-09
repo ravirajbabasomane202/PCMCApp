@@ -11,7 +11,7 @@ import 'package:main_ui/widgets/custom_button.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/providers/admin_provider.dart';
-
+import 'package:main_ui/widgets/custom_button_.dart';
 class ComplaintManagement extends ConsumerStatefulWidget {
   const ComplaintManagement({super.key});
 
@@ -71,22 +71,33 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     if (_isLoading) {
       return Scaffold(
+        backgroundColor: const Color(0xFFf8fbff),
         appBar: AppBar(
-          title: Text(l10n.appTitle),
+          title: Text(l10n.complaintManagement),
           centerTitle: true,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+          elevation: 2,
         ),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 
     if (_errorMessage != null) {
       return Scaffold(
+        backgroundColor: const Color(0xFFf8fbff),
         appBar: AppBar(
-          title: Text(l10n.appTitle),
+          title: Text(l10n.complaintManagement),
           centerTitle: true,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+          elevation: 2,
         ),
         body: EmptyState(
           icon: Icons.error,
@@ -103,9 +114,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
     if (_grievances.isEmpty) {
       return Scaffold(
+        backgroundColor: const Color(0xFFf8fbff),
         appBar: AppBar(
-          title: Text(l10n.appTitle),
+          title: Text(l10n.complaintManagement),
           centerTitle: true,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
+          elevation: 2,
         ),
         body: EmptyState(
           icon: Icons.inbox,
@@ -121,161 +136,234 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(l10n.appTitle),
+        title: Text(l10n.complaintManagement),
         centerTitle: true,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        elevation: 2,
       ),
       body: Column(
         children: [
-          // Filters
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Wrap(
-              spacing: 16.0,
-              runSpacing: 8.0,
-              children: [
-                DropdownButton<String>(
-                  hint: Text(l10n.filterByStatus),
-                  value: _selectedStatus,
-                  isExpanded: true,
-                  items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                      .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedStatus = value);
-                    _fetchData();
-                  },
-                ),
-                DropdownButton<String>(
-                  hint: Text(l10n.filterByPriority),
-                  value: _selectedPriority,
-                  isExpanded: true,
-                  items: ['low', 'medium', 'high', 'urgent']
-                      .map((p) => DropdownMenuItem(value: p, child: Text(p.capitalize())))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedPriority = value);
-                    _fetchData();
-                  },
-                ),
-                DropdownButton<int>(
-                  hint: Text(l10n.filterByArea),
-                  value: _selectedAreaId,
-                  isExpanded: true,
-                  items: _areas
-                      .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedAreaId = value);
-                    _fetchData();
-                  },
-                ),
-                DropdownButton<int>(
-                  hint: Text(l10n.filterBySubject),
-                  value: _selectedSubjectId,
-                  isExpanded: true,
-                  items: _subjects
-                      .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
-                      .toList(),
-                  onChanged: (value) {
-                    setState(() => _selectedSubjectId = value);
-                    _fetchData();
-                  },
-                ),
-                // Add a clear filters button
-                CustomButton(
-                  text: l10n.clearFilters,
-                  onPressed: () {
-                    setState(() {
-                      _selectedStatus = null;
-                      _selectedPriority = null;
-                      _selectedAreaId = null;
-                      _selectedSubjectId = null;
-                    });
-                    _fetchData();
-                  },
-                  icon: Icons.clear,
-                ),
-              ],
+          // Filters Card
+          Card(
+            margin: const EdgeInsets.all(16),
+            elevation: 2,
+            color: const Color(0xFFecf2fe),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.filters,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 12.0,
+                    runSpacing: 12.0,
+                    children: [
+                      // Status Filter
+                      FilterChip(
+                        label: Text(_selectedStatus?.capitalize() ?? l10n.filterByStatus),
+                        selected: _selectedStatus != null,
+                        onSelected: (selected) {
+                          if (!selected) {
+                            setState(() => _selectedStatus = null);
+                            _fetchData();
+                          }
+                        },
+                        backgroundColor: Colors.white,
+                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        labelStyle: TextStyle(
+                          color: _selectedStatus != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      
+                      // Priority Filter
+                      FilterChip(
+                        label: Text(_selectedPriority?.capitalize() ?? l10n.filterByPriority),
+                        selected: _selectedPriority != null,
+                        onSelected: (selected) {
+                          if (!selected) {
+                            setState(() => _selectedPriority = null);
+                            _fetchData();
+                          }
+                        },
+                        backgroundColor: Colors.white,
+                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        labelStyle: TextStyle(
+                          color: _selectedPriority != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      
+                      // Area Filter
+                      FilterChip(
+                        label: Text(
+                          _selectedAreaId != null 
+                            ? _areas.firstWhere((a) => a.id == _selectedAreaId, orElse: () => MasterArea(id: 0, name: 'Unknown')).name
+                            : l10n.filterByArea
+                        ),
+                        selected: _selectedAreaId != null,
+                        onSelected: (selected) {
+                          if (!selected) {
+                            setState(() => _selectedAreaId = null);
+                            _fetchData();
+                          }
+                        },
+                        backgroundColor: Colors.white,
+                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        labelStyle: TextStyle(
+                          color: _selectedAreaId != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      
+                      // Subject Filter
+                      FilterChip(
+                        label: Text(
+                          _selectedSubjectId != null 
+                            ? _subjects.firstWhere((s) => s.id == _selectedSubjectId, orElse: () => MasterSubject(id: 0, name: 'Unknown')).name
+                            : l10n.filterBySubject
+                        ),
+                        selected: _selectedSubjectId != null,
+                        onSelected: (selected) {
+                          if (!selected) {
+                            setState(() => _selectedSubjectId = null);
+                            _fetchData();
+                          }
+                        },
+                        backgroundColor: Colors.white,
+                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        labelStyle: TextStyle(
+                          color: _selectedSubjectId != null 
+                            ? theme.colorScheme.primary 
+                            : theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      
+                      // Clear Filters Button
+                      ActionChip(
+                        label: Text(l10n.clearFilters),
+                        onPressed: () {
+                          setState(() {
+                            _selectedStatus = null;
+                            _selectedPriority = null;
+                            _selectedAreaId = null;
+                            _selectedSubjectId = null;
+                          });
+                          _fetchData();
+                        },
+                        backgroundColor: theme.colorScheme.primary,
+                        labelStyle: TextStyle(color: theme.colorScheme.onPrimary),
+                        avatar: Icon(Icons.clear, size: 18, color: theme.colorScheme.onPrimary),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
+          
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchData,
               child: ListView.builder(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 itemCount: _grievances.length,
                 itemBuilder: (ctx, idx) {
                   final grievance = _grievances[idx];
                   return Card(
-                    child: Column(
-                      children: [
-                        GrievanceCard(grievance: grievance),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
+                    elevation: 1,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    color: const Color(0xFFecf2fe),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          GrievanceCard(grievance: grievance),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
                             children: [
-                              Flexible(
-                                child: CustomButton(
-                                  text: l10n.reassignComplaint,
-                                  onPressed: () => _showReassignDialog(grievance.id),
-                                  icon: Icons.person_add,
-                                ),
+                              CustomButton2(
+                                text: l10n.reassignComplaint,
+                                onPressed: () => _showReassignDialog(grievance.id),
+                                icon: Icons.person_add,
+                                variant: ButtonVariant.outlined,
+                                size: ButtonSize.small,
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: CustomButton(
-                                  text: l10n.escalateComplaint,
-                                  onPressed: () async {
-                                    try {
-                                      int newAssigneeId = 13;
-                                      int admin=4;
-                                      await ref.read(adminProvider.notifier).escalateGrievance(grievance.id,newAssigneeId,admin);
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('${l10n.escalateComplaint} Successful')),
-                                      );
-                                      _fetchData();
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(e.toString())),
-                                      );
-                                    }
-                                  },
-                                  icon: Icons.arrow_upward,
-                                ),
+                              CustomButton2(
+                                text: l10n.escalateComplaint,
+                                onPressed: () async {
+                                  try {
+                                    int newAssigneeId = 13;
+                                    int admin = 4;
+                                    await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('${l10n.escalateComplaint} Successful'),
+                                        backgroundColor: theme.colorScheme.primary,
+                                      ),
+                                    );
+                                    _fetchData();
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e.toString()),
+                                        backgroundColor: theme.colorScheme.error,
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: Icons.arrow_upward,
+                                variant: ButtonVariant.outlined,
+                                size: ButtonSize.small,
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: CustomButton(
-                                  text: l10n.updateStatus,
-                                  onPressed: () => _showStatusDialog(grievance.id),
-                                  icon: Icons.update,
-                                ),
+                              CustomButton2(
+                                text: l10n.updateStatus,
+                                onPressed: () => _showStatusDialog(grievance.id),
+                                icon: Icons.update,
+                                variant: ButtonVariant.outlined,
+                                size: ButtonSize.small,
                               ),
-                              const SizedBox(width: 8),
-                              Flexible(
-                                child: CustomButton(
-                                  text: l10n.viewDetails,
-                                  onPressed: () {
-                                    if (grievance.id > 0) {
-                                      Navigator.pushNamed(
-                                        context,
-                                        '/citizen/detail',
-                                        arguments: grievance.id,
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text("Invalid grievance ID")),
-                                      );
-                                    }
-                                  },
-                                  icon: Icons.info,
-                                ),
+                              CustomButton2(
+                                text: l10n.viewDetails,
+                                onPressed: () {
+                                  if (grievance.id > 0) {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/citizen/detail',
+                                      arguments: grievance.id,
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text("Invalid grievance ID"),
+                                        backgroundColor: theme.colorScheme.error,
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: Icons.info,
+                                variant: ButtonVariant.outlined,
+                                size: ButtonSize.small,
                               ),
                             ],
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },
@@ -284,23 +372,171 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showFilterDialog,
+        child: const Icon(Icons.filter_list),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+      ),
     );
   }
 
-  void _showReassignDialog(int grievanceId) {
+  void _showFilterDialog() {
     final l10n = AppLocalizations.of(context)!;
-    int? selectedAssigneeId;
+    final theme = Theme.of(context);
+    
+    String? tempStatus = _selectedStatus;
+    String? tempPriority = _selectedPriority;
+    int? tempAreaId = _selectedAreaId;
+    int? tempSubjectId = _selectedSubjectId;
+    
     showDialog(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(l10n.reassignComplaint),
+              title: Text(l10n.filters, style: theme.textTheme.titleLarge),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Status Filter
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: l10n.filterByStatus,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      value: tempStatus,
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.filterByStatus)),
+                        ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() => tempStatus = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Priority Filter
+                    DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: l10n.filterByPriority,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      value: tempPriority,
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.filterByPriority)),
+                        ...['low', 'medium', 'high', 'urgent']
+                            .map((p) => DropdownMenuItem(value: p, child: Text(p.capitalize())))
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() => tempPriority = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Area Filter
+                    DropdownButtonFormField<int>(
+                      decoration: InputDecoration(
+                        labelText: l10n.filterByArea,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      value: tempAreaId,
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.filterByArea)),
+                        ..._areas
+                            .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() => tempAreaId = value);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Subject Filter
+                    DropdownButtonFormField<int>(
+                      decoration: InputDecoration(
+                        labelText: l10n.filterBySubject,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      value: tempSubjectId,
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.filterBySubject)),
+                        ..._subjects
+                            .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
+                            .toList(),
+                      ],
+                      onChanged: (value) {
+                        setState(() => tempSubjectId = value);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      _selectedStatus = tempStatus;
+                      _selectedPriority = tempPriority;
+                      _selectedAreaId = tempAreaId;
+                      _selectedSubjectId = tempSubjectId;
+                    });
+                    Navigator.pop(ctx);
+                    _fetchData();
+                  },
+                  child: Text(l10n.apply),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showReassignDialog(int grievanceId) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    int? selectedAssigneeId;
+    
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(l10n.reassignComplaint, style: theme.textTheme.titleLarge),
               content: _assignees.isEmpty
                   ? Text('No field staff available')
-                  : DropdownButton<int>(
-                      hint: Text(l10n.selectAssignee),
+                  : DropdownButtonFormField<int>(
+                      decoration: InputDecoration(
+                        labelText: l10n.selectAssignee,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
                       value: selectedAssigneeId,
                       isExpanded: true,
                       items: _assignees
@@ -318,24 +554,33 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(l10n.cancel),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () async {
                     if (selectedAssigneeId != null) {
                       try {
                         await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${l10n.reassignComplaint} Successful')),
+                          SnackBar(
+                            content: Text('${l10n.reassignComplaint} Successful'),
+                            backgroundColor: theme.colorScheme.primary,
+                          ),
                         );
                         _fetchData();
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
+                          SnackBar(
+                            content: Text(e.toString()),
+                            backgroundColor: theme.colorScheme.error,
+                          ),
                         );
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.selectAssignee)),
+                        SnackBar(
+                          content: Text(l10n.selectAssignee),
+                          backgroundColor: theme.colorScheme.error,
+                        ),
                       );
                     }
                   },
@@ -351,21 +596,31 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
 
   void _showStatusDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     String? selectedStatus;
+    
     showDialog(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(l10n.updateStatus),
-              content: DropdownButton<String>(
-                hint: Text(l10n.selectStatus),
+              title: Text(l10n.updateStatus, style: theme.textTheme.titleLarge),
+              content: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  labelText: l10n.selectStatus,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
                 value: selectedStatus,
                 isExpanded: true,
-                items: ['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                    .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                    .toList(),
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.selectStatus)),
+                  ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
+                      .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
+                      .toList(),
+                ],
                 onChanged: (value) {
                   setState(() => selectedStatus = value);
                 },
@@ -375,24 +630,33 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   onPressed: () => Navigator.pop(ctx),
                   child: Text(l10n.cancel),
                 ),
-                TextButton(
+                ElevatedButton(
                   onPressed: () async {
                     if (selectedStatus != null) {
                       try {
                         await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('${l10n.updateStatus} Successful')),
+                          SnackBar(
+                            content: Text('${l10n.updateStatus} Successful'),
+                            backgroundColor: theme.colorScheme.primary,
+                          ),
                         );
                         _fetchData();
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
+                          SnackBar(
+                            content: Text(e.toString()),
+                            backgroundColor: theme.colorScheme.error,
+                          ),
                         );
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(l10n.selectStatus)),
+                        SnackBar(
+                          content: Text(l10n.selectStatus),
+                          backgroundColor: theme.colorScheme.error,
+                        ),
                       );
                     }
                   },

@@ -87,32 +87,32 @@ class CustomNavigationDrawer extends ConsumerWidget {
               title: localizations.manageAreas ?? 'Manage Areas',
               route: '/admin/areas',
             ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.assessment,
-              title: localizations.reports ?? 'Reports',
-              route: '/admin/reports',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.assessment,
+            //   title: localizations.reports ?? 'Reports',
+            //   route: '/admin/reports',
+            // ),
           ],
           if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.view_list,
-              title: localizations.viewgrievanceetails ?? 'View Grievances',
-              route: '/member_head/view',
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.assignment,
-              title: localizations.assignGrievance ?? 'Assign Grievance',
-              route: '/member_head/assign',
-            ),
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.cancel,
-              title: localizations.rejectGrievance ?? 'Reject Grievance',
-              route: '/member_head/reject',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.view_list,
+            //   title: localizations.viewgrievanceetails ?? 'View Grievances',
+            //   route: '/member_head/view',
+            // ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.assignment,
+            //   title: localizations.assignGrievance ?? 'Assign Grievance',
+            //   route: '/member_head/assign',
+            // ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.cancel,
+            //   title: localizations.rejectGrievance ?? 'Reject Grievance',
+            //   route: '/member_head/reject',
+            // ),
           ],
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             

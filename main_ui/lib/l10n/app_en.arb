@@ -203,5 +203,8 @@
   "selectExpiration":"Select Expiration",
   "announcementAdded":"Announcement added successfully",
   "takeAction":"Take Action",
-  "refresh":"Refresh"
+  "refresh":"Refresh",
+  "exportReports":"Export Reports",
+  "filters":"Filters",
+  "apply":"Apply"
 }

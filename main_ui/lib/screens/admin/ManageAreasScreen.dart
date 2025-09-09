@@ -35,14 +35,19 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FBFF), // soft background
       appBar: AppBar(
-        title: const Text('Manage Areas'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: _showAddAreaDialog,
-          ),
-        ],
+        title: const Text(
+          'Manage Areas',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.blue.shade600,
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue.shade600,
+        onPressed: _showAddAreaDialog,
+        child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<MasterArea>>(
         future: _areasFuture,
@@ -53,14 +58,45 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
+
           final areas = snapshot.data ?? [];
+          if (areas.isEmpty) {
+            return const Center(
+              child: Text(
+                "No areas found",
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            );
+          }
+
           return ListView.builder(
+            padding: const EdgeInsets.all(12),
             itemCount: areas.length,
             itemBuilder: (context, index) {
               final area = areas[index];
-              return ListTile(
-                title: Text(area.name),
-                subtitle: Text(area.description ?? 'No description'),
+              return Card(
+                color: const Color(0xFFECF2FE), // card background
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ListTile(
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  title: Text(
+                    area.name,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    area.description ?? 'No description',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                ),
               );
             },
           );
@@ -121,7 +157,11 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Area'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text(
+        'Add Area',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       content: Form(
         key: _formKey,
         child: Column(
@@ -129,7 +169,10 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
           children: [
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(labelText: 'Area Name'),
+              decoration: const InputDecoration(
+                labelText: 'Area Name',
+                border: OutlineInputBorder(),
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter an area name';
@@ -137,9 +180,13 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
                 return null;
               },
             ),
+            const SizedBox(height: 12),
             TextFormField(
               controller: _descriptionController,
-              decoration: const InputDecoration(labelText: 'Description (Optional)'),
+              decoration: const InputDecoration(
+                labelText: 'Description (Optional)',
+                border: OutlineInputBorder(),
+              ),
             ),
           ],
         ),
@@ -150,12 +197,19 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue.shade600,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
           onPressed: _isSubmitting ? null : _submit,
           child: _isSubmitting
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  child: CircularProgressIndicator(
+                      strokeWidth: 2, color: Colors.white),
                 )
               : const Text('Add'),
         ),

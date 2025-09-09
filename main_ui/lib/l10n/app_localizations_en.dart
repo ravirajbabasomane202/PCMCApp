@@ -509,4 +509,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refresh => 'Refresh';
+
+  @override
+  String get exportReports => 'Export Reports';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get apply => 'Apply';
 }

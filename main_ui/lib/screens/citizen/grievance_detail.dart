@@ -98,6 +98,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
               children: [
                 // Header section with title and status
                 Card(
+                  color: const Color(0xFFecf2fe), 
                   elevation: 2,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Padding(
@@ -134,6 +135,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                 
                 // Details section
                 Card(
+                  color: const Color(0xFFecf2fe), 
                   elevation: 2,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Padding(
@@ -184,6 +186,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                 if (grievance.attachments != null && grievance.attachments!.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   Card(
+                    color: const Color(0xFFecf2fe), 
                     elevation: 2,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: Padding(
@@ -219,6 +222,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                 // Comments section
                 const SizedBox(height: 16),
                 Card(
+                  color: const Color(0xFFecf2fe), 
                   elevation: 2,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Padding(
@@ -253,6 +257,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                 if (grievance.status == 'resolved') ...[
                   const SizedBox(height: 16),
                   Card(
+                    color: const Color(0xFFecf2fe), 
                     elevation: 2,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: Padding(

@@ -198,7 +198,10 @@
   "selectExpiration": "कालावधी निवडा",
   "announcementAdded": "जाहिरात यशस्वीरीत्या जोडली गेली",
   "takeAction":"कार्रवाई करें",
-  "refresh":"ताज़ा करें"
+  "refresh":"ताज़ा करें",
+  "exportReports":"रिपोर्ट निर्यात करें",
+  "filters":"फ़िल्टर",
+  "apply":"लागू करें"
 }
 
 

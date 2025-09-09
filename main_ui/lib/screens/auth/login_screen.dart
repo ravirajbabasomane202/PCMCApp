@@ -58,6 +58,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final l10n = AppLocalizations.of(context)!;
     
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FBFF),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -65,10 +66,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              Text(
-                _isLogin ? l10n.login : l10n.register,
-                style: theme.textTheme.headlineLarge,
-              ),
+              Center(
+  child: Text(
+    _isLogin ? l10n.login : l10n.register,
+    textAlign: TextAlign.center,
+    style: theme.textTheme.headlineLarge?.copyWith(
+      fontSize: 32, // adjust as needed
+      fontWeight: FontWeight.bold,
+      color: const Color(0xFF0076FD),
+    ),
+  ),
+),
+
               const SizedBox(height: 8),
               Text(
                 _isLogin 
@@ -148,7 +157,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             });
                           },
                           style: TextButton.styleFrom(
-                            foregroundColor: const Color(0xFF151a2f),
+                            foregroundColor: const Color(0xFF0076FD),
                           ),
                           child: Text(_isLogin ? l10n.register : l10n.login),
                         ),
@@ -173,28 +182,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     const SizedBox(height: 24),
                     
-                    OutlinedButton.icon(
-                      icon: Image.asset('assets/images/google_logo.png', height: 24, width: 24),
-                      label: Text(l10n.googleLogin),
-                      onPressed: _isLoading ? null : () async {
-                        setState(() => _isLoading = true);
-                        try {
-                          await ref.read(authProvider.notifier).loginWithGoogle();
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${l10n.googleLoginFailed}: $e')),
-                          );
-                        } finally {
-                          setState(() => _isLoading = false);
-                        }
-                      },
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: theme.dividerTheme.color!),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    SizedBox(
+  width: double.infinity,
+  child: OutlinedButton.icon(
+    icon: Image.asset('assets/images/google_logo.png', height: 24, width: 24),
+    label: Text(l10n.googleLogin),
+    onPressed: _isLoading ? null : () async {
+      setState(() => _isLoading = true);
+      try {
+        await ref.read(authProvider.notifier).loginWithGoogle();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.googleLoginFailed}: $e')),
+        );
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    },
+    style: OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      side: BorderSide(color: theme.dividerTheme.color!),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    ),
+  ),
+)
 
-                      ),
-                    ),
+
+
+
+
                   ],
                 ),
               ),

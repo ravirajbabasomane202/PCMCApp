@@ -7,6 +7,7 @@ import 'package:main_ui/services/api_service.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/status_badge.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 
 class ViewGrievances extends StatefulWidget {
   const ViewGrievances({super.key});
@@ -60,7 +61,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     });
 
     try {
-      final response = await ApiService.get('/grievances/all' );
+      final response = await ApiService.get('/grievances/all');
       print("📥 Raw API response: ${response.data}");
 
       if (response.data is! List) {
@@ -81,13 +82,13 @@ class _ViewGrievancesState extends State<ViewGrievances> {
       filteredGrievances = List.from(grievances);
       print("📌 Filtered grievances initialized: $filteredGrievances");
 
-      final areasResponse = await ApiService.get('/areas' );
+      final areasResponse = await ApiService.get('/areas');
       areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
 
-      final subjectsResponse = await ApiService.get('/subjects' );
+      final subjectsResponse = await ApiService.get('/subjects');
       subjects = (subjectsResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
 
-      final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff' );
+      final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff');
       fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
     } catch (e) {
       print("❌ Error in _loadData: $e");
@@ -123,6 +124,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   void _showActionSheet(Grievance grievance) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -132,32 +134,39 @@ class _ViewGrievancesState extends State<ViewGrievances> {
           padding: const EdgeInsets.all(16),
           children: [
             ListTile(
-              leading: const Icon(Icons.update),
-              title: Text(AppLocalizations.of(context)!.updateStatus),
+              leading: const Icon(Icons.update, color: Colors.blue),
+              title: Text(AppLocalizations.of(context)!.updateStatus,
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showUpdateStatusDialog(grievance);
               },
             ),
+            const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.assignment_ind),
-              title: Text(AppLocalizations.of(context)!.assignGrievance),
+              leading: const Icon(Icons.assignment_ind, color: Colors.blue),
+              title: Text(AppLocalizations.of(context)!.assignGrievance,
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showAssignDialog(grievance);
               },
             ),
+            const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.cancel),
-              title: Text(AppLocalizations.of(context)!.rejectGrievance),
+              leading: const Icon(Icons.cancel, color: Colors.red),
+              title: Text(AppLocalizations.of(context)!.rejectGrievance,
+                  style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.red)),
               onTap: () {
                 Navigator.pop(ctx);
                 _showRejectDialog(grievance);
               },
             ),
+            const Divider(height: 1),
             ListTile(
-              leading: const Icon(Icons.visibility),
-              title: Text(AppLocalizations.of(context)!.viewDetails),
+              leading: const Icon(Icons.visibility, color: Colors.blue),
+              title: Text(AppLocalizations.of(context)!.viewDetails,
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
               onTap: () {
                 Navigator.pop(ctx);
                 Navigator.pushNamed(context, '/citizen/detail', arguments: grievance.id);
@@ -174,9 +183,20 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.updateStatus),
+        title: Text(AppLocalizations.of(context)!.updateStatus,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
           value: newStatus,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xffecf2fe),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
           hint: Text(AppLocalizations.of(context)!.selectStatus),
           items: statuses.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
           onChanged: (value) => newStatus = value,
@@ -184,9 +204,14 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
             onPressed: () async {
               if (newStatus != null) {
                 try {
@@ -200,7 +225,8 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                 }
               }
             },
-            child: Text(AppLocalizations.of(context)!.update),
+            child: Text(AppLocalizations.of(context)!.update,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -212,9 +238,20 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.assignGrievance),
+        title: Text(AppLocalizations.of(context)!.assignGrievance,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
           value: assigneeId,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color(0xffecf2fe),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
           hint: Text(AppLocalizations.of(context)!.selectAssignee),
           items: fieldStaff.map((staff) => DropdownMenuItem(value: staff['id'].toString(), child: Text(staff['name'] ?? 'Unknown'))).toList(),
           onChanged: (value) => assigneeId = value,
@@ -222,9 +259,14 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
             onPressed: () async {
               if (assigneeId != null) {
                 try {
@@ -238,7 +280,8 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                 }
               }
             },
-            child: Text(AppLocalizations.of(context)!.assignGrievance),
+            child: Text(AppLocalizations.of(context)!.assignGrievance,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -250,17 +293,34 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.rejectGrievance),
+        title: Text(AppLocalizations.of(context)!.rejectGrievance,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: TextField(
           controller: reasonController,
-          decoration: InputDecoration(hintText: AppLocalizations.of(context)!.rejectionReason ?? 'Enter rejection reason'),
+          maxLines: 3,
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.rejectionReason ?? 'Enter rejection reason',
+            filled: true,
+            fillColor: const Color(0xffecf2fe),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(AppLocalizations.of(context)!.cancel,
+                style: const TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
             onPressed: () async {
               final reason = reasonController.text;
               if (reason.isNotEmpty) {
@@ -275,7 +335,8 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                 }
               }
             },
-            child: Text(AppLocalizations.of(context)!.reject),
+            child: Text(AppLocalizations.of(context)!.reject,
+                style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -287,16 +348,21 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     final l = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: const Color(0xfff8fbff),
       appBar: AppBar(
-        title: Text(l.viewgrievanceetails),
+        title: Text(l.viewgrievanceetails,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
+        elevation: 2,
+        iconTheme: const IconThemeData(color: Colors.blue),
       ),
+      drawer: const CustomNavigationDrawer(),
       body: isLoading
           ? const LoadingIndicator()
           : SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  
                   grievances.isEmpty
                       ? EmptyState(
                           icon: Icons.hourglass_empty,
@@ -304,96 +370,147 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                           message: l.noGrievancesMessage,
                           actionButton: ElevatedButton(
                             onPressed: _loadData,
-                            child: Text(l.retry),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(l.retry, style: const TextStyle(color: Colors.white)),
                           ),
                         )
                       : Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _buildFilterDropdown(
-                                      l.filterByStatus,
-                                      statuses,
-                                      selectedStatus,
-                                      (v) {
-                                        selectedStatus = v;
-                                        _applyFilters();
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildFilterDropdown(
-                                      l.filterByPriority,
-                                      priorities,
-                                      selectedPriority,
-                                      (v) {
-                                        selectedPriority = v;
-                                        _applyFilters();
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildFilterDropdown(
-                                      l.filterByArea,
-                                      areas.map((a) => a['name'] as String).toList(),
-                                      selectedArea,
-                                      (v) {
-                                        selectedArea = v == null ? null : areas.firstWhere((a) => a['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                        _applyFilters();
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    _buildFilterDropdown(
-                                      l.filterBySubject,
-                                      subjects.map((s) => s['name'] as String).toList(),
-                                      selectedSubject,
-                                      (v) {
-                                        selectedSubject = v == null ? null : subjects.firstWhere((s) => s['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                        _applyFilters();
-                                      },
-                                    ),
-                                  ],
-                                ),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              color: Colors.white,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text("Filters",
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 12,
+                                    runSpacing: 12,
+                                    children: [
+                                      _buildFilterDropdown(
+                                        l.filterByStatus,
+                                        statuses,
+                                        selectedStatus,
+                                        (v) {
+                                          selectedStatus = v;
+                                          _applyFilters();
+                                        },
+                                      ),
+                                      _buildFilterDropdown(
+                                        l.filterByPriority,
+                                        priorities,
+                                        selectedPriority,
+                                        (v) {
+                                          selectedPriority = v;
+                                          _applyFilters();
+                                        },
+                                      ),
+                                      _buildFilterDropdown(
+                                        l.filterByArea,
+                                        areas.map((a) => a['name'] as String).toList(),
+                                        selectedArea,
+                                        (v) {
+                                          selectedArea = v == null
+                                              ? null
+                                              : areas.firstWhere((a) => a['name'] == v, orElse: () => {'id': null})['id']?.toString();
+                                          _applyFilters();
+                                        },
+                                      ),
+                                      _buildFilterDropdown(
+                                        l.filterBySubject,
+                                        subjects.map((s) => s['name'] as String).toList(),
+                                        selectedSubject,
+                                        (v) {
+                                          selectedSubject = v == null
+                                              ? null
+                                              : subjects.firstWhere((s) => s['name'] == v, orElse: () => {'id': null})['id']?.toString();
+                                          _applyFilters();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.7,
-                              child: RefreshIndicator(
-                                onRefresh: _loadData,
-                                child: ListView.builder(
-                                  itemCount: filteredGrievances.length,
-                                  itemBuilder: (ctx, i) {
-                                    final g = filteredGrievances[i];
-                                    return Card(
-                                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Expanded(child: Text(g.title ?? 'Untitled', style: const TextStyle(fontWeight: FontWeight.bold))),
-                                                StatusBadge(status: g.status ?? 'new'),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(g.description ?? ''),
-                                            const SizedBox(height: 8),
-                                            ElevatedButton(
-                                              onPressed: () => _showActionSheet(g),
-                                              child: Text(l.takeAction ?? 'Take Action'),
-                                            ),
-                                          ],
+                            const SizedBox(height: 16),
+                            RefreshIndicator(
+                              onRefresh: _loadData,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: filteredGrievances.length,
+                                itemBuilder: (ctx, i) {
+                                  final g = filteredGrievances[i];
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xffecf2fe),
+                                      borderRadius: BorderRadius.circular(16),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.1),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 2),
                                         ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Expanded(
+                                                child: Text(g.title ?? 'Untitled',
+                                                    style: const TextStyle(
+                                                        fontWeight: FontWeight.bold, fontSize: 16)),
+                                              ),
+                                              StatusBadge(status: g.status ?? 'new'),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Text(g.description ?? '',
+                                              style: TextStyle(color: Colors.grey[700])),
+                                          const SizedBox(height: 12),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              if (g.priority != null)
+                                                Chip(
+                                                  label: Text(g.priority!,
+                                                      style: const TextStyle(fontSize: 12, color: Colors.white)),
+                                                  backgroundColor: _getPriorityColor(g.priority!),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                                ),
+                                              const Spacer(),
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.blue,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(12),
+                                                  ),
+                                                ),
+                                                onPressed: () => _showActionSheet(g),
+                                                child: Text(l.takeAction ?? 'Take Action',
+                                                    style: const TextStyle(color: Colors.white)),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ],
@@ -405,47 +522,72 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   }
 
   Widget _buildFilterDropdown(
-  String label,
-  dynamic items, // Can be List<String> or List<Map<String, dynamic>>
-  String? selected,
-  ValueChanged<String?> onChanged,
-) {
-  List<DropdownMenuItem<String?>> dropdownItems = [];
+    String label,
+    dynamic items,
+    String? selected,
+    ValueChanged<String?> onChanged,
+  ) {
+    List<DropdownMenuItem<String?>> dropdownItems = [];
 
-  // Default "All" option
-  dropdownItems.add(const DropdownMenuItem(
-    value: null,
-    child: Text("All"),
-  ));
+    // Default "All" option
+    dropdownItems.add(const DropdownMenuItem(
+      value: null,
+      child: Text("All", style: TextStyle(color: Colors.grey)),
+    ));
 
-  if (items is List<String>) {
-    // Handle plain string lists (status, priority)
-    dropdownItems.addAll(
-      items.map(
-        (s) => DropdownMenuItem(
-          value: s,
-          child: Text(s),
+    if (items is List<String>) {
+      // Handle plain string lists (status, priority)
+      dropdownItems.addAll(
+        items.map(
+          (s) => DropdownMenuItem(
+            value: s,
+            child: Text(s),
+          ),
         ),
+      );
+    } else if (items is List<Map<String, dynamic>>) {
+      // Handle maps with {id, name} (areas, subjects, staff)
+      dropdownItems.addAll(
+        items.map(
+          (m) => DropdownMenuItem(
+            value: m['id']?.toString(),
+            child: Text(m['name'] ?? 'Unknown'),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xffecf2fe),
+        borderRadius: BorderRadius.circular(12),
       ),
-    );
-  } else if (items is List<Map<String, dynamic>>) {
-    // Handle maps with {id, name} (areas, subjects, staff)
-    dropdownItems.addAll(
-      items.map(
-        (m) => DropdownMenuItem(
-          value: m['id']?.toString(),
-          child: Text(m['name'] ?? 'Unknown'),
-        ),
+      child: DropdownButton<String?>(
+        hint: Text(label, style: const TextStyle(fontSize: 14)),
+        value: selected,
+        items: dropdownItems,
+        onChanged: onChanged,
+        underline: const SizedBox(),
+        icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
+        isDense: true,
+        borderRadius: BorderRadius.circular(12),
       ),
     );
   }
 
-  return DropdownButton<String?>(
-    hint: Text(label),
-    value: selected,
-    items: dropdownItems,
-    onChanged: onChanged,
-  );
-}
-
+  Color _getPriorityColor(String priority) {
+    switch (priority) {
+      case 'low':
+        return Colors.green;
+      case 'medium':
+        return Colors.orange;
+      case 'high':
+        return Colors.orangeAccent;
+      case 'urgent':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
 }

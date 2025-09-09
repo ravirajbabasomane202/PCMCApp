@@ -509,4 +509,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get refresh => 'ताज़ा करें';
+
+  @override
+  String get exportReports => 'रिपोर्ट निर्यात करें';
+
+  @override
+  String get filters => 'फ़िल्टर';
+
+  @override
+  String get apply => 'लागू करें';
 }

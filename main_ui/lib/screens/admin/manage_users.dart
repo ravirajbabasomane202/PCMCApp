@@ -28,298 +28,423 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.addUser),
-        content: SingleChildScrollView(
-          child: Form(
-            key: formKey,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: l10n.name,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                Text(
+                  l10n.addUser,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[800],
                   ),
-                  validator: validateRequired,
-                  onChanged: (value) => name = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: l10n.email,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 20),
+                SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: l10n.name,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: validateRequired,
+                          onChanged: (value) => name = value,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: l10n.email,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: validateEmail,
+                          onChanged: (value) => email = value,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Phone number is required';
+                            }
+                            if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                              return 'Invalid phone number';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) => phoneNumber = value,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: l10n.password,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Password is required';
+                            }
+                            if (value.length < 6) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) => password = value,
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          value: role,
+                          decoration: InputDecoration(
+                            labelText: l10n.role,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+                              .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                              .toList(),
+                          onChanged: (value) => role = value ?? 'CITIZEN',
+                          validator: validateRequired,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Department ID (Optional)',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) => departmentId = value.isEmpty ? null : value,
+                        ),
+                      ],
                     ),
                   ),
-                  validator: validateEmail,
-                  onChanged: (value) => email = value,
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[700])),
                     ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Phone number is required';
-                    }
-                    if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                      return 'Invalid phone number';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => phoneNumber = value,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: l10n.password,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 100, // Fixed width to avoid layout issues
+                      child: CustomButton(
+                        text: l10n.add,
+                        onPressed: () async {
+                          if (formKey.currentState?.validate() ?? false) {
+                            try {
+                              await ref.read(usersProvider.notifier).addUser({
+                                'name': name,
+                                'email': email,
+                                'phone_number': phoneNumber,
+                                'password': password,
+                                'role': role,
+                                'department_id':
+                                    departmentId != null ? int.tryParse(departmentId!) : null,
+                              });
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.userAddedSuccess),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('${l10n.failedToAddUser}: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
                     ),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Password is required';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                  onChanged: (value) => password = value,
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: role,
-                  decoration: InputDecoration(
-                    labelText: l10n.role,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                      .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                      .toList(),
-                  onChanged: (value) => role = value ?? 'CITIZEN',
-                  validator: validateRequired,
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Department ID (Optional)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) => departmentId = value.isEmpty ? null : value,
+                  ],
                 ),
               ],
             ),
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel),
-          ),
-          CustomButton(
-            text: l10n.add,
-            onPressed: () async {
-              if (formKey.currentState?.validate() ?? false) {
-                try {
-                  await ref.read(usersProvider.notifier).addUser({
-                    'name': name,
-                    'email': email,
-                    'phone_number': phoneNumber,
-                    'password': password,
-                    'role': role,
-                    'department_id':
-                        departmentId != null ? int.tryParse(departmentId!) : null,
-                  });
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.userAddedSuccess)),
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${l10n.failedToAddUser}: $e')),
-                  );
-                }
-              }
-            },
-          ),
-        ],
       ),
     );
   }
 
   Future<void> _showEditUserDialog(User user) async {
-  final l10n = AppLocalizations.of(context)!;
-  final formKey = GlobalKey<FormState>();
-  String name = user.name ?? "";
-  String email = user.email ?? '';
-  String phoneNumber = user.phoneNumber ?? '';
-  // Normalize role to match dropdown items
-  String role = ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-      .contains(user.role?.toUpperCase())
-      ? user.role!.toUpperCase()
-      : 'CITIZEN'; // Default to 'CITIZEN' if invalid
-  String? departmentId = user.departmentId?.toString();
+    final l10n = AppLocalizations.of(context)!;
+    final formKey = GlobalKey<FormState>();
+    String name = user.name ?? "";
+    String email = user.email ?? '';
+    String phoneNumber = user.phoneNumber ?? '';
+    // Normalize role to match dropdown items
+    String role = ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+        .contains(user.role?.toUpperCase())
+        ? user.role!.toUpperCase()
+        : 'CITIZEN'; // Default to 'CITIZEN' if invalid
+    String? departmentId = user.departmentId?.toString();
 
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(l10n.editUser ?? 'Edit User'),
-      content: SingleChildScrollView(
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                initialValue: name,
-                decoration: InputDecoration(
-                  labelText: l10n.name,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  l10n.editUser ?? 'Edit User',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue[800],
                   ),
                 ),
-                validator: validateRequired,
-                onChanged: (value) => name = value,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                initialValue: email,
-                decoration: InputDecoration(
-                  labelText: l10n.email,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 20),
+                SingleChildScrollView(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          initialValue: name,
+                          decoration: InputDecoration(
+                            labelText: l10n.name,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: validateRequired,
+                          onChanged: (value) => name = value,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          initialValue: email,
+                          decoration: InputDecoration(
+                            labelText: l10n.email,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: validateEmail,
+                          onChanged: (value) => email = value,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          initialValue: phoneNumber,
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Phone number is required';
+                            }
+                            if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                              return 'Invalid phone number';
+                            }
+                            return null;
+                          },
+                          onChanged: (value) => phoneNumber = value,
+                        ),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          value: role,
+                          decoration: InputDecoration(
+                            labelText: l10n.role,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+                              .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                              .toList(),
+                          onChanged: (value) => setState(() {
+                            role = value ?? 'CITIZEN';
+                          }),
+                          validator: validateRequired,
+                        ),
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          initialValue: departmentId,
+                          decoration: InputDecoration(
+                            labelText: 'Department ID (Optional)',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) => departmentId = value.isEmpty ? null : value,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                validator: validateEmail,
-                onChanged: (value) => email = value,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                initialValue: phoneNumber,
-                decoration: InputDecoration(
-                  labelText: 'Phone Number',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[700])),
+                    ),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 100, // Fixed width to avoid layout issues
+                      child: CustomButton(
+                        text: l10n.update,
+                        onPressed: () async {
+                          if (formKey.currentState?.validate() ?? false) {
+                            try {
+                              await ref.read(usersProvider.notifier).updateUser(user.id, {
+                                'id': user.id,
+                                'name': name,
+                                'email': email,
+                                'phone_number': phoneNumber,
+                                'role': role,
+                                'department_id':
+                                    departmentId != null ? int.tryParse(departmentId!) : null,
+                              });
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.userUpdatedSuccess ??
+                                      'User updated successfully'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Phone number is required';
-                  }
-                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                    return 'Invalid phone number';
-                  }
-                  return null;
-                },
-                onChanged: (value) => phoneNumber = value,
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: role,
-                decoration: InputDecoration(
-                  labelText: l10n.role,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                    .toList(),
-                onChanged: (value) => setState(() {
-                  role = value ?? 'CITIZEN';
-                }),
-                validator: validateRequired,
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                initialValue: departmentId,
-                decoration: InputDecoration(
-                  labelText: 'Department ID (Optional)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) => departmentId = value.isEmpty ? null : value,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.cancel),
-        ),
-        CustomButton(
-          text: l10n.update,
-          onPressed: () async {
-            if (formKey.currentState?.validate() ?? false) {
-              try {
-                await ref.read(usersProvider.notifier).updateUser(user.id, {
-                  'id': user.id,
-                  'name': name,
-                  'email': email,
-                  'phone_number': phoneNumber,
-                  'role': role,
-                  'department_id':
-                      departmentId != null ? int.tryParse(departmentId!) : null,
-                });
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(l10n.userUpdatedSuccess ??
-                          'User updated successfully')),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(
-                          '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e')),
-                );
-              }
-            }
-          },
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   Future<void> _confirmDeleteUser(int userId) async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deleteUser ?? 'Delete User'),
-        content: Text(l10n.deleteUserConfirmation ??
-            'Are you sure you want to delete this user?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
           ),
-          CustomButton(
-            text: l10n.delete ?? 'Delete',
-            backgroundColor: Colors.red,
-            onPressed: () => Navigator.pop(context, true),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.warning_amber_rounded, size: 48, color: Colors.orange[700]),
+              const SizedBox(height: 16),
+              Text(
+                l10n.deleteUser ?? 'Delete User',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.deleteUserConfirmation ??
+                    'Are you sure you want to delete this user?',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey[700]),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[700])),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 100, // Fixed width to avoid layout issues
+                    child: CustomButton(
+                      text: l10n.delete ?? 'Delete',
+                      backgroundColor: Colors.red,
+                      onPressed: () => Navigator.pop(context, true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
 
@@ -328,14 +453,16 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
         await ref.read(usersProvider.notifier).deleteUser(userId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(l10n.userDeletedSuccess ?? 'User deleted successfully')),
+            content: Text(l10n.userDeletedSuccess ?? 'User deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  '${l10n.failedToDeleteUser ?? 'Failed to delete user'}: $e')),
+            content: Text('${l10n.failedToDeleteUser ?? 'Failed to delete user'}: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -349,13 +476,16 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFf8fbff), // Set background color
       appBar: AppBar(
         title: Text(l10n.manageUsers),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue[800],
+        elevation: 1,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: () =>
-                ref.read(usersProvider.notifier).fetchUsers(),
+            onPressed: () => ref.read(usersProvider.notifier).fetchUsers(),
             tooltip: l10n.retry,
           ),
         ],
@@ -363,7 +493,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddUserDialog,
         backgroundColor: theme.colorScheme.primary,
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
         tooltip: l10n.addUser,
       ),
       body: users.isEmpty
@@ -377,46 +507,93 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
               ),
             )
           : ListView.builder(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(16),
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final user = users[index];
-                return Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: theme.colorScheme.primary,
-                      child: Text(
-                        (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
-                        style: TextStyle(color: theme.colorScheme.onPrimary),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Card(
+                    elevation: 1,
+                    color: const Color(0xFFecf2fe), // Set card background color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      leading: CircleAvatar(
+                        backgroundColor: theme.colorScheme.primary,
+                        child: Text(
+                          (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
+                          style: TextStyle(color: theme.colorScheme.onPrimary),
+                        ),
                       ),
-                    ),
-                    title: Text(user.name ?? "", style: theme.textTheme.titleMedium),
-                    subtitle: Text(
-                      '${user.email ?? l10n.noEmail} • ${user.role}',
-                      style: theme.textTheme.bodySmall,
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => _showEditUserDialog(user),
-                          tooltip: l10n.editUser,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _confirmDeleteUser(user.id),
-                          tooltip: l10n.deleteUser,
-                        ),
-                      ],
+                      title: Text(user.name ?? "", 
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600
+                          )),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Text(
+                            user.email ?? l10n.noEmail,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[700]
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _getRoleColor(user.role),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              user.role ?? '',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.blue[700]),
+                            onPressed: () => _showEditUserDialog(user),
+                            tooltip: l10n.editUser,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _confirmDeleteUser(user.id),
+                            tooltip: l10n.deleteUser,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
             ),
     );
+  }
+
+  Color _getRoleColor(String? role) {
+    switch (role?.toUpperCase()) {
+      case 'ADMIN':
+        return Colors.red;
+      case 'MEMBER_HEAD':
+        return Colors.orange;
+      case 'FIELD_STAFF':
+        return Colors.green;
+      case 'CITIZEN':
+      default:
+        return Colors.blue;
+    }
   }
 }

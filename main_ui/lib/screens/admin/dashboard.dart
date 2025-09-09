@@ -59,14 +59,23 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(loc.appTitle),
+        title: Text(loc.appTitle,
+    style: TextStyle(color: Colors.black),),
         centerTitle: true,
         elevation: 2,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue.shade800,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
       drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
         onRefresh: _fetchData,
+        backgroundColor: Colors.white,
+        color: Colors.blue.shade600,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -87,9 +96,15 @@ class _DashboardState extends ConsumerState<Dashboard> {
                         const SizedBox(height: 20),
                         _buildSlaCard(theme, kpiData, loc),
                         const SizedBox(height: 20),
-                        Text(loc.recentComplaints ?? 'Recent Complaints',
-                            style: theme.textTheme.titleMedium),
-                        const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(loc.recentComplaints ?? 'Recent Complaints',
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: Colors.blue.shade800,
+                                fontWeight: FontWeight.bold,
+                              )),
+                        ),
+                        const SizedBox(height: 12),
                         _buildRecentComplaints(loc),
                         const SizedBox(height: 24),
                         _buildExportButtons(loc),
@@ -112,29 +127,51 @@ class _DashboardState extends ConsumerState<Dashboard> {
   }
 
   Widget _buildFilterDropdown(ThemeData theme, AppLocalizations loc) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(loc.filterByPeriod ?? 'Time Period: ',
-            style: theme.textTheme.bodyMedium),
-        const SizedBox(width: 8),
-        DropdownButton<String>(
-          value: _selectedPeriod,
-          style: theme.textTheme.bodyMedium,
-          items: ['day', 'week', 'month', 'year', 'all']
-              .map((period) => DropdownMenuItem(
-                    value: period,
-                    child: Text(period.capitalize()),
-                  ))
-              .toList(),
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _selectedPeriod = value);
-              _fetchData();
-            }
-          },
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text(loc.filterByPeriod ?? 'Time Period: ',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w500,
+              )),
+          const SizedBox(width: 12),
+          DropdownButton<String>(
+            value: _selectedPeriod,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Colors.blue.shade800,
+            ),
+            dropdownColor: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            icon: Icon(Icons.arrow_drop_down, color: Colors.blue.shade600),
+            items: ['day', 'week', 'month', 'year', 'all']
+                .map((period) => DropdownMenuItem(
+                      value: period,
+                      child: Text(period.capitalize()),
+                    ))
+                .toList(),
+            onChanged: (value) {
+              if (value != null) {
+                setState(() => _selectedPeriod = value);
+                _fetchData();
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -142,29 +179,29 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: const Color(0xFFecf2fe),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(loc.totalComplaints ?? 'Total Complaints',
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                )),
+            const SizedBox(height: 16),
             Wrap(
-              spacing: 16,
-              runSpacing: 8,
+              spacing: 24,
+              runSpacing: 16,
               children: [
-                _buildMetricItem(loc.day ?? 'Day', totalComplaints['day'] ?? 0),
-                _buildMetricItem(
-                    loc.week ?? 'Week', totalComplaints['week'] ?? 0),
-                _buildMetricItem(
-                    loc.month ?? 'Month', totalComplaints['month'] ?? 0),
-                _buildMetricItem(
-                    loc.year ?? 'Year', totalComplaints['year'] ?? 0),
-                _buildMetricItem(
-                    loc.allTime ?? 'All Time', totalComplaints['all'] ?? 0),
+                _buildMetricItem(loc.day ?? 'Day', totalComplaints['day'] ?? 0, Colors.blue),
+                _buildMetricItem(loc.week ?? 'Week', totalComplaints['week'] ?? 0, Colors.green),
+                _buildMetricItem(loc.month ?? 'Month', totalComplaints['month'] ?? 0, Colors.orange),
+                _buildMetricItem(loc.year ?? 'Year', totalComplaints['year'] ?? 0, Colors.purple),
+                _buildMetricItem(loc.allTime ?? 'All Time', totalComplaints['all'] ?? 0, Colors.red),
               ],
             ),
           ],
@@ -173,15 +210,39 @@ class _DashboardState extends ConsumerState<Dashboard> {
     );
   }
 
-  Widget _buildMetricItem(String label, int value) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(fontSize: 12)),
-        Text(
-          '$value',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
+  Widget _buildMetricItem(String label, int value, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(label, 
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            )),
+          const SizedBox(height: 4),
+          Text(
+            '$value',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -189,27 +250,35 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final statusOverview = kpiData.statusOverview ?? {};
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: const Color(0xFFecf2fe),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(loc.complaintStatusOverview ?? 'Complaint Status Overview',
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                )),
+            const SizedBox(height: 16),
             SizedBox(
-              height: 220,
+              height: 240,
               child: statusOverview.isNotEmpty
                   ? PieChart(
                       PieChartData(
                         sections: _buildPieChartSections(statusOverview),
-                        centerSpaceRadius: 40,
-                        sectionsSpace: 2,
+                        centerSpaceRadius: 50,
+                        sectionsSpace: 0,
                       ),
                     )
-                  : const Center(child: LoadingIndicator()),
+                  : Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue.shade600,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -223,8 +292,10 @@ class _DashboardState extends ConsumerState<Dashboard> {
       Colors.orange,
       Colors.green,
       Colors.red,
-      Colors.grey,
-      Colors.purple
+      Colors.purple,
+      Colors.teal,
+      Colors.amber,
+      Colors.deepOrange,
     ];
     int index = 0;
 
@@ -239,9 +310,13 @@ class _DashboardState extends ConsumerState<Dashboard> {
         PieChartSectionData(
           value: 1,
           title: 'No Data',
-          color: Colors.grey,
-          radius: 50,
-          titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+          color: Colors.grey.shade300,
+          radius: 60,
+          titleStyle: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
         )
       ];
     }
@@ -255,21 +330,36 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
       return PieChartSectionData(
         value: value,
-        title: '${entry.key.replaceAll('_', ' ').capitalize()}\n${value.toInt()}',
+        title: '${value.toInt()}',
         color: color,
-        radius: 50,
-        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-        badgeWidget: Tooltip(
-          message: '${entry.key.capitalize()}: ${value.toInt()}',
-          child: Container(
-            width: 10,
-            height: 10,
-            decoration: BoxDecoration(
+        radius: 60,
+        titleStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        badgeWidget: Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(6),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 4,
+              ),
+            ],
+          ),
+          child: Text(
+            entry.key.capitalize(),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
               color: color,
-              shape: BoxShape.circle,
             ),
           ),
         ),
+        badgePositionPercentageOffset: 1.2,
       );
     }).toList();
   }
@@ -278,53 +368,86 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final totalComplaints = kpiData.totalComplaints ?? {};
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: const Color(0xFFecf2fe),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(loc.grievanceTrend ?? 'Grievance Trend Over Time',
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                )),
+            const SizedBox(height: 16),
             SizedBox(
-              height: 220,
+              height: 240,
               child: totalComplaints.isNotEmpty
                   ? LineChart(
                       LineChartData(
-                        gridData: FlGridData(show: true),
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: true,
+                          horizontalInterval: 1,
+                          verticalInterval: 1,
+                          getDrawingHorizontalLine: (value) => FlLine(
+                            color: Colors.grey.shade300,
+                            strokeWidth: 1,
+                          ),
+                          getDrawingVerticalLine: (value) => FlLine(
+                            color: Colors.grey.shade300,
+                            strokeWidth: 1,
+                          ),
+                        ),
                         titlesData: FlTitlesData(
                           leftTitles: AxisTitles(
                             sideTitles: SideTitles(
                               showTitles: true,
                               reservedSize: 40,
                               getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  style: const TextStyle(fontSize: 12),
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Text(
+                                    value.toInt().toString(),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
                                 );
                               },
                             ),
-                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
                           ),
                           bottomTitles: AxisTitles(
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
                                 const labels = ['Day', 'Week', 'Month', 'Year', 'All'];
-                                return Text(
-                                  labels[value.toInt()],
-                                  style: const TextStyle(fontSize: 12),
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    labels[value.toInt()],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
                                 );
                               },
                             ),
-                            axisNameWidget: Text(loc.timePeriod ?? 'Time Period'),
                           ),
                           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         ),
-                        borderData: FlBorderData(show: true),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
+                        ),
                         minX: 0,
                         maxX: 4,
                         minY: 0,
@@ -338,18 +461,37 @@ class _DashboardState extends ConsumerState<Dashboard> {
                               FlSpot(4, (totalComplaints['all'] ?? 0).toDouble()),
                             ],
                             isCurved: true,
-                            color: Colors.blue,
-                            barWidth: 3,
-                            dotData: FlDotData(show: true),
+                            color: Colors.blue.shade600,
+                            barWidth: 4,
+                            dotData: FlDotData(
+                              show: true,
+                              getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
+                                radius: 4,
+                                color: Colors.blue.shade600,
+                                strokeWidth: 2,
+                                strokeColor: Colors.white,
+                              ),
+                            ),
                             belowBarData: BarAreaData(
                               show: true,
-                              color: Colors.blue.withOpacity(0.2),
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.blue.shade600.withOpacity(0.3),
+                                  Colors.blue.shade100.withOpacity(0.1),
+                                ],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     )
-                  : const Center(child: LoadingIndicator()),
+                  : Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue.shade600,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -361,18 +503,22 @@ class _DashboardState extends ConsumerState<Dashboard> {
     final deptWise = kpiData.deptWise ?? {};
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: const Color(0xFFecf2fe),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(loc.deptWiseDistribution ?? 'Department-Wise Distribution',
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 8),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                )),
+            const SizedBox(height: 16),
             SizedBox(
-              height: 220,
+              height: 240,
               child: deptWise.isNotEmpty
                   ? BarChart(
                       BarChartData(
@@ -384,35 +530,65 @@ class _DashboardState extends ConsumerState<Dashboard> {
                               showTitles: true,
                               reservedSize: 40,
                               getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  style: const TextStyle(fontSize: 12),
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: Text(
+                                    value.toInt().toString(),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
                                 );
                               },
                             ),
-                            axisNameWidget: Text(loc.numberOfGrievances ?? 'Number of Grievances'),
                           ),
                           bottomTitles: AxisTitles(
                             sideTitles: SideTitles(
                               showTitles: true,
                               getTitlesWidget: (value, meta) {
                                 final keys = deptWise.keys.toList();
-                                return Text(
-                                  keys[value.toInt()].capitalize(),
-                                  style: const TextStyle(fontSize: 12),
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Text(
+                                    keys[value.toInt()].capitalize(),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 );
                               },
                             ),
-                            axisNameWidget: Text(loc.department ?? 'Department'),
                           ),
                           topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                           rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                         ),
-                        borderData: FlBorderData(show: true),
-                        gridData: FlGridData(show: true),
+                        borderData: FlBorderData(
+                          show: true,
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
+                        ),
+                        gridData: FlGridData(
+                          show: true,
+                          drawVerticalLine: false,
+                          horizontalInterval: 1,
+                          getDrawingHorizontalLine: (value) => FlLine(
+                            color: Colors.grey.shade300,
+                            strokeWidth: 1,
+                          ),
+                        ),
                       ),
                     )
-                  : const Center(child: LoadingIndicator()),
+                  : Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.blue.shade600,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -427,64 +603,126 @@ class _DashboardState extends ConsumerState<Dashboard> {
       Colors.green,
       Colors.red,
       Colors.purple,
+      Colors.teal,
+      Colors.amber,
+      Colors.deepOrange,
     ];
+    
     return deptWise.entries.toList().asMap().entries.map((entry) {
-  final index = entry.key;
-  final dept = entry.value.key;
-  final value = entry.value.value is num
-      ? (entry.value.value as num).toDouble()
-      : double.tryParse(entry.value.value.toString()) ?? 0.0;
+      final index = entry.key;
+      final dept = entry.value.key;
+      final value = entry.value.value is num
+          ? (entry.value.value as num).toDouble()
+          : double.tryParse(entry.value.value.toString()) ?? 0.0;
 
-  return BarChartGroupData(
-    x: index,
-    barRods: [
-      BarChartRodData(
-        toY: value,
-        color: colors[index % colors.length],
-        width: 16,
-        borderRadius: BorderRadius.circular(4),
-      ),
-    ],
-  );
-}).toList();
-
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: value,
+            color: colors[index % colors.length],
+            width: 20,
+            borderRadius: BorderRadius.circular(8),
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: value * 1.1,
+              color: Colors.grey.shade200,
+            ),
+          ),
+        ],
+      );
+    }).toList();
   }
 
   Widget _buildSlaCard(ThemeData theme, KpiData kpiData, AppLocalizations loc) {
     final slaMetrics = kpiData.slaMetrics ?? {};
 
     return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: const Color(0xFFecf2fe),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(loc.slaMetrics ?? 'SLA Metrics',
-                style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            _buildSlaMetricItem(loc.slaDays ?? 'SLA Days',
-                '${slaMetrics['sla_days'] ?? 7}'),
-            _buildSlaMetricItem(loc.complianceRate ?? 'Compliance Rate',
-                '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%'),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.blue.shade800,
+                  fontWeight: FontWeight.bold,
+                )),
+            const SizedBox(height: 16),
             _buildSlaMetricItem(
-                loc.avgResolutionTime ?? 'Avg Resolution Time',
-                '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days'),
+              loc.slaDays ?? 'SLA Days',
+              '${slaMetrics['sla_days'] ?? 7}',
+              Icons.calendar_today,
+              Colors.blue,
+            ),
+            const SizedBox(height: 12),
+            _buildSlaMetricItem(
+              loc.complianceRate ?? 'Compliance Rate',
+              '${(slaMetrics['sla_compliance_rate'] ?? 0).toStringAsFixed(2)}%',
+              Icons.percent,
+              Colors.green,
+            ),
+            const SizedBox(height: 12),
+            _buildSlaMetricItem(
+              loc.avgResolutionTime ?? 'Avg Resolution Time',
+              '${(slaMetrics['avg_resolution_time_days'] ?? 0).toStringAsFixed(2)} days',
+              Icons.timer,
+              Colors.orange,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSlaMetricItem(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+  Widget _buildSlaMetricItem(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
+                    )),
+                const SizedBox(height: 4),
+                Text(value,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    )),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -495,7 +733,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
       future: _grievancesFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingIndicator();
+          return const Center(child: LoadingIndicator());
         } else if (snapshot.hasError) {
           return EmptyState(
             icon: Icons.error,
@@ -523,69 +761,145 @@ class _DashboardState extends ConsumerState<Dashboard> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: grievances.length,
-          itemBuilder: (ctx, idx) => GrievanceCard(grievance: grievances[idx]),
+          itemBuilder: (ctx, idx) => Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: GrievanceCard(grievance: grievances[idx]),
+          ),
         );
       },
     );
   }
 
   Widget _buildExportButtons(AppLocalizations loc) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            loc.exportReports ?? 'Export Reports',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildExportButton(
+                icon: Icons.picture_as_pdf,
+                label: loc.exportPDF ?? 'PDF',
+                color: Colors.red,
+                onPressed: () => _exportReport('pdf'),
+              ),
+              _buildExportButton(
+                icon: Icons.table_chart,
+                label: loc.exportCSV ?? 'CSV',
+                color: Colors.green,
+                onPressed: () => _exportReport('csv'),
+              ),
+              _buildExportButton(
+                icon: Icons.grid_on,
+                label: loc.exportExcel ?? 'Excel',
+                color: Colors.blue,
+                onPressed: () => _exportReport('excel'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExportButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return Column(
       children: [
-        OutlinedButton.icon(
-          onPressed: () => _exportReport('pdf'),
-          icon: const Icon(Icons.picture_as_pdf),
-          label: Text(loc.exportPDF ?? 'Export PDF'),
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            shape: BoxShape.circle,
+            border: Border.all(color: color.withOpacity(0.3), width: 2),
+          ),
+          child: IconButton(
+            icon: Icon(icon, color: color),
+            onPressed: onPressed,
+          ),
         ),
-        OutlinedButton.icon(
-          onPressed: () => _exportReport('csv'),
-          icon: const Icon(Icons.table_chart),
-          label: Text(loc.exportCSV ?? 'Export CSV'),
-        ),
-        OutlinedButton.icon(
-          onPressed: () => _exportReport('excel'),
-          icon: const Icon(Icons.grid_on),
-          label: Text(loc.exportExcel ?? 'Export Excel'),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: color,
+          ),
         ),
       ],
     );
   }
 
   Future<void> _exportReport(String format) async {
-  final loc = AppLocalizations.of(context)!;
-  try {
-    final data = await ref
-        .read(adminProvider.notifier)
-        .generateReport(_selectedPeriod, format);
-    final fileName =
-        'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
+    final loc = AppLocalizations.of(context)!;
+    try {
+      final data = await ref
+          .read(adminProvider.notifier)
+          .generateReport(_selectedPeriod, format);
+      final fileName =
+          'report_${_selectedPeriod}_$format.${format == 'excel' ? 'xlsx' : format}';
 
-    if (kIsWeb) {
-      // Web-specific file download
-      final blob = html.Blob([data]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute('download', fileName)
-        ..click();
-      html.Url.revokeObjectUrl(url);
+      if (kIsWeb) {
+        // Web-specific file download
+        final blob = html.Blob([data]);
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.AnchorElement(href: url)
+          ..setAttribute('download', fileName)
+          ..click();
+        html.Url.revokeObjectUrl(url);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${loc.reportExported ?? 'Report exported'}: $fileName'),
+              backgroundColor: Colors.green,
+            ));
+      } else {
+        // Mobile/desktop file handling
+        final dir = await getTemporaryDirectory();
+        final filePath = '${dir.path}/$fileName';
+        final file = io.File(filePath);
+        await file.writeAsBytes(data);
+        await OpenFile.open(filePath);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${loc.reportExported ?? 'Report exported'}: $fileName'),
+              backgroundColor: Colors.green,
+            ));
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
-    } else {
-      // Mobile/desktop file handling
-      final dir = await getTemporaryDirectory();
-      final filePath = '${dir.path}/$fileName';
-      final file = io.File(filePath);
-      await file.writeAsBytes(data);
-      await OpenFile.open(filePath);
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${loc.reportExported ?? 'Report exported'}: $fileName')));
+          SnackBar(
+            content: Text('${loc.errorExportingReport ?? 'Error exporting report'}: $e'),
+            backgroundColor: Colors.red,
+          ));
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${loc.errorExportingReport ?? 'Error exporting report'}: $e')));
   }
-}
 }
 
 extension StringExtension on String {

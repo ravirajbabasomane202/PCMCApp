@@ -1893,6 +1893,7 @@ def create_grievance(user):
 @grievance_bp.route('/mine', methods=['GET'])
 @citizen_or_admin_required
 def my_grievances(user):
+    print(f"Fetching grievances for user {user.id} with role {user.role}")
     try:
         if user.role == Role.ADMIN:
             grievances = Grievance.query.all()  # Admins see all grievances

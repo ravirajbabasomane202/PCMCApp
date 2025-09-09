@@ -156,6 +156,7 @@ await grievanceService.createGrievance(
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
+      backgroundColor: const Color(0xffecf2fe),
       appBar: AppBar(
         title: Text(localizations.submitGrievance),
         elevation: 0,

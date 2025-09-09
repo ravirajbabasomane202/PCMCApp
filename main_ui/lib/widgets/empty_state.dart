@@ -10,7 +10,7 @@ class EmptyState extends StatefulWidget {
   final TextStyle? titleStyle; // Optional title style
   final TextStyle? messageStyle; // Optional message style
   final Color? backgroundColor; // Optional background color
-
+  
   const EmptyState({
     super.key,
     required this.icon,

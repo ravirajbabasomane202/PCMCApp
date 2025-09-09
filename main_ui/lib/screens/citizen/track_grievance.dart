@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/providers/grievance_provider.dart';
-import 'package:main_ui/widgets/grievance_card.dart';
+// import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
-import 'package:main_ui/widgets/track_grievance_progress.dart';
+// import 'package:main_ui/widgets/track_grievance_progress.dart';
+import 'package:main_ui/widgets/CombinedGrievanceCard.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 
 // Assuming a provider for the authenticated user's ID (e.g., from JWT)
@@ -94,6 +95,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
 
     if (userId == null) {
       return Scaffold(
+        backgroundColor: const Color(0xFFf8fbff),
         appBar: AppBar(
           title: Text(localizations.track_grievances),
           backgroundColor: theme.appBarTheme.backgroundColor,
@@ -113,6 +115,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     }
 
     return Scaffold(
+      backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
         title: Text(localizations.track_grievances),
         backgroundColor: theme.appBarTheme.backgroundColor,
@@ -231,19 +234,14 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                         itemCount: grievances.length,
                         itemBuilder: (context, index) {
                           final grievance = grievances[index];
+                          
                           return Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: Column(
-                              children: [
-                                GrievanceCard(grievance: grievance),
-                                const SizedBox(height: 8),
-                                TrackGrievanceProgress(grievance: grievance),
-                              ],
-                            ),
-                          );
+  padding: const EdgeInsets.symmetric(
+    horizontal: 16.0,
+    vertical: 8.0,
+  ),
+  child: CombinedGrievanceCard(grievance: grievance),
+);
                         },
                       ),
                     ],

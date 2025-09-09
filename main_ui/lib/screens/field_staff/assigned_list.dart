@@ -133,14 +133,31 @@ class _AssignedListState extends ConsumerState<AssignedList> {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return AlertDialog(
-              title: const Text('Update Status'),
-              content: DropdownButton<String>(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              title: const Text(
+                'Update Status',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                ),
                 hint: const Text('Select New Status'),
                 value: selectedStatus,
                 items: ['in_progress', 'on_hold', 'resolved'].map((status) {
                   return DropdownMenuItem<String>(
                     value: status,
-                    child: Text(status.toUpperCase()),
+                    child: Text(
+                      status.replaceAll('_', ' ').toUpperCase(),
+                      style: const TextStyle(fontSize: 14),
+                    ),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -154,14 +171,23 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                   onPressed: () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
-                TextButton(
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF4A64F6),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
                   onPressed: () {
                     if (selectedStatus != null) {
                       _updateStatus(grievance.id, selectedStatus!);
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('Update'),
+                  child: const Text(
+                    'Update',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             );
@@ -188,156 +214,376 @@ class _AssignedListState extends ConsumerState<AssignedList> {
       'yyyy-MM-dd HH:mm:ss',
     ); // For formatting dates
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+    // Status color mapping
+    Color getStatusColor(String status) {
+      switch (status) {
+        case 'new':
+          return Colors.blue;
+        case 'in_progress':
+          return Colors.orange;
+        case 'on_hold':
+          return Colors.red;
+        case 'resolved':
+          return Colors.green;
+        default:
+          return Colors.grey;
+      }
+    }
+
+    // Priority color mapping
+    Color getPriorityColor(String priority) {
+      switch (priority) {
+        case 'high':
+          return Colors.red;
+        case 'medium':
+          return Colors.orange;
+        case 'low':
+          return Colors.green;
+        default:
+          return Colors.grey;
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFECF2FE), // Card background color
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title and Complaint ID
-            Text(
-              grievance.title ?? 'No Title',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+            // Header with ID and status
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    grievance.title ?? 'No Title',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF1A237E),
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: getStatusColor(grievance.status ?? '').withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: getStatusColor(grievance.status ?? ''),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    grievance.status?.toUpperCase() ?? "N/A",
+                    style: TextStyle(
+                      color: getStatusColor(grievance.status ?? ''),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
               'Complaint ID: ${grievance.complaintId}',
-              style: Theme.of(context).textTheme.bodySmall,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
             ),
 
             // Divider
-            const Divider(height: 16),
+            const Divider(height: 24, thickness: 1),
 
             // Description
             Text(
               'Description:',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
+            const SizedBox(height: 4),
             Text(
               grievance.description ?? 'No Description',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
             // Status and Priority
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Status: ${grievance.status?.toUpperCase() ?? "N/A"}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                // Status
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Status',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: getStatusColor(grievance.status ?? ''),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            grievance.status?.replaceAll('_', ' ').toUpperCase() ?? "N/A",
+                            style: TextStyle(
+                              color: getStatusColor(grievance.status ?? ''),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  'Priority: ${grievance.priority?.toUpperCase() ?? 'N/A'}',
-                  style: Theme.of(context).textTheme.bodyMedium,
+                
+                // Priority
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Priority',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: getPriorityColor(grievance.priority ?? ''),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            grievance.priority?.toUpperCase() ?? 'N/A',
+                            style: TextStyle(
+                              color: getPriorityColor(grievance.priority ?? ''),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
 
             // Dates
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
+            Text(
+              'Dates',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            const SizedBox(height: 4),
             Text(
               'Created: ${grievance.createdAt != null ? dateFormat.format(grievance.createdAt!) : 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             Text(
               'Updated: ${grievance.updatedAt != null ? dateFormat.format(grievance.updatedAt!) : 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
             if (grievance.resolvedAt != null)
               Text(
                 'Resolved: ${dateFormat.format(grievance.resolvedAt!)}',
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
 
             // Location
-            const SizedBox(height: 8),
-            Text('Location:', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 16),
+            Text(
+              'Location',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            const SizedBox(height: 4),
             Text(
               'Area: ${grievance.area?.name ?? 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
-            Text(
-              'Latitude: ${grievance.latitude ?? 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Lat: ${grievance.latitude ?? 'N/A'}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'Long: ${grievance.longitude ?? 'N/A'}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'Longitude: ${grievance.longitude ?? 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-
-            // People
-            // const SizedBox(height: 8),
-            // Text(
-            //   'Citizen: ${grievance.citizen?.name ?? 'N/A'}',
-            //   style: Theme.of(context).textTheme.bodyMedium,
-            // ),
-            // Text(
-            //   'Assignee: ${grievance.assignee?.name ?? 'N/A'}',
-            //   style: Theme.of(context).textTheme.bodyMedium,
-            // ),
-            // Text(
-            //   'Assigner: ${grievance.assignedBy ?? 'N/A'}',
-            //   style: Theme.of(context).textTheme.bodyMedium,
-            // ),
 
             // Subject
-            const SizedBox(height: 8),
-            Text('Subject:', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 16),
             Text(
-              'Name: ${grievance.subject?.name ?? 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              'Subject',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
+            const SizedBox(height: 4),
             Text(
-              'Description: ${grievance.subject?.description ?? 'N/A'}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              '${grievance.subject?.name ?? 'N/A'}',
+              style: Theme.of(context).textTheme.bodySmall,
             ),
+            if (grievance.subject?.description != null)
+              Text(
+                '${grievance.subject?.description}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
 
             // Additional Fields
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             if (grievance.rejectionReason != null)
-              Text(
-                'Rejection Reason: ${grievance.rejectionReason}',
-                style: Theme.of(context).textTheme.bodyMedium,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Rejection Reason',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    grievance.rejectionReason!,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
               ),
             Text(
               'Attachments: ${grievance.attachments?.isEmpty ?? true ? 'None' : grievance.attachments!.length}',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodySmall,
             ),
 
             // Action Buttons
-            const Divider(height: 16),
+            const Divider(height: 24, thickness: 1),
             Wrap(
               spacing: 8.0,
-              runSpacing: 4.0,
+              runSpacing: 8.0,
               alignment: WrapAlignment.end,
               children: [
                 if (grievance.status == 'new')
-                  ElevatedButton.icon(
+                  ElevatedButton(
                     onPressed: () => _acceptGrievance(grievance.id),
-                    icon: const Icon(Icons.check),
-                    label: const Text('Accept'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF4CAF50),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check, size: 18),
+                        SizedBox(width: 4),
+                        Text('Accept'),
+                      ],
+                    ),
                   ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: () => _showUpdateStatusPopup(grievance),
-                  icon: const Icon(Icons.update),
-                  label: const Text('Update Status'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF2196F3),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.update, size: 18),
+                      SizedBox(width: 4),
+                      Text('Update Status'),
+                    ],
+                  ),
                 ),
-                ElevatedButton.icon(
+                ElevatedButton(
                   onPressed: () => _showUploadWorkproofPopup(grievance),
-                  icon: const Icon(Icons.upload_file),
-                  label: const Text('Upload Proof'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFF9800),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.upload_file, size: 18),
+                      SizedBox(width: 4),
+                      Text('Upload Proof'),
+                    ],
+                  ),
                 ),
                 if (grievance.status == 'resolved')
-                  ElevatedButton.icon(
+                  ElevatedButton(
                     onPressed: () => _closeGrievance(grievance.id),
-                    icon: const Icon(Icons.close),
-                    label: const Text('Close'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: const Color(0xFFF44336),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.close, size: 18),
+                        SizedBox(width: 4),
+                        Text('Close'),
+                      ],
                     ),
                   ),
               ],
@@ -352,8 +598,17 @@ class _AssignedListState extends ConsumerState<AssignedList> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
         title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
+        titleTextStyle: const TextStyle(
+          color: Color(0xFF1A237E),
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       drawer: const CustomNavigationDrawer(),
       body: FutureBuilder<List<Grievance>>(
@@ -370,6 +625,13 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                 onPressed: () => setState(
                   () => _grievancesFuture = _fetchAssignedGrievances(),
                 ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4A64F6),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
                 child: Text(l10n.retry),
               ),
             );
@@ -385,7 +647,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                 setState(() => _grievancesFuture = _fetchAssignedGrievances());
               },
               child: ListView.builder(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(16.0),
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
                   final grievance = snapshot.data![index];

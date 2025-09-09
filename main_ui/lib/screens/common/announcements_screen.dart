@@ -31,103 +31,170 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.addAnnouncement ?? 'Add Announcement'),
-          content: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.title ?? 'Title'),
-                    validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
-                  ),
-                  TextFormField(
-                    controller: _messageController,
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.message ?? 'Message'),
-                    validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
-                    maxLines: 3,
-                  ),
-                  DropdownButtonFormField<String>(
-                    value: _type,
-                    items: ['general', 'emergency'].map((t) => DropdownMenuItem(value: t, child: Text(t.capitalize()))).toList(),
-                    onChanged: (value) => setState(() => _type = value!),
-                    decoration: InputDecoration(labelText: AppLocalizations.of(context)!.type ?? 'Type'),
-                  ),
-                  ListTile(
-                    title: Text(_expiresAt == null
-                        ? AppLocalizations.of(context)!.selectExpiration ?? 'Select Expiration'
-                        : DateFormat('yyyy-MM-dd').format(_expiresAt!)),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                      );
-                      if (picked != null) setState(() => _expiresAt = picked);
-                    },
-                  ),
-                  DropdownButtonFormField<String>(
-                    initialValue: _targetRole,
-                    items: [
-    {'label': 'CITIZEN', 'value': 'citizen'},
-    {'label': 'MEMBER_HEAD', 'value': 'member_head'},
-    {'label': 'FIELD_STAFF', 'value': 'field_staff'},
-    {'label': 'ADMIN', 'value': 'admin'},
-  ].map((role) => DropdownMenuItem(
-        value: role['value'], // 👈 send lowercase to backend
-        child: Text(role['label']!), // 👈 display uppercase to user
-      ))
-      .toList(),
-                    onChanged: (value) => setState(() => _targetRole = value),
-                    decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.targetRole ?? 'Target Role (Optional)'),
-                  ),
-                ],
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.addAnnouncement ?? 'Add Announcement',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.title ?? 'Title',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        filled: true,
+                        fillColor: const Color(0xFFf8fbff),
+                      ),
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.message ?? 'Message',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        filled: true,
+                        fillColor: const Color(0xFFf8fbff),
+                      ),
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                      maxLines: 3,
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _type,
+                      items: ['general', 'emergency'].map((t) => DropdownMenuItem(
+                        value: t, 
+                        child: Text(t.capitalize(), style: const TextStyle(fontSize: 14)),
+                      )).toList(),
+                      onChanged: (value) => setState(() => _type = value!),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.type ?? 'Type',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        filled: true,
+                        fillColor: const Color(0xFFf8fbff),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFf8fbff),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          _expiresAt == null
+                              ? AppLocalizations.of(context)!.selectExpiration ?? 'Select Expiration'
+                              : DateFormat('yyyy-MM-dd').format(_expiresAt!),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        trailing: const Icon(Icons.calendar_today, size: 20),
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(const Duration(days: 365)),
+                          );
+                          if (picked != null) setState(() => _expiresAt = picked);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      initialValue: _targetRole,
+                      items: [
+                        {'label': 'CITIZEN', 'value': 'citizen'},
+                        {'label': 'MEMBER_HEAD', 'value': 'member_head'},
+                        {'label': 'FIELD_STAFF', 'value': 'field_staff'},
+                        {'label': 'ADMIN', 'value': 'admin'},
+                      ].map((role) => DropdownMenuItem(
+                        value: role['value'],
+                        child: Text(role['label']!, style: const TextStyle(fontSize: 14)),
+                      )).toList(),
+                      onChanged: (value) => setState(() => _targetRole = value),
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.targetRole ?? 'Target Role (Optional)',
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                        filled: true,
+                        fillColor: const Color(0xFFf8fbff),
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(AppLocalizations.of(context)!.cancel ?? 'Cancel'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              final data = {
+                                'title': _titleController.text,
+                                'message': _messageController.text,
+                                'type': _type,
+                                'expires_at': _expiresAt?.toIso8601String(),
+                                'target_role': _targetRole,
+                                'is_active': true,
+                              };
+                              try {
+                                await ApiService.post('/admins/announcements', data);
+                                ref.refresh(announcementsProvider);
+                                Navigator.pop(context);
+                                _titleController.clear();
+                                _messageController.clear();
+                                _type = 'general';
+                                _expiresAt = null;
+                                _targetRole = null;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(AppLocalizations.of(context)!.announcementAdded ?? 'Announcement added'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: Text(AppLocalizations.of(context)!.submit ?? 'Submit'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(AppLocalizations.of(context)!.cancel ?? 'Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  final data = {
-                    'title': _titleController.text,
-                    'message': _messageController.text,
-                    'type': _type,
-                    'expires_at': _expiresAt?.toIso8601String(),
-                    'target_role': _targetRole,
-                    'is_active': true,
-                  };
-                  try {
-                    await ApiService.post('/admins/announcements', data);
-                    ref.refresh(announcementsProvider);
-                    Navigator.pop(context);
-                    _titleController.clear();
-                    _messageController.clear();
-                    _type = 'general';
-                    _expiresAt = null;
-                    _targetRole = null;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text(AppLocalizations.of(context)!.announcementAdded ?? 'Announcement added')),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-                  }
-                }
-              },
-              child: Text(AppLocalizations.of(context)!.submit ?? 'Submit'),
-            ),
-          ],
         );
       },
     );
@@ -141,53 +208,160 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     final announcementsAsync = ref.watch(announcementsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(localizations.announcements ?? 'Announcements')),
+      backgroundColor: const Color(0xFFf8fbff),
+      appBar: AppBar(
+        title: Text(localizations.announcements ?? 'Announcements'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.blue,
+        elevation: 1,
+      ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
               onPressed: _showAddAnnouncementDialog,
+              backgroundColor: Colors.blue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: const Icon(Icons.add),
             )
           : null,
       body: announcementsAsync.when(
         data: (announcements) => announcements.isEmpty
             ? Center(
-                child: Text(localizations.noAnnouncements ?? 'No announcements available'),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.announcement, size: 64, color: Colors.grey.shade400),
+                    const SizedBox(height: 16),
+                    Text(
+                      localizations.noAnnouncements ?? 'No announcements available',
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+                    ),
+                  ],
+                ),
               )
             : ListView.builder(
+                padding: const EdgeInsets.all(16),
                 itemCount: announcements.length,
                 itemBuilder: (context, index) {
                   final ann = announcements[index];
-                  return Card(
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      leading: Icon(
-                        ann.type == 'emergency' ? Icons.warning : Icons.info,
-                        color: ann.type == 'emergency' ? Colors.red : Colors.blue,
-                      ),
-                      title: Text(ann.title),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(ann.message),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Posted on ${DateFormat('dd/MM/yyyy').format(ann.createdAt)}',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          if (ann.expiresAt != null)
-                            Text(
-                              'Expires on ${DateFormat('dd/MM/yyyy').format(ann.expiresAt!)}',
-                              style: Theme.of(context).textTheme.bodySmall,
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.1),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Card(
+                      color: const Color(0xFFecf2fe),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    ann.type == 'emergency' ? Icons.warning : Icons.info,
+                                    color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        ann.title,
+                                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        ann.message,
+                                        style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    ann.type.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                        ],
+                            const SizedBox(height: 12),
+                            Divider(color: Colors.grey.shade300, height: 1),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(Icons.calendar_today, size: 14, color: Colors.grey.shade600),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Posted on ${DateFormat('dd/MM/yyyy').format(ann.createdAt)}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                ),
+                                if (ann.expiresAt != null) ...[
+                                  const SizedBox(width: 16),
+                                  Icon(Icons.timer, size: 14, color: Colors.grey.shade600),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Expires on ${DateFormat('dd/MM/yyyy').format(ann.expiresAt!)}',
+                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      trailing: Text(ann.type.toUpperCase()),
                     ),
                   );
                 },
               ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('${localizations.error}: $err')),
+        loading: () => const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          ),
+        ),
+        error: (err, stack) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              const SizedBox(height: 16),
+              Text(
+                '${localizations.error}: $err',
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

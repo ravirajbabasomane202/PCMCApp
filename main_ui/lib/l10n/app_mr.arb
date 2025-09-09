@@ -180,5 +180,8 @@
   "@@locale": "mr",
   "clearFilters": "फिल्टर साफ करा",
   "takeAction":"कारवाई करा",
-  "refresh":"रिफ्रेश करा"
+  "refresh":"रिफ्रेश करा",
+  "exportReports": "अहवाल निर्यात करा",
+  "filters":"फिल्टर्स",
+  "apply":"लागू करा"
 }
