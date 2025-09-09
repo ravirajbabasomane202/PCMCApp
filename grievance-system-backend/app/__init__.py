@@ -28,7 +28,7 @@ def create_app():
     jwt.init_app(app)
     mail.init_app(app)
     oauth.init_app(app)
-    cors_origins = ["http://localhost:*", "http://127.0.0.1:*", "http://localhost:5500", "http://127.0.0.1:5500"]
+    cors_origins = ["http://localhost:*", "http://127.0.0.1:*", "http://localhost:5500", "http://127.0.0.1:5500", "https://pcmcapp.onrender.com"]
     CORS(app, resources={r"/*": {
         "origins": cors_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
