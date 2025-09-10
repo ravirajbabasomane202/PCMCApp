@@ -8,9 +8,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: const Text("Privacy Policy"),
+        title: const Text("Privacy Policy",
+    style: TextStyle(color: Colors.black), ),
         backgroundColor: const Color(0xFFECF2FE), // Matching card theme
         elevation: 0,
+  iconTheme: const IconThemeData(color: Colors.black), 
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

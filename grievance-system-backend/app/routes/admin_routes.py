@@ -246,7 +246,8 @@ def get_all_grievances(user):
         if subject_id:
             query = query.filter_by(subject_id=subject_id)
         
-        grievances = query.all()
+        grievances = query.order_by(Grievance.created_at.desc()).all()
+
         return jsonify([g.to_dict() for g in grievances])
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500

@@ -45,12 +45,12 @@ class CustomNavigationDrawer extends ConsumerWidget {
             },
           ),
           if (user?.role?.toUpperCase() == 'ADMIN') ...[
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.history,
-              title: localizations.viewAuditLogs ?? 'View Audit Logs',
-              route: '/admin/audit',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.history,
+            //   title: localizations.viewAuditLogs ?? 'View Audit Logs',
+            //   route: '/admin/audit',
+            // ),
             _buildDrawerItem(
               context: context,
               icon: Icons.report,
@@ -147,12 +147,12 @@ class CustomNavigationDrawer extends ConsumerWidget {
             title: localizations.announcements ?? 'Announcements',
             route: '/announcements',
           ),
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.notifications,
-            title: localizations.notifications ?? 'Notifications',
-            route: '/notifications',
-          ),
+          // _buildDrawerItem(
+          //   context: context,
+          //   icon: Icons.notifications,
+          //   title: localizations.notifications ?? 'Notifications',
+          //   route: '/notifications',
+          // ),
           _buildDrawerItem(
             context: context,
             icon: Icons.privacy_tip,

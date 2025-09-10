@@ -519,4 +519,34 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get apply => 'लागू करा';
+
+  @override
+  String get locationPermissionDenied => 'स्थान परवानगी नाकारली';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सर्व फील्ड भरा';
+
+  @override
+  String get grievanceSubmitted => 'तक्रार सबमिट केली';
+
+  @override
+  String get titleRequired => 'शीर्षक आवश्यक आहे';
+
+  @override
+  String get description => 'वर्णन';
+
+  @override
+  String get descriptionRequired => 'वर्णन आवश्यक आहे';
+
+  @override
+  String get categorization => 'वर्गीकरण';
+
+  @override
+  String get subjectRequired => 'विषय आवश्यक आहे';
+
+  @override
+  String get areaRequired => 'क्षेत्र आवश्यक आहे';
+
+  @override
+  String get locationDetails => 'स्थानाची माहिती';
 }

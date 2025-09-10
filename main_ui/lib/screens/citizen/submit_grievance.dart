@@ -47,11 +47,16 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     if (!hasPermission) return;
 
     try {
+      setState(() => _isSubmitting = true);
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      setState(() => _currentPosition = position);
+      setState(() {
+        _currentPosition = position;
+        _isSubmitting = false;
+      });
     } catch (e) {
+      setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
@@ -67,37 +72,43 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
       return false;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+        SnackBar(content: Text(AppLocalizations.of(context)!.locationPermissionDenied)),
       );
       return false;
     }
   }
 
   Future<void> _pickImage() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  if (pickedFile != null) {
-    // Prepare values outside setState
-    final fileBytes = kIsWeb ? await pickedFile.readAsBytes() : null;
-    final filePath = kIsWeb ? null : pickedFile.path;
-    final fileName = pickedFile.name;
-    // Compute size: Use bytes length for web, file length for non-web
-    final fileSize = kIsWeb
-        ? fileBytes?.length ?? 0
-        : await File(pickedFile.path).length();
+    if (pickedFile != null) {
+      // Prepare values outside setState
+      final fileBytes = kIsWeb ? await pickedFile.readAsBytes() : null;
+      final filePath = kIsWeb ? null : pickedFile.path;
+      final fileName = pickedFile.name;
+      // Compute size: Use bytes length for web, file length for non-web
+      final fileSize = kIsWeb
+          ? fileBytes?.length ?? 0
+          : await File(pickedFile.path).length();
 
-    // Now call setState with already computed values
+      // Now call setState with already computed values
+      setState(() {
+        _attachments.add(PlatformFile(
+          name: fileName,
+          size: fileSize, // Size in bytes, required
+          path: filePath, // Path for non-web
+          bytes: fileBytes, // Bytes for web
+        ));
+      });
+    }
+  }
+
+  void _removeAttachment(int index) {
     setState(() {
-      _attachments.add(PlatformFile(
-        name: fileName,
-        size: fileSize, // Size in bytes, required
-        path: filePath, // Path for non-web
-        bytes: fileBytes, // Bytes for web
-      ));
+      _attachments.removeAt(index);
     });
   }
-}
 
   Future<void> _submitGrievance() async {
     if (!_formKey.currentState!.validate() ||
@@ -105,7 +116,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
         _selectedAreaId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.error),
+          content: Text(AppLocalizations.of(context)!.pleaseFillAllFields),
           backgroundColor: Colors.red,
         ),
       );
@@ -115,23 +126,31 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     setState(() => _isSubmitting = true);
 
     try {
+      // Log before send
+      // Log count
+      print("===============================================================================================================================================Sending multipart with ${_attachments.length} files");
+      for (var i = 0; i < _attachments.length; i++) {
+        // Log each file added
+        print("Adding file[$i]: ${_attachments[i].name}");
+        // Log details like name size
+        print("  size: ${_attachments[i].size}");
+      }
       final grievanceService = GrievanceService();
-await grievanceService.createGrievance(
-  title: _titleController.text,
-  description: _descriptionController.text,
-  subjectId: _selectedSubjectId!,
-  areaId: _selectedAreaId!,
-  latitude: _currentPosition?.latitude,
-  longitude: _currentPosition?.longitude,
-  address: _addressController.text.isNotEmpty ? _addressController.text : null,
-  attachments: _attachments,
-);
-
+      await grievanceService.createGrievance(
+        title: _titleController.text,
+        description: _descriptionController.text,
+        subjectId: _selectedSubjectId!,
+        areaId: _selectedAreaId!,
+        latitude: _currentPosition?.latitude,
+        longitude: _currentPosition?.longitude,
+        address: _addressController.text.isNotEmpty ? _addressController.text : null,
+        attachments: _attachments,
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.submitGrievance),
+          content: Text(AppLocalizations.of(context)!.grievanceSubmitted),
           backgroundColor: Colors.green,
         ),
       );
@@ -154,6 +173,7 @@ await grievanceService.createGrievance(
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xffecf2fe),
@@ -161,121 +181,206 @@ await grievanceService.createGrievance(
         title: Text(localizations.submitGrievance),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: localizations.name,
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) => value!.isEmpty ? localizations.error : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: localizations.feedback,
-                  border: const OutlineInputBorder(),
-                ),
-                maxLines: 4,
-                validator: (value) => value!.isEmpty ? localizations.error : null,
-              ),
-              const SizedBox(height: 16),
-              ref.watch(subjectsProvider).when(
-                    data: (subjects) => DropdownButtonFormField<int>(
-                      decoration: InputDecoration(
-                        labelText: localizations.filterBySubject,
-                        border: const OutlineInputBorder(),
-                      ),
-                      value: _selectedSubjectId,
-                      items: subjects
-                          .map((subject) => DropdownMenuItem<int>(
-                                value: subject.id,
-                                child: Text(subject.name),
-                              ))
-                          .toList(),
-                      onChanged: (value) => setState(() => _selectedSubjectId = value),
-                      validator: (value) => value == null ? localizations.error : null,
-                    ),
-                    loading: () => const LoadingIndicator(),
-                    error: (error, stack) => Text('${localizations.error}: $error'),
-                  ),
-              const SizedBox(height: 16),
-              ref.watch(areasProvider).when(
-                    data: (areas) => DropdownButtonFormField<int>(
-                      decoration: InputDecoration(
-                        labelText: localizations.filterByArea,
-                        border: const OutlineInputBorder(),
-                      ),
-                      value: _selectedAreaId,
-                      items: areas
-                          .map((area) => DropdownMenuItem<int>(
-                                value: area.id,
-                                child: Text(area.name),
-                              ))
-                          .toList(),
-                      onChanged: (value) => setState(() => _selectedAreaId = value),
-                      validator: (value) => value == null ? localizations.error : null,
-                    ),
-                    loading: () => const LoadingIndicator(),
-                    error: (error, stack) => Text('${localizations.error}: $error'),
-                  ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Address (optional)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  CustomButton(
-                    text: 'Get Location',
-                    onPressed: _getCurrentLocation,
-                    icon: Icons.location_on,
-                    fullWidth: false,
-                  ),
-                  const SizedBox(width: 8),
-                  CustomButton(
-                    text: 'Pick Image',
-                    onPressed: _pickImage,
-                    icon: Icons.image,
-                    fullWidth: false,
-                  ),
-                  const SizedBox(width: 8),
-                  if (_currentPosition != null)
+      body: _isSubmitting && _currentPosition == null
+          ? const Center(child: LoadingIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      'Lat: ${_currentPosition!.latitude.toStringAsFixed(4)}, '
-                      'Lng: ${_currentPosition!.longitude.toStringAsFixed(4)}',
-                      style: const TextStyle(fontSize: 12),
+                      localizations.grievanceDetails,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
                     ),
-                ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        labelText: localizations.title,
+                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: (value) => value!.isEmpty ? localizations.titleRequired : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(
+                        labelText: localizations.description,
+                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                        alignLabelWithHint: true,
+                      ),
+                      maxLines: 4,
+                      validator: (value) => value!.isEmpty ? localizations.descriptionRequired : null,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      localizations.categorization,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ref.watch(subjectsProvider).when(
+                          data: (subjects) => DropdownButtonFormField<int>(
+                            decoration: InputDecoration(
+                              labelText: localizations.filterBySubject,
+                              border: const OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            value: _selectedSubjectId,
+                            items: subjects
+                                .map((subject) => DropdownMenuItem<int>(
+                                      value: subject.id,
+                                      child: Text(subject.name),
+                                    ))
+                                .toList(),
+                            onChanged: (value) => setState(() => _selectedSubjectId = value),
+                            validator: (value) => value == null ? localizations.subjectRequired : null,
+                          ),
+                          loading: () => const LoadingIndicator(),
+                          error: (error, stack) => Text('${localizations.error}: $error'),
+                        ),
+                    const SizedBox(height: 16),
+                    ref.watch(areasProvider).when(
+                          data: (areas) => DropdownButtonFormField<int>(
+                            decoration: InputDecoration(
+                              labelText: localizations.filterByArea,
+                              border: const OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            value: _selectedAreaId,
+                            items: areas
+                                .map((area) => DropdownMenuItem<int>(
+                                      value: area.id,
+                                      child: Text(area.name),
+                                    ))
+                                .toList(),
+                            onChanged: (value) => setState(() => _selectedAreaId = value),
+                            validator: (value) => value == null ? localizations.areaRequired : null,
+                          ),
+                          loading: () => const LoadingIndicator(),
+                          error: (error, stack) => Text('${localizations.error}: $error'),
+                        ),
+                    const SizedBox(height: 24),
+                    Text(
+                      localizations.locationDetails,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: 'Address (optional)',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: _isSubmitting ? 'Getting Location...' : 'Get Location',
+                            onPressed: _isSubmitting ? null : _getCurrentLocation,
+                            icon: Icons.location_on,
+                            fullWidth: true,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CustomButton(
+                            text: 'Add Media',
+                            onPressed: _pickImage,
+                            icon: Icons.image,
+                            fullWidth: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    if (_currentPosition != null)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.green[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Location captured: ${_currentPosition!.latitude.toStringAsFixed(4)}, '
+                                '${_currentPosition!.longitude.toStringAsFixed(4)}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 24),
+                    if (_attachments.isNotEmpty) ...[
+                      Text(
+                        'Attachments (${_attachments.length})',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: List.generate(_attachments.length, (index) {
+                          final file = _attachments[index];
+                          return Chip(
+                            label: Text(
+                              file.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            avatar: const Icon(Icons.attachment, size: 18),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () => _removeAttachment(index),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    FileUploadWidget(
+                      onFilesSelected: (files) {
+                        setState(() => _attachments.addAll(files));
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      text: _isSubmitting ? 'Submitting...' : localizations.submit,
+                      onPressed: _isSubmitting ? null : _submitGrievance,
+                      icon: Icons.send,
+                      fullWidth: true,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              FileUploadWidget(
-                onFilesSelected: (files) {
-                  setState(() => _attachments.addAll(files));
-                },
-              ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: _isSubmitting ? 'Submitting...' : localizations.submit,
-                onPressed: _isSubmitting ? null : _submitGrievance,
-                icon: Icons.send,
-                fullWidth: true,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

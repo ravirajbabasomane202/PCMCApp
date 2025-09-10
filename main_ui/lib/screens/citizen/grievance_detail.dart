@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
 import '../../models/comment_model.dart';
 import '../../services/grievance_service.dart';
@@ -9,7 +10,8 @@ import '../../widgets/comment_tile.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
-
+import '../../services/api_service.dart'; // Import ApiService for baseUrl
+import 'package:main_ui/utils/constants.dart';
 // Provider for grievance details
 final grievanceProvider = FutureProvider.family<Grievance, int>((ref, id) async {
   return await GrievanceService().getGrievanceDetails(id);
@@ -34,6 +36,18 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     _feedbackController.dispose();
     _commentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _launchURL(String path) async {
+    final String url = '${Constants.baseUrl}/uploads/$path';
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch $url')),
+        );
+      }
+    }
   }
 
   Future<void> _addComment() async {
@@ -201,14 +215,44 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
+
+                          // Show file previews
+                          Column(
                             children: grievance.attachments!.map((attachment) {
-                              return Chip(
-                                avatar: const Icon(Icons.attachment, size: 18),
-                                label: Text(
-                                  attachment.filePath.split('/').last,
-                                  style: theme.textTheme.bodySmall,
+                              final fileName = attachment.filePath.split('/').last;
+                              final isImage = fileName.endsWith('.jpg') ||
+                                              fileName.endsWith('.jpeg') ||
+                                              fileName.endsWith('.png');
+
+                              return GestureDetector(
+                                onTap: () {
+                                  _launchURL(attachment.filePath);
+                                },
+                                child: Card(
+                                  margin: const EdgeInsets.symmetric(vertical: 6),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        isImage
+                                            ? Image.network(
+                                                '${Constants.baseUrl}/uploads/${attachment.filePath}', // Prepend base URL and /uploads/
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error, stackTrace) =>
+                                                    const Icon(Icons.broken_image, size: 40),
+                                              )
+                                            : const Icon(Icons.insert_drive_file, size: 40),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(fileName,
+                                              style: theme.textTheme.bodyMedium),
+                                        ),
+                                        const Icon(Icons.open_in_new, size: 20),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               );
                             }).toList(),

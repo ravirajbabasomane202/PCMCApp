@@ -390,29 +390,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity, // Make logout button full width
-                child: CustomButton(
-                  text: localizations.logout,
-                  icon: Icons.logout,
-                  backgroundColor: theme.colorScheme.error,
-                  foregroundColor: theme.colorScheme.onError,
-                  onPressed: () async {
-                    setState(() => _isLoading = true);
-                    try {
-                      await AuthService.logout();
-                      ref.read(userNotifierProvider.notifier).setUser(null);
-                      Navigator.pushReplacementNamed(context, '/login');
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(localizations.logoutFailed)),
-                      );
-                    } finally {
-                      setState(() => _isLoading = false);
-                    }
-                  },
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity, // Make logout button full width
+              //   child: CustomButton(
+              //     text: localizations.logout,
+              //     icon: Icons.logout,
+              //     backgroundColor: theme.colorScheme.error,
+              //     foregroundColor: theme.colorScheme.onError,
+              //     onPressed: () async {
+              //       setState(() => _isLoading = true);
+              //       try {
+              //         await AuthService.logout();
+              //         ref.read(userNotifierProvider.notifier).setUser(null);
+              //         Navigator.pushReplacementNamed(context, '/login');
+              //       } catch (e) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(content: Text(localizations.logoutFailed)),
+              //         );
+              //       } finally {
+              //         setState(() => _isLoading = false);
+              //       }
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),

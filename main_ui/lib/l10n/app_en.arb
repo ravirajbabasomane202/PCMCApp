@@ -206,5 +206,16 @@
   "refresh":"Refresh",
   "exportReports":"Export Reports",
   "filters":"Filters",
-  "apply":"Apply"
+  "apply":"Apply",
+  "locationPermissionDenied":"Location permission denied",
+"pleaseFillAllFields":"Please fill all fields",
+"grievanceSubmitted":"Grievance submitted",
+"titleRequired":"Title is required",
+"description":"Description",
+"descriptionRequired":"Description is required",
+"categorization":"Categorization",
+"subjectRequired":"Subject is required",
+"areaRequired":"Area is required",
+"locationDetails":"Location details"
+  
 }

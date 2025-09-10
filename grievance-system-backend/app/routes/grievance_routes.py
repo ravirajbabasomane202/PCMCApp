@@ -20,9 +20,19 @@ grievance_bp = Blueprint('grievances', __name__)
 @grievance_bp.route('/', methods=['POST'])
 @citizen_required
 def create_grievance(user):
+    current_app.logger.info(f"Request Content-Type: {request.content_type}")
+    current_app.logger.info(f"Form data keys: {list(request.form.keys())}")
+    current_app.logger.info(f"Files keys: {list(request.files.keys())}")
     try:
-        data = request.form.to_dict()
-        files = request.files.getlist('files')
+        if request.content_type.startswith('multipart/form-data'):
+            data = request.form.to_dict()
+        else:
+            data = request.json
+
+        # Collect all files uploaded under the 'attachments' key
+        files = request.files.getlist('attachments')  # This gets all files with the same key
+        
+        current_app.logger.info(f"Collected {len(files)} files for upload")
         
         # Set default priority if not provided
         if 'priority' not in data or not data['priority']:
@@ -45,12 +55,13 @@ def create_grievance(user):
 @grievance_bp.route('/mine', methods=['GET'])
 @citizen_or_admin_required
 def my_grievances(user):
-    print(f"Fetching grievances for user {user.id} with role {user.role}")
+    current_app.logger.info(f"Fetching grievances for user {user.id} with role {user.role}")
     try:
         if user.role == Role.ADMIN:
-            grievances = Grievance.query.all()  # Admins see all grievances
+            grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()  # Admins see all grievances
         else:
-            grievances = Grievance.query.filter_by(citizen_id=user.id).all()  # Citizens see only their own
+            grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()  # Citizens see only their own
+            
         return jsonify([grievance.to_dict() for grievance in grievances]), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching grievances for user {user.id}: {str(e)}")
@@ -108,8 +119,8 @@ def rejection_reason(user, id):
 @member_head_required
 def new_grievances(user):
     try:
-        result = get_new_grievances()
-        print(f"New grievances for department: {result}")
+        result = get_new_grievances() # This fetches all grievances, ordered by creation date
+        current_app.logger.info(f"New grievances for department: {len(result)} grievances found.")
         return jsonify(result), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching new grievances for department : {str(e)}")
@@ -131,15 +142,15 @@ def accept(user, id):
 @member_head_required
 def reject(user, id):
     try:
-        data = request.get_json()
-        print(f"Rejecting grievance {id} with data: {data}")
+        data = request.get_json() or {}
+        current_app.logger.info(f"Rejecting grievance {id} with data: {data}")
         reason = data.get('reason')
-        print(f"Rejection reason: {reason}")
+        current_app.logger.info(f"Rejection reason: {reason}")
         if not reason:
-            print("Rejection reason is required")
+            current_app.logger.warning("Rejection reason is required")
             return jsonify({"msg": "Rejection reason is required"}), 400
         result = reject_grievance(id, user.id, reason)
-        print(f"Result of rejection: {result}")
+        current_app.logger.info(f"Result of rejection: {result}")
         log_audit(f"Grievance {id} rejected by user {user.id}", user.id, id)
         return jsonify(result), 200
     except Exception as e:
@@ -190,21 +201,21 @@ def get_assigned_grievances_by_user(user, user_id):
 @field_staff_or_admin_required
 def update_grievance_status(user, id):
     data = request.json
-    new_status = data.get('status')
-    print(f"Updating status for grievance {id} to {new_status} by user {user.id}")
+    new_status_str = data.get('status')
+    current_app.logger.info(f"Updating status for grievance {id} to {new_status_str} by user {user.id}")
     try:
-        print("Fetching grievance...")
+        current_app.logger.info("Fetching grievance...")
         grievance = db.session.get(Grievance, id)
         if not grievance:
             return jsonify({"error": "Grievance not found"}), 404
-        print(f"Grievance found: {grievance}")
+        current_app.logger.info(f"Grievance found: {grievance}")
         # Check if the user is the assigned staff OR an ADMIN
         if grievance.assigned_to != user.id and user.role not in [Role.ADMIN, Role.MEMBER_HEAD]:
             return jsonify({"error": "Not authorized to update this grievance"}), 403
         
-        print("Updating grievance status...")
+        current_app.logger.info("Updating grievance status...")
         old_status = grievance.status
-        grievance.status = GrievanceStatus[new_status.upper()]
+        grievance.status = GrievanceStatus[new_status_str.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
             grievance.resolved_at = datetime.utcnow()
         db.session.commit()
@@ -213,7 +224,7 @@ def update_grievance_status(user, id):
         send_notification(
             grievance.citizen.email,
             'Status Updated',
-            f'Your grievance #{id} status is now {new_status}.'
+            f'Your grievance #{id} status is now {new_status_str}.'
         )
         schema = GrievanceSchema()
         return jsonify(schema.dump(grievance)), 200
@@ -277,7 +288,8 @@ def get_grievance_admin(user, id):
 @admin_required
 def get_all_grievances(user):
     try:
-        grievances = Grievance.query.all()
+        grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()
+
         schema = GrievanceSchema(many=True)
         log_audit(f"Admin {user.id} fetched all grievances", user.id, None)
         return jsonify(schema.dump(grievances)), 200
@@ -340,7 +352,8 @@ def search_grievance_by_complaint_id(user, complaint_id):
 def track_grievances(user):
     try:
         current_app.logger.info(f"Track grievances called for user ID {user.id}")
-        grievances = Grievance.query.filter_by(citizen_id=user.id).all()
+        grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()
+
         schema = GrievanceSchema(many=True)
         
         grievances_data = schema.dump(grievances)

@@ -183,5 +183,16 @@
   "refresh":"रिफ्रेश करा",
   "exportReports": "अहवाल निर्यात करा",
   "filters":"फिल्टर्स",
-  "apply":"लागू करा"
+  "apply":"लागू करा",
+  "locationPermissionDenied":"स्थान परवानगी नाकारली",
+"pleaseFillAllFields":"कृपया सर्व फील्ड भरा",
+"grievanceSubmitted":"तक्रार सबमिट केली",
+"titleRequired":"शीर्षक आवश्यक आहे",
+"description":"वर्णन",
+"descriptionRequired":"वर्णन आवश्यक आहे",
+"categorization":"वर्गीकरण",
+"subjectRequired":"विषय आवश्यक आहे",
+"areaRequired":"क्षेत्र आवश्यक आहे",
+"locationDetails":"स्थानाची माहिती"
+
 }

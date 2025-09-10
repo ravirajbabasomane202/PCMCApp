@@ -8,6 +8,7 @@ import 'package:main_ui/widgets/loading_indicator.dart';
 // import 'package:main_ui/widgets/track_grievance_progress.dart';
 import 'package:main_ui/widgets/CombinedGrievanceCard.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 
 // Assuming a provider for the authenticated user's ID (e.g., from JWT)
 final userIdProvider = Provider<int?>((ref) {
@@ -121,13 +122,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: theme.appBarTheme.elevation,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-        ],
       ),
+      drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
           final userId = ref.read(userIdProvider);

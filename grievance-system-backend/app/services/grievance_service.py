@@ -163,7 +163,7 @@ def get_rejection_reason(id, citizen_id):
 
 def get_new_grievances():
     try:
-        grievances = Grievance.query.filter_by().all()
+        grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()
         
         schema = GrievanceSchema(many=True)
         return schema.dump(grievances)

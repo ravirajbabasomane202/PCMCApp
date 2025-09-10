@@ -51,6 +51,7 @@ class AdminState {
 }
 
 class AdminNotifier extends StateNotifier<AdminState> {
+  // ignore: unused_field
   final ApiService _apiService;
 
   AdminNotifier(this._apiService) : super(AdminState()) {
@@ -62,7 +63,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
       final response = await ApiService.get('/admins/reports/kpis/advanced?time_period=$timePeriod');
       final kpiData = KpiData.fromJson(response.data);
       state = state.copyWith(kpiData: kpiData, error: null);
-      print(response.data);
+     
     } catch (e) {
       state = state.copyWith(error: e.toString());
     }
@@ -89,7 +90,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
   Future<void> escalateGrievance(int grievanceId, int newAssigneeId, int userId ) async {
   try {
-    print("Called Escalate");
+    
     await ApiService.post(
       '/admins/grievances/$grievanceId/escalate', 
       {'escalated_by': userId,
@@ -99,7 +100,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
     await getAllGrievances();
   } catch (e) {
     state = state.copyWith(error: e.toString());
-    print(state.error);
+    
   }
 }
 
@@ -109,25 +110,25 @@ class AdminNotifier extends StateNotifier<AdminState> {
           .post('/admins/reassign/$grievanceId', {'assigned_to': assigneeId});
       state = state.copyWith(error: null);
       
-       print("Escalation failed: ${state.error} "); 
+       
       await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
       
-      print("Unexpected error: ${state.error}");
+      
     }
   }
 
   Future<void> updateGrievanceStatus(int grievanceId, String status) async {
     try {
-      print("Called Update states");
+      
       await ApiService.post('/grievances/$grievanceId/status', {'status': status});
       state = state.copyWith(error: null);
-      print(state.error);
+      
       await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      print(state.error);
+     
     }
   }
 

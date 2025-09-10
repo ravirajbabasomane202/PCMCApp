@@ -28,8 +28,10 @@ def allowed_file(filename):
 
 def upload_files(files, grievance_id):
     uploaded_paths = []
-    upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'grievance_{grievance_id}')
-    os.makedirs(upload_folder, exist_ok=True)
+    base_upload_folder = current_app.config['UPLOAD_FOLDER']
+    relative_grievance_folder = f'grievance_{grievance_id}'
+    absolute_grievance_folder = os.path.join(base_upload_folder, relative_grievance_folder)
+    os.makedirs(absolute_grievance_folder, exist_ok=True)
     
     if len(files) > 10:
         raise ValueError("Maximum 10 files allowed")
@@ -37,10 +39,14 @@ def upload_files(files, grievance_id):
     for file in files:
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file_path = os.path.join(upload_folder, filename)
-            file.save(file_path)
-            file_size = os.path.getsize(file_path)
-            uploaded_paths.append((file_path, filename.rsplit('.', 1)[1].lower(), file_size))
+            absolute_file_path = os.path.join(absolute_grievance_folder, filename)
+            file.save(absolute_file_path)
+            
+            # Store the relative path for URL generation, replacing backslashes
+            relative_file_path = os.path.join(relative_grievance_folder, filename).replace('\\', '/')
+            
+            file_size = os.path.getsize(absolute_file_path)
+            uploaded_paths.append((relative_file_path, filename.rsplit('.', 1)[1].lower(), file_size))
         else:
             raise ValueError("Invalid file type")
     
@@ -50,10 +56,14 @@ def upload_workproof(file, grievance_id):
     if not allowed_file(file.filename):
         raise ValueError("Invalid file type")
     
-    upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], f'workproof_{grievance_id}')
-    os.makedirs(upload_folder, exist_ok=True)
+    base_upload_folder = current_app.config['UPLOAD_FOLDER']
+    relative_workproof_folder = f'workproof_{grievance_id}'
+    absolute_workproof_folder = os.path.join(base_upload_folder, relative_workproof_folder)
+    os.makedirs(absolute_workproof_folder, exist_ok=True)
     
     filename = secure_filename(file.filename)
-    file_path = os.path.join(upload_folder, filename)
-    file.save(file_path)
-    return file_path
+    absolute_file_path = os.path.join(absolute_workproof_folder, filename)
+    file.save(absolute_file_path)
+    
+    # Return the relative path for URL generation, replacing backslashes
+    return os.path.join(relative_workproof_folder, filename).replace('\\', '/')

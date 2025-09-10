@@ -163,7 +163,7 @@ class GrievanceAttachment(db.Model):
             'file_path': self.file_path,
             'file_type': self.file_type,
             'file_size': self.file_size,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None
         }
 
 class GrievanceComment(db.Model):

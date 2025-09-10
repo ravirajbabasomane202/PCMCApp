@@ -518,4 +518,34 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get apply => 'लागू करें';
+
+  @override
+  String get locationPermissionDenied => 'स्थान अनुमति अस्वीकृत';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सभी फ़ील्ड भरें';
+
+  @override
+  String get grievanceSubmitted => 'शिकायत दर्ज की गई';
+
+  @override
+  String get titleRequired => 'शीर्षक आवश्यक है';
+
+  @override
+  String get description => 'विवरण';
+
+  @override
+  String get descriptionRequired => 'विवरण आवश्यक है';
+
+  @override
+  String get categorization => 'श्रेणीकरण';
+
+  @override
+  String get subjectRequired => 'विषय आवश्यक है';
+
+  @override
+  String get areaRequired => 'क्षेत्र आवश्यक है';
+
+  @override
+  String get locationDetails => 'स्थान विवरण';
 }

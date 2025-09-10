@@ -1357,6 +1357,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Apply'**
   String get apply;
+
+  /// No description provided for @locationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission denied'**
+  String get locationPermissionDenied;
+
+  /// No description provided for @pleaseFillAllFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all fields'**
+  String get pleaseFillAllFields;
+
+  /// No description provided for @grievanceSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance submitted'**
+  String get grievanceSubmitted;
+
+  /// No description provided for @titleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get titleRequired;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @descriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get descriptionRequired;
+
+  /// No description provided for @categorization.
+  ///
+  /// In en, this message translates to:
+  /// **'Categorization'**
+  String get categorization;
+
+  /// No description provided for @subjectRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject is required'**
+  String get subjectRequired;
+
+  /// No description provided for @areaRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Area is required'**
+  String get areaRequired;
+
+  /// No description provided for @locationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Location details'**
+  String get locationDetails;
 }
 
 class _AppLocalizationsDelegate
@@ -1916,6 +1976,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apply => 'Apply';
+
+  @override
+  String get locationPermissionDenied => 'Location permission denied';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all fields';
+
+  @override
+  String get grievanceSubmitted => 'Grievance submitted';
+
+  @override
+  String get titleRequired => 'Title is required';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get descriptionRequired => 'Description is required';
+
+  @override
+  String get categorization => 'Categorization';
+
+  @override
+  String get subjectRequired => 'Subject is required';
+
+  @override
+  String get areaRequired => 'Area is required';
+
+  @override
+  String get locationDetails => 'Location details';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2439,6 +2529,36 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get apply => 'लागू करें';
+
+  @override
+  String get locationPermissionDenied => 'स्थान अनुमति अस्वीकृत';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सभी फ़ील्ड भरें';
+
+  @override
+  String get grievanceSubmitted => 'शिकायत दर्ज की गई';
+
+  @override
+  String get titleRequired => 'शीर्षक आवश्यक है';
+
+  @override
+  String get description => 'विवरण';
+
+  @override
+  String get descriptionRequired => 'विवरण आवश्यक है';
+
+  @override
+  String get categorization => 'श्रेणीकरण';
+
+  @override
+  String get subjectRequired => 'विषय आवश्यक है';
+
+  @override
+  String get areaRequired => 'क्षेत्र आवश्यक है';
+
+  @override
+  String get locationDetails => 'स्थान विवरण';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2963,6 +3083,36 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get apply => 'लागू करा';
+
+  @override
+  String get locationPermissionDenied => 'स्थान परवानगी नाकारली';
+
+  @override
+  String get pleaseFillAllFields => 'कृपया सर्व फील्ड भरा';
+
+  @override
+  String get grievanceSubmitted => 'तक्रार सबमिट केली';
+
+  @override
+  String get titleRequired => 'शीर्षक आवश्यक आहे';
+
+  @override
+  String get description => 'वर्णन';
+
+  @override
+  String get descriptionRequired => 'वर्णन आवश्यक आहे';
+
+  @override
+  String get categorization => 'वर्गीकरण';
+
+  @override
+  String get subjectRequired => 'विषय आवश्यक आहे';
+
+  @override
+  String get areaRequired => 'क्षेत्र आवश्यक आहे';
+
+  @override
+  String get locationDetails => 'स्थानाची माहिती';
 }
 
 
@@ -3523,6 +3673,7 @@ class AdminState {
 }
 
 class AdminNotifier extends StateNotifier<AdminState> {
+  // ignore: unused_field
   final ApiService _apiService;
 
   AdminNotifier(this._apiService) : super(AdminState()) {
@@ -3534,7 +3685,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
       final response = await ApiService.get('/admins/reports/kpis/advanced?time_period=$timePeriod');
       final kpiData = KpiData.fromJson(response.data);
       state = state.copyWith(kpiData: kpiData, error: null);
-      print(response.data);
+     
     } catch (e) {
       state = state.copyWith(error: e.toString());
     }
@@ -3561,7 +3712,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
 
   Future<void> escalateGrievance(int grievanceId, int newAssigneeId, int userId ) async {
   try {
-    print("Called Escalate");
+    
     await ApiService.post(
       '/admins/grievances/$grievanceId/escalate', 
       {'escalated_by': userId,
@@ -3571,7 +3722,7 @@ class AdminNotifier extends StateNotifier<AdminState> {
     await getAllGrievances();
   } catch (e) {
     state = state.copyWith(error: e.toString());
-    print(state.error);
+    
   }
 }
 
@@ -3581,25 +3732,25 @@ class AdminNotifier extends StateNotifier<AdminState> {
           .post('/admins/reassign/$grievanceId', {'assigned_to': assigneeId});
       state = state.copyWith(error: null);
       
-       print("Escalation failed: ${state.error} "); 
+       
       await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
       
-      print("Unexpected error: ${state.error}");
+      
     }
   }
 
   Future<void> updateGrievanceStatus(int grievanceId, String status) async {
     try {
-      print("Called Update states");
+      
       await ApiService.post('/grievances/$grievanceId/status', {'status': status});
       state = state.copyWith(error: null);
-      print(state.error);
+      
       await getAllGrievances();
     } catch (e) {
       state = state.copyWith(error: e.toString());
-      print(state.error);
+     
     }
   }
 
@@ -7870,29 +8021,190 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\auth\splash_screen.dart ---
-// main_ui/lib/screens/auth/splash_screen.dart
+// lib/screens/auth/splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/locale_provider.dart';
+import 'package:main_ui/providers/auth_provider.dart';
+import 'package:main_ui/routes.dart';
 
-class SplashScreen extends ConsumerWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(localeNotifierProvider.notifier); // Ensure locale is loaded
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    try {
+      // Check if user is already authenticated
       await ref.read(authProvider.notifier).checkAuth();
+      
+      // Add a small delay to show the splash screen
+      await Future.delayed(const Duration(milliseconds: 1500));
+      
+      // Navigate based on authentication status
       final user = ref.read(authProvider);
-      if (user != null) {
-        Navigator.pushReplacementNamed(context, '/${user.role}/home');
-      } else {
+      
+      if (mounted) {
+        if (user != null) {
+          // User is authenticated, navigate to appropriate home screen
+          _navigateBasedOnRole(user.role);
+        } else {
+          // User is not authenticated, navigate to login
+          Navigator.pushReplacementNamed(context, '/login');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        // If there's an error, still navigate to login
         Navigator.pushReplacementNamed(context, '/login');
       }
-    });
-    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
   }
+
+  void _navigateBasedOnRole(String? role) {
+    switch (role?.toUpperCase()) {
+      case 'ADMIN':
+        Navigator.pushReplacementNamed(context, '/admin/home');
+        break;
+      case 'MEMBER_HEAD':
+        Navigator.pushReplacementNamed(context, '/member_head/home');
+        break;
+      case 'FIELD_STAFF':
+        Navigator.pushReplacementNamed(context, '/field_staff/home');
+        break;
+      case 'CITIZEN':
+      default:
+        Navigator.pushReplacementNamed(context, '/citizen/home');
+        break;
+    }
+  }
+
+  // Alternative branded splash screen
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.blue.shade800,
+            Colors.blue.shade600,
+          ],
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Background pattern
+          Positioned(
+            right: -50,
+            bottom: -50,
+            child: Opacity(
+              opacity: 0.1,
+              child: Icon(
+                Icons.gavel_rounded,
+                size: 200,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Animated logo container
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 15,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.gavel_rounded,
+                    size: 60,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                
+                // App title with animation
+                TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 800),
+                  tween: Tween<double>(begin: 0, end: 1),
+                  builder: (context, double value, child) {
+                    return Transform.translate(
+                      offset: Offset(0, 20 * (1 - value)),
+                      child: Opacity(
+                        opacity: value,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Grievance System',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 8),
+                
+                // Tagline
+                Text(
+                  'Redressal Made Easy',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                ),
+                
+                const SizedBox(height: 40),
+                
+                // Loading indicator with delayed appearance
+                TweenAnimationBuilder(
+                  duration: const Duration(milliseconds: 500),
+                  tween: Tween<double>(begin: 0, end: 1),
+                  builder: (context, double value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: child,
+                    );
+                  },
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    strokeWidth: 3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 }
 
 === Folder: screens\citizen ===
@@ -7901,6 +8213,7 @@ class SplashScreen extends ConsumerWidget {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
 import '../../models/comment_model.dart';
 import '../../services/grievance_service.dart';
@@ -7909,7 +8222,8 @@ import '../../widgets/comment_tile.dart';
 import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
-
+import '../../services/api_service.dart'; // Import ApiService for baseUrl
+import 'package:main_ui/utils/constants.dart';
 // Provider for grievance details
 final grievanceProvider = FutureProvider.family<Grievance, int>((ref, id) async {
   return await GrievanceService().getGrievanceDetails(id);
@@ -7934,6 +8248,18 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     _feedbackController.dispose();
     _commentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _launchURL(String path) async {
+    final String url = '${Constants.baseUrl}/uploads/$path';
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch $url')),
+        );
+      }
+    }
   }
 
   Future<void> _addComment() async {
@@ -8101,14 +8427,44 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
+
+                          // Show file previews
+                          Column(
                             children: grievance.attachments!.map((attachment) {
-                              return Chip(
-                                avatar: const Icon(Icons.attachment, size: 18),
-                                label: Text(
-                                  attachment.filePath.split('/').last,
-                                  style: theme.textTheme.bodySmall,
+                              final fileName = attachment.filePath.split('/').last;
+                              final isImage = fileName.endsWith('.jpg') ||
+                                              fileName.endsWith('.jpeg') ||
+                                              fileName.endsWith('.png');
+
+                              return GestureDetector(
+                                onTap: () {
+                                  _launchURL(attachment.filePath);
+                                },
+                                child: Card(
+                                  margin: const EdgeInsets.symmetric(vertical: 6),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        isImage
+                                            ? Image.network(
+                                                '${Constants.baseUrl}/uploads/${attachment.filePath}', // Prepend base URL and /uploads/
+                                                width: 60,
+                                                height: 60,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (context, error, stackTrace) =>
+                                                    const Icon(Icons.broken_image, size: 40),
+                                              )
+                                            : const Icon(Icons.insert_drive_file, size: 40),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(fileName,
+                                              style: theme.textTheme.bodyMedium),
+                                        ),
+                                        const Icon(Icons.open_in_new, size: 20),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               );
                             }).toList(),
@@ -8368,11 +8724,16 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     if (!hasPermission) return;
 
     try {
+      setState(() => _isSubmitting = true);
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-      setState(() => _currentPosition = position);
+      setState(() {
+        _currentPosition = position;
+        _isSubmitting = false;
+      });
     } catch (e) {
+      setState(() => _isSubmitting = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
       );
@@ -8388,37 +8749,43 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
       return false;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.error)),
+        SnackBar(content: Text(AppLocalizations.of(context)!.locationPermissionDenied)),
       );
       return false;
     }
   }
 
   Future<void> _pickImage() async {
-  final picker = ImagePicker();
-  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-  if (pickedFile != null) {
-    // Prepare values outside setState
-    final fileBytes = kIsWeb ? await pickedFile.readAsBytes() : null;
-    final filePath = kIsWeb ? null : pickedFile.path;
-    final fileName = pickedFile.name;
-    // Compute size: Use bytes length for web, file length for non-web
-    final fileSize = kIsWeb
-        ? fileBytes?.length ?? 0
-        : await File(pickedFile.path).length();
+    if (pickedFile != null) {
+      // Prepare values outside setState
+      final fileBytes = kIsWeb ? await pickedFile.readAsBytes() : null;
+      final filePath = kIsWeb ? null : pickedFile.path;
+      final fileName = pickedFile.name;
+      // Compute size: Use bytes length for web, file length for non-web
+      final fileSize = kIsWeb
+          ? fileBytes?.length ?? 0
+          : await File(pickedFile.path).length();
 
-    // Now call setState with already computed values
+      // Now call setState with already computed values
+      setState(() {
+        _attachments.add(PlatformFile(
+          name: fileName,
+          size: fileSize, // Size in bytes, required
+          path: filePath, // Path for non-web
+          bytes: fileBytes, // Bytes for web
+        ));
+      });
+    }
+  }
+
+  void _removeAttachment(int index) {
     setState(() {
-      _attachments.add(PlatformFile(
-        name: fileName,
-        size: fileSize, // Size in bytes, required
-        path: filePath, // Path for non-web
-        bytes: fileBytes, // Bytes for web
-      ));
+      _attachments.removeAt(index);
     });
   }
-}
 
   Future<void> _submitGrievance() async {
     if (!_formKey.currentState!.validate() ||
@@ -8426,7 +8793,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
         _selectedAreaId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.error),
+          content: Text(AppLocalizations.of(context)!.pleaseFillAllFields),
           backgroundColor: Colors.red,
         ),
       );
@@ -8436,23 +8803,31 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     setState(() => _isSubmitting = true);
 
     try {
+      // Log before send
+      // Log count
+      print("===============================================================================================================================================Sending multipart with ${_attachments.length} files");
+      for (var i = 0; i < _attachments.length; i++) {
+        // Log each file added
+        print("Adding file[$i]: ${_attachments[i].name}");
+        // Log details like name size
+        print("  size: ${_attachments[i].size}");
+      }
       final grievanceService = GrievanceService();
-await grievanceService.createGrievance(
-  title: _titleController.text,
-  description: _descriptionController.text,
-  subjectId: _selectedSubjectId!,
-  areaId: _selectedAreaId!,
-  latitude: _currentPosition?.latitude,
-  longitude: _currentPosition?.longitude,
-  address: _addressController.text.isNotEmpty ? _addressController.text : null,
-  attachments: _attachments,
-);
-
+      await grievanceService.createGrievance(
+        title: _titleController.text,
+        description: _descriptionController.text,
+        subjectId: _selectedSubjectId!,
+        areaId: _selectedAreaId!,
+        latitude: _currentPosition?.latitude,
+        longitude: _currentPosition?.longitude,
+        address: _addressController.text.isNotEmpty ? _addressController.text : null,
+        attachments: _attachments,
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.submitGrievance),
+          content: Text(AppLocalizations.of(context)!.grievanceSubmitted),
           backgroundColor: Colors.green,
         ),
       );
@@ -8475,6 +8850,7 @@ await grievanceService.createGrievance(
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xffecf2fe),
@@ -8482,121 +8858,206 @@ await grievanceService.createGrievance(
         title: Text(localizations.submitGrievance),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: localizations.name,
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) => value!.isEmpty ? localizations.error : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: localizations.feedback,
-                  border: const OutlineInputBorder(),
-                ),
-                maxLines: 4,
-                validator: (value) => value!.isEmpty ? localizations.error : null,
-              ),
-              const SizedBox(height: 16),
-              ref.watch(subjectsProvider).when(
-                    data: (subjects) => DropdownButtonFormField<int>(
-                      decoration: InputDecoration(
-                        labelText: localizations.filterBySubject,
-                        border: const OutlineInputBorder(),
-                      ),
-                      value: _selectedSubjectId,
-                      items: subjects
-                          .map((subject) => DropdownMenuItem<int>(
-                                value: subject.id,
-                                child: Text(subject.name),
-                              ))
-                          .toList(),
-                      onChanged: (value) => setState(() => _selectedSubjectId = value),
-                      validator: (value) => value == null ? localizations.error : null,
-                    ),
-                    loading: () => const LoadingIndicator(),
-                    error: (error, stack) => Text('${localizations.error}: $error'),
-                  ),
-              const SizedBox(height: 16),
-              ref.watch(areasProvider).when(
-                    data: (areas) => DropdownButtonFormField<int>(
-                      decoration: InputDecoration(
-                        labelText: localizations.filterByArea,
-                        border: const OutlineInputBorder(),
-                      ),
-                      value: _selectedAreaId,
-                      items: areas
-                          .map((area) => DropdownMenuItem<int>(
-                                value: area.id,
-                                child: Text(area.name),
-                              ))
-                          .toList(),
-                      onChanged: (value) => setState(() => _selectedAreaId = value),
-                      validator: (value) => value == null ? localizations.error : null,
-                    ),
-                    loading: () => const LoadingIndicator(),
-                    error: (error, stack) => Text('${localizations.error}: $error'),
-                  ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Address (optional)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  CustomButton(
-                    text: 'Get Location',
-                    onPressed: _getCurrentLocation,
-                    icon: Icons.location_on,
-                    fullWidth: false,
-                  ),
-                  const SizedBox(width: 8),
-                  CustomButton(
-                    text: 'Pick Image',
-                    onPressed: _pickImage,
-                    icon: Icons.image,
-                    fullWidth: false,
-                  ),
-                  const SizedBox(width: 8),
-                  if (_currentPosition != null)
+      body: _isSubmitting && _currentPosition == null
+          ? const Center(child: LoadingIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      'Lat: ${_currentPosition!.latitude.toStringAsFixed(4)}, '
-                      'Lng: ${_currentPosition!.longitude.toStringAsFixed(4)}',
-                      style: const TextStyle(fontSize: 12),
+                      localizations.grievanceDetails,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
                     ),
-                ],
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        labelText: localizations.title,
+                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      validator: (value) => value!.isEmpty ? localizations.titleRequired : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(
+                        labelText: localizations.description,
+                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                        alignLabelWithHint: true,
+                      ),
+                      maxLines: 4,
+                      validator: (value) => value!.isEmpty ? localizations.descriptionRequired : null,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      localizations.categorization,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ref.watch(subjectsProvider).when(
+                          data: (subjects) => DropdownButtonFormField<int>(
+                            decoration: InputDecoration(
+                              labelText: localizations.filterBySubject,
+                              border: const OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            value: _selectedSubjectId,
+                            items: subjects
+                                .map((subject) => DropdownMenuItem<int>(
+                                      value: subject.id,
+                                      child: Text(subject.name),
+                                    ))
+                                .toList(),
+                            onChanged: (value) => setState(() => _selectedSubjectId = value),
+                            validator: (value) => value == null ? localizations.subjectRequired : null,
+                          ),
+                          loading: () => const LoadingIndicator(),
+                          error: (error, stack) => Text('${localizations.error}: $error'),
+                        ),
+                    const SizedBox(height: 16),
+                    ref.watch(areasProvider).when(
+                          data: (areas) => DropdownButtonFormField<int>(
+                            decoration: InputDecoration(
+                              labelText: localizations.filterByArea,
+                              border: const OutlineInputBorder(),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            value: _selectedAreaId,
+                            items: areas
+                                .map((area) => DropdownMenuItem<int>(
+                                      value: area.id,
+                                      child: Text(area.name),
+                                    ))
+                                .toList(),
+                            onChanged: (value) => setState(() => _selectedAreaId = value),
+                            validator: (value) => value == null ? localizations.areaRequired : null,
+                          ),
+                          loading: () => const LoadingIndicator(),
+                          error: (error, stack) => Text('${localizations.error}: $error'),
+                        ),
+                    const SizedBox(height: 24),
+                    Text(
+                      localizations.locationDetails,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _addressController,
+                      decoration: const InputDecoration(
+                        labelText: 'Address (optional)',
+                        border: OutlineInputBorder(),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomButton(
+                            text: _isSubmitting ? 'Getting Location...' : 'Get Location',
+                            onPressed: _isSubmitting ? null : _getCurrentLocation,
+                            icon: Icons.location_on,
+                            fullWidth: true,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: CustomButton(
+                            text: 'Add Media',
+                            onPressed: _pickImage,
+                            icon: Icons.image,
+                            fullWidth: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    if (_currentPosition != null)
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.green[50],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Location captured: ${_currentPosition!.latitude.toStringAsFixed(4)}, '
+                                '${_currentPosition!.longitude.toStringAsFixed(4)}',
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 24),
+                    if (_attachments.isNotEmpty) ...[
+                      Text(
+                        'Attachments (${_attachments.length})',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: List.generate(_attachments.length, (index) {
+                          final file = _attachments[index];
+                          return Chip(
+                            label: Text(
+                              file.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            avatar: const Icon(Icons.attachment, size: 18),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () => _removeAttachment(index),
+                          );
+                        }),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    FileUploadWidget(
+                      onFilesSelected: (files) {
+                        setState(() => _attachments.addAll(files));
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    CustomButton(
+                      text: _isSubmitting ? 'Submitting...' : localizations.submit,
+                      onPressed: _isSubmitting ? null : _submitGrievance,
+                      icon: Icons.send,
+                      fullWidth: true,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              FileUploadWidget(
-                onFilesSelected: (files) {
-                  setState(() => _attachments.addAll(files));
-                },
-              ),
-              const SizedBox(height: 24),
-              CustomButton(
-                text: _isSubmitting ? 'Submitting...' : localizations.submit,
-                onPressed: _isSubmitting ? null : _submitGrievance,
-                icon: Icons.send,
-                fullWidth: true,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
@@ -8611,6 +9072,7 @@ import 'package:main_ui/widgets/loading_indicator.dart';
 // import 'package:main_ui/widgets/track_grievance_progress.dart';
 import 'package:main_ui/widgets/CombinedGrievanceCard.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/widgets/navigation_drawer.dart';
 
 // Assuming a provider for the authenticated user's ID (e.g., from JWT)
 final userIdProvider = Provider<int?>((ref) {
@@ -8724,13 +9186,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         backgroundColor: theme.appBarTheme.backgroundColor,
         foregroundColor: theme.appBarTheme.foregroundColor,
         elevation: theme.appBarTheme.elevation,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-        ],
       ),
+      drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
         onRefresh: () async {
           final userId = ref.read(userIdProvider);
@@ -10788,29 +11245,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity, // Make logout button full width
-                child: CustomButton(
-                  text: localizations.logout,
-                  icon: Icons.logout,
-                  backgroundColor: theme.colorScheme.error,
-                  foregroundColor: theme.colorScheme.onError,
-                  onPressed: () async {
-                    setState(() => _isLoading = true);
-                    try {
-                      await AuthService.logout();
-                      ref.read(userNotifierProvider.notifier).setUser(null);
-                      Navigator.pushReplacementNamed(context, '/login');
-                    } catch (e) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(localizations.logoutFailed)),
-                      );
-                    } finally {
-                      setState(() => _isLoading = false);
-                    }
-                  },
-                ),
-              ),
+              // SizedBox(
+              //   width: double.infinity, // Make logout button full width
+              //   child: CustomButton(
+              //     text: localizations.logout,
+              //     icon: Icons.logout,
+              //     backgroundColor: theme.colorScheme.error,
+              //     foregroundColor: theme.colorScheme.onError,
+              //     onPressed: () async {
+              //       setState(() => _isLoading = true);
+              //       try {
+              //         await AuthService.logout();
+              //         ref.read(userNotifierProvider.notifier).setUser(null);
+              //         Navigator.pushReplacementNamed(context, '/login');
+              //       } catch (e) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(content: Text(localizations.logoutFailed)),
+              //         );
+              //       } finally {
+              //         setState(() => _isLoading = false);
+              //       }
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -11193,9 +11650,11 @@ class PrivacyPolicyScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: const Text("Privacy Policy"),
+        title: const Text("Privacy Policy",
+    style: TextStyle(color: Colors.black), ),
         backgroundColor: const Color(0xFFECF2FE), // Matching card theme
         elevation: 0,
+  iconTheme: const IconThemeData(color: Colors.black), 
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -13606,6 +14065,7 @@ class Constants {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return "http://10.0.2.2:5000"; // Android emulator
+        // return "https://pcmcapp.onrender.com"; 
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
@@ -14716,12 +15176,12 @@ class CustomNavigationDrawer extends ConsumerWidget {
             },
           ),
           if (user?.role?.toUpperCase() == 'ADMIN') ...[
-            _buildDrawerItem(
-              context: context,
-              icon: Icons.history,
-              title: localizations.viewAuditLogs ?? 'View Audit Logs',
-              route: '/admin/audit',
-            ),
+            // _buildDrawerItem(
+            //   context: context,
+            //   icon: Icons.history,
+            //   title: localizations.viewAuditLogs ?? 'View Audit Logs',
+            //   route: '/admin/audit',
+            // ),
             _buildDrawerItem(
               context: context,
               icon: Icons.report,
@@ -14818,12 +15278,12 @@ class CustomNavigationDrawer extends ConsumerWidget {
             title: localizations.announcements ?? 'Announcements',
             route: '/announcements',
           ),
-          _buildDrawerItem(
-            context: context,
-            icon: Icons.notifications,
-            title: localizations.notifications ?? 'Notifications',
-            route: '/notifications',
-          ),
+          // _buildDrawerItem(
+          //   context: context,
+          //   icon: Icons.notifications,
+          //   title: localizations.notifications ?? 'Notifications',
+          //   route: '/notifications',
+          // ),
           _buildDrawerItem(
             context: context,
             icon: Icons.privacy_tip,

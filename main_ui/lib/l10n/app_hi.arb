@@ -201,7 +201,18 @@
   "refresh":"ताज़ा करें",
   "exportReports":"रिपोर्ट निर्यात करें",
   "filters":"फ़िल्टर",
-  "apply":"लागू करें"
+  "apply":"लागू करें",
+  "locationPermissionDenied":"स्थान अनुमति अस्वीकृत",
+"pleaseFillAllFields":"कृपया सभी फ़ील्ड भरें",
+"grievanceSubmitted":"शिकायत दर्ज की गई",
+"titleRequired":"शीर्षक आवश्यक है",
+"description":"विवरण",
+"descriptionRequired":"विवरण आवश्यक है",
+"categorization":"श्रेणीकरण",
+"subjectRequired":"विषय आवश्यक है",
+"areaRequired":"क्षेत्र आवश्यक है",
+"locationDetails":"स्थान विवरण"
+
 }
 
 

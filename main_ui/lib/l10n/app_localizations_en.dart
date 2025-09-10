@@ -518,4 +518,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get apply => 'Apply';
+
+  @override
+  String get locationPermissionDenied => 'Location permission denied';
+
+  @override
+  String get pleaseFillAllFields => 'Please fill all fields';
+
+  @override
+  String get grievanceSubmitted => 'Grievance submitted';
+
+  @override
+  String get titleRequired => 'Title is required';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get descriptionRequired => 'Description is required';
+
+  @override
+  String get categorization => 'Categorization';
+
+  @override
+  String get subjectRequired => 'Subject is required';
+
+  @override
+  String get areaRequired => 'Area is required';
+
+  @override
+  String get locationDetails => 'Location details';
 }
