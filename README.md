@@ -1,327 +1,327 @@
-PCMC Grievance System
-The PCMC Grievance System is a full-stack web and mobile application designed to manage public grievances efficiently. It allows citizens to submit complaints, track their status, and provide feedback, while enabling administrators, member heads, and field staff to manage and resolve these grievances. The system supports multilingual interfaces (English, Marathi, Hindi) and integrates with Firebase for authentication and file storage. The backend is built with Flask, and the frontend is developed using Flutter for cross-platform compatibility.
-Table of Contents
+# PCMC Grievance System
 
-Features
-Project Structure
-Technologies
-Setup Instructions
-Backend Setup (Flask)
-Frontend Setup (Flutter)
+![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 
+A full-stack web and mobile application designed to manage public grievances efficiently. The system allows citizens to submit complaints, track their status, and provide feedback, while enabling administrators, member heads, and field staff to manage and resolve these grievances.
 
-Super Admin Feature
-API Endpoints
-Running the Application
-Testing
-Contributing
-License
+## 📋 Table of Contents
 
-Features
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Technologies](#-technologies)
+- [Setup Instructions](#-setup-instructions)
+  - [Backend Setup (Flask)](#backend-setup-flask)
+  - [Frontend Setup (Flutter)](#frontend-setup-flutter)
+- [Super Admin Features](#-super-admin-features)
+- [API Endpoints](#-api-endpoints)
+- [Running the Application](#-running-the-application)
+- [Testing](#-testing)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-Citizen Features:
+## ✨ Features
 
-Submit grievances with file attachments (e.g., images, PDFs).
-Track grievance status and view progress.
-Provide feedback and ratings for resolved grievances.
-Multilingual support (English, Marathi, Hindi).
+### 👥 Citizen Features
+- Submit grievances with file attachments (images, PDFs, etc.)
+- Track grievance status and view progress
+- Provide feedback and ratings for resolved grievances
+- Multilingual support (English, Marathi, Hindi)
 
+### 👨‍💼 Member Head Features
+- View and assign grievances to field staff
+- Escalate grievances to higher levels
 
-Member Head Features:
+### 🛠️ Field Staff Features
+- View assigned grievances
+- Upload work proof and update grievance status
 
-View and assign grievances to field staff.
-Escalate grievances to higher levels.
+### 🔧 Admin Features
+- Manage users, subjects, areas, and system configurations
+- View advanced KPIs, audit logs, and user histories
+- Generate reports in Excel and PDF formats
 
+### ⚡ Super Admin Features (Company-Only)
+- Full control over all users, including other super admins
+- Hidden from non-super-admin users
+- Toggle maintenance mode to stop the app for all non-super-admin users
 
-Field Staff Features:
+### 🔒 Security
+- JWT-based authentication with role-based access control
+- Google OAuth for login
+- File upload validation (max 10 files, 50MB total, specific formats)
 
-View assigned grievances.
-Upload work proof and update grievance status.
+### 🌐 Localization
+- Supports English, Marathi, and Hindi via Flutter's localization system
 
+## 📁 Project Structure
 
-Admin Features:
-
-Manage users, subjects, areas, and system configurations.
-View advanced KPIs, audit logs, and user histories.
-Generate reports in Excel and PDF formats.
-
-
-Super Admin Features (Company-Only):
-
-Full control over all users, including other super admins.
-Hidden from non-super-admin users (citizens, member heads, field staff, admins).
-Toggle maintenance mode to stop the app for all non-super-admin users (returns 503 error).
-
-
-Security:
-
-JWT-based authentication with role-based access control.
-Google OAuth for login.
-File upload validation (max 10 files, 50MB total, specific formats: JPG, PNG, PDF, MP4, MOV).
-
-
-Localization:
-
-Supports English, Marathi, and Hindi via Flutter's localization system.
-
-
-
-Project Structure
+```
 PCMCApp/
 ├── grievance-system-backend/      # Flask backend
 │   ├── app/
 │   │   ├── __init__.py           # Flask app initialization
-│   │   ├── config.py             # Configuration settings (database, JWT, uploads)
+│   │   ├── config.py             # Configuration settings
 │   │   ├── extensions.py         # OAuth initialization
-│   │   ├── models.py             # Database models (User, Grievance, MasterConfig, etc.)
+│   │   ├── models.py             # Database models
 │   │   ├── routes/               # API routes
-│   │   │   ├── superadmin_routes.py  # Super admin routes (maintenance, user management)
-│   │   │   └── ...               # Other route files (admin, auth, grievances, etc.)
-│   │   ├── services/             # Business logic (e.g., user_service.py)
-│   │   ├── utils/                # Utilities (auth_utils.py, file_utils.py, kpi_utils.py)
+│   │   │   ├── superadmin_routes.py  # Super admin routes
+│   │   │   └── ...               # Other route files
+│   │   ├── services/             # Business logic
+│   │   ├── utils/                # Utilities
 │   │   └── schemas/              # Data validation schemas
 │   ├── addConfig.py              # Script to insert master configurations
 │   ├── addData.py                # Script to insert master areas
 │   ├── addData_Subject.py        # Script to insert master subjects
 │   ├── create_database.py        # Script to reset and create database tables
-│   ├── create_super_admin.py     # Script to create super admin and maintenance config
+│   ├── create_super_admin.py     # Script to create super admin
 │   ├── run.py                    # Entry point to run Flask app
 │   ├── seedData.py               # Script to seed sample data
 │   ├── testusers.py              # Script to create test users
 │   ├── test_all_routes.py        # Script to test API routes
 │   └── uploads/                  # Folder for file uploads
-├── main_ui/                      # Flutter frontend
-│   ├── lib/
-│   │   ├── firebase_options.dart # Firebase configuration
-│   │   ├── main.dart             # Flutter app entry point
-│   │   ├── routes.dart           # App navigation routes
-│   │   ├── l10n/                 # Localization files
-│   │   ├── models/               # Data models (e.g., grievance_model.dart)
-│   │   ├── providers/            # State management (Riverpod)
-│   │   ├── screens/              # UI screens (login, dashboard, etc.)
-│   │   ├── services/             # Services (auth_service.dart, api_service.dart)
-│   │   ├── utils/                # Utilities (e.g., theme.dart)
-│   │   └── widgets/              # Reusable UI components
-│   └── pubspec.yaml              # Flutter dependencies
-
-Technologies
-
-Backend:
-
-Flask (Python web framework)
-SQLAlchemy (ORM for database management)
-Flask-JWT-Extended (JWT authentication)
-Authlib (OAuth for Google login)
-SQLite (default database; supports PostgreSQL/MySQL)
-ReportLab (PDF generation)
-Pandas (Excel report generation)
-
-
-Frontend:
-
-Flutter (cross-platform UI framework)
-Firebase (authentication and storage)
-Riverpod (state management)
-Flutter Localizations (multilingual support)
-File Picker (file uploads)
-
-
-
-Setup Instructions
-Backend Setup (Flask)
-
-Clone the Repository:
-git clone <repository-url>
-cd PCMCApp/grievance-system-backend
-
-
-Create a Virtual Environment:
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-
-Install Dependencies:Ensure you have Python 3.8+ installed. Install required packages:
-pip install flask flask-sqlalchemy flask-jwt-extended authlib python-dotenv pandas reportlab
-
-
-Set Up Environment Variables:Create a .env file in the grievance-system-backend directory based on .env.example:
-SECRET_KEY=your-secret-key
-JWT_SECRET_KEY=your-jwt-secret-key
-DATABASE_URL=sqlite:///app.db
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-Generate secure keys using:
-python -c 'import secrets; print(secrets.token_hex(16))'
-
-
-Initialize the Database:Run the following scripts in order:
-python create_database.py
-python addConfig.py
-python addData.py
-python addData_Subject.py
-python seedData.py
-python testusers.py
-python create_super_admin.py
-
-
-Run the Flask App:
-python run.py
-
-The backend runs at http://127.0.0.1:5000.
-
-
-Frontend Setup (Flutter)
-
-Install Flutter:Follow the official Flutter installation guide to set up Flutter and Dart.
-
-Navigate to Frontend Directory:
-cd PCMCApp/main_ui
-
-
-Install Dependencies:
-flutter pub get
-
-
-Configure Firebase:
-
-Create a Firebase project at console.firebase.google.com.
-Add your app for Web, Android, iOS, etc., and update lib/firebase_options.dart with the generated configuration.
-Enable Firebase Authentication (Email/Password and Google Sign-In) and Firebase Storage.
-
-
-Run the Flutter App:
-flutter run
-
-Choose a device (browser, emulator, or physical device) to run the app.
-
-
-Super Admin Feature
-The super admin is a special role (SUPER_ADMIN) designed for internal company use, with the following characteristics:
-
-Hidden from Other Users: Super admins are not visible in user listings or histories to non-super-admin users (citizens, member heads, field staff, admins).
-Full User Control: Can list, edit, and delete all users, including other super admins.
-Maintenance Mode: Can toggle the app into maintenance mode via /superadmin/toggle_maintenance, which blocks all non-super-admin access with a 503 error.
-
-Implementation Details
-
-Backend Changes:
-
-Added SUPER_ADMIN to Role enum in app/models.py.
-Created app/routes/superadmin_routes.py with endpoints:
-POST /superadmin/toggle_maintenance: Toggles MAINTENANCE_MODE in MasterConfig.
-GET /superadmin/users: Lists all users (including super admins).
-PUT /superadmin/users/<user_id>: Updates any user.
-DELETE /superadmin/users/<user_id>: Deletes any user.
-
-
-Modified app/__init__.py to register the superadmin blueprint and add a before_request hook to enforce maintenance mode.
-Updated app/routes/admin_routes.py to filter out super admins from user listings and histories for non-super-admins.
-Added create_super_admin.py to create a super admin user (superadmin@company.com, password: super_secure_password) and initialize MAINTENANCE_MODE config.
-
-
-Usage:
-
-Run python create_super_admin.py to create the super admin and maintenance config.
-Login as super admin via /auth/login with superadmin@company.com.
-Use /superadmin/toggle_maintenance to enable/disable maintenance mode.
-
-
-
-Note: Change the super admin password immediately and store secrets securely in .env.
-API Endpoints
-Authentication
-
-POST /auth/login: Authenticate user and return JWT token.
-POST /auth/register: Register a new user.
-GET /auth/me: Get current user details.
-POST /auth/otp/send: Send OTP for verification.
-POST /auth/otp/verify: Verify OTP.
-POST /auth/guest-login: Guest login without credentials.
-
-Grievances
-
-POST /grievances/: Submit a new grievance (citizen).
-GET /grievances/mine: List user's grievances (citizen).
-GET /grievances/assigned: List assigned grievances (field staff).
-POST /grievances/<id>/accept: Accept a grievance (field staff).
-POST /grievances/<id>/reject: Reject a grievance with reason.
-POST /grievances/<id>/close: Close a grievance.
-POST /grievances/<id>/escalate: Escalate a grievance.
-PUT /grievances/<id>/reassign: Reassign a grievance.
-POST /grievances/<id>/feedback: Submit feedback (citizen).
-POST /grievances/<id>/workproof: Upload work proof (field staff).
-
-Admin
-
-GET /admins/dashboard: Admin dashboard with KPIs.
-GET /admins/users: List users (excludes super admins for non-super-admins).
-GET /admins/users/<id>/history: Get user grievance history.
-GET /admins/areas: List areas.
-POST /admins/areas: Add a new area.
-GET /admins/subjects: List subjects.
-POST /admins/subjects: Add a new subject.
-GET /admins/configs: List configurations.
-POST /admins/configs: Add a new configuration.
-PUT /admins/configs/<key>: Update a configuration.
-GET /admins/reports: Generate reports (Excel/PDF).
-GET /admins/audit-logs: View audit logs.
-
-Super Admin
-
-POST /superadmin/toggle_maintenance: Enable/disable maintenance mode.
-GET /superadmin/users: List all users (including super admins).
-PUT /superadmin/users/<id>: Update any user.
-DELETE /superadmin/users/<id>: Delete any user.
-
-Other
-
-GET /areas: List master areas (public).
-GET /subjects: List master subjects (public).
-GET /settings/settings: Get user settings.
-POST /settings/settings: Update user settings.
-POST /notifications/register: Register for notifications.
-
-Running the Application
-
-Start the Backend:
-cd grievance-system-backend
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-python run.py
-
-
-Start the Frontend:
-cd main_ui
-flutter run
-
-
-Access the App:
-
-Web: Open http://localhost:5000 (backend) and the Flutter app URL (e.g., http://localhost:4200).
-Mobile: Use an emulator or physical device via Flutter.
-
-
-
-Testing
-
-Backend Testing:Run test_all_routes.py to test all API endpoints:
+└── main_ui/                      # Flutter frontend
+    ├── lib/
+    │   ├── firebase_options.dart # Firebase configuration
+    │   ├── main.dart             # Flutter app entry point
+    │   ├── routes.dart           # App navigation routes
+    │   ├── l10n/                 # Localization files
+    │   ├── models/               # Data models
+    │   ├── providers/            # State management (Riverpod)
+    │   ├── screens/              # UI screens
+    │   ├── services/             # Services
+    │   ├── utils/                # Utilities
+    │   └── widgets/              # Reusable UI components
+    └── pubspec.yaml              # Flutter dependencies
+```
+
+## 🛠️ Technologies
+
+### Backend
+- **Flask** - Python web framework
+- **SQLAlchemy** - ORM for database management
+- **Flask-JWT-Extended** - JWT authentication
+- **Authlib** - OAuth for Google login
+- **SQLite** - Default database (supports PostgreSQL/MySQL)
+- **ReportLab** - PDF generation
+- **Pandas** - Excel report generation
+
+### Frontend
+- **Flutter** - Cross-platform UI framework
+- **Firebase** - Authentication and storage
+- **Riverpod** - State management
+- **Flutter Localizations** - Multilingual support
+- **File Picker** - File uploads
+
+## 🚀 Setup Instructions
+
+### Backend Setup (Flask)
+
+1. **Clone the Repository**
+   ```bash
+   git clone <repository-url>
+   cd PCMCApp/grievance-system-backend
+   ```
+
+2. **Create a Virtual Environment**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   pip install flask flask-sqlalchemy flask-jwt-extended authlib python-dotenv pandas reportlab
+   ```
+
+4. **Set Up Environment Variables**
+   
+   Create a `.env` file in the `grievance-system-backend` directory:
+   ```
+   SECRET_KEY=your-secret-key
+   JWT_SECRET_KEY=your-jwt-secret-key
+   DATABASE_URL=sqlite:///app.db
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   ```
+   
+   Generate secure keys using:
+   ```bash
+   python -c 'import secrets; print(secrets.token_hex(16))'
+   ```
+
+5. **Initialize the Database**
+   
+   Run the following scripts in order:
+   ```bash
+   python create_database.py
+   python addConfig.py
+   python addData.py
+   python addData_Subject.py
+   python seedData.py
+   python testusers.py
+   python create_super_admin.py
+   ```
+
+6. **Run the Flask App**
+   ```bash
+   python run.py
+   ```
+   
+   The backend runs at http://127.0.0.1:5000.
+
+### Frontend Setup (Flutter)
+
+1. **Install Flutter**
+   
+   Follow the official [Flutter installation guide](https://flutter.dev/docs/get-started/install).
+
+2. **Navigate to Frontend Directory**
+   ```bash
+   cd PCMCApp/main_ui
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+4. **Configure Firebase**
+   
+   - Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com)
+   - Add your app for Web, Android, iOS, etc.
+   - Update `lib/firebase_options.dart` with the generated configuration
+   - Enable Firebase Authentication (Email/Password and Google Sign-In) and Firebase Storage
+
+5. **Run the Flutter App**
+   ```bash
+   flutter run
+   ```
+   
+   Choose a device (browser, emulator, or physical device) to run the app.
+
+## 👑 Super Admin Features
+
+The super admin is a special role (`SUPER_ADMIN`) designed for internal company use:
+
+- **Hidden from Other Users**: Not visible in user listings or histories to non-super-admin users
+- **Full User Control**: Can list, edit, and delete all users, including other super admins
+- **Maintenance Mode**: Can toggle the app into maintenance mode, blocking all non-super-admin access
+
+### Implementation Details
+
+**Backend Changes:**
+- Added `SUPER_ADMIN` to Role enum in `app/models.py`
+- Created `app/routes/superadmin_routes.py` with endpoints for maintenance mode and user management
+- Modified `app/__init__.py` to register the superadmin blueprint and add maintenance mode enforcement
+- Updated admin routes to filter out super admins for non-super-admins
+- Added `create_super_admin.py` to create the default super admin
+
+**Usage:**
+1. Run `python create_super_admin.py` to create the super admin
+2. Login as super admin via `/auth/login` with `superadmin@company.com`
+3. Use `/superadmin/toggle_maintenance` to enable/disable maintenance mode
+
+> **Note**: Change the super admin password immediately and store secrets securely in `.env`.
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /auth/login` - Authenticate user and return JWT token
+- `POST /auth/register` - Register a new user
+- `GET /auth/me` - Get current user details
+- `POST /auth/otp/send` - Send OTP for verification
+- `POST /auth/otp/verify` - Verify OTP
+- `POST /auth/guest-login` - Guest login without credentials
+
+### Grievances
+- `POST /grievances/` - Submit a new grievance (citizen)
+- `GET /grievances/mine` - List user's grievances (citizen)
+- `GET /grievances/assigned` - List assigned grievances (field staff)
+- `POST /grievances/<id>/accept` - Accept a grievance (field staff)
+- `POST /grievances/<id>/reject` - Reject a grievance with reason
+- `POST /grievances/<id>/close` - Close a grievance
+- `POST /grievances/<id>/escalate` - Escalate a grievance
+- `PUT /grievances/<id>/reassign` - Reassign a grievance
+- `POST /grievances/<id>/feedback` - Submit feedback (citizen)
+- `POST /grievances/<id>/workproof` - Upload work proof (field staff)
+
+### Admin
+- `GET /admins/dashboard` - Admin dashboard with KPIs
+- `GET /admins/users` - List users (excludes super admins for non-super-admins)
+- `GET /admins/users/<id>/history` - Get user grievance history
+- `GET /admins/areas` - List areas
+- `POST /admins/areas` - Add a new area
+- `GET /admins/subjects` - List subjects
+- `POST /admins/subjects` - Add a new subject
+- `GET /admins/configs` - List configurations
+- `POST /admins/configs` - Add a new configuration
+- `PUT /admins/configs/<key>` - Update a configuration
+- `GET /admins/reports` - Generate reports (Excel/PDF)
+- `GET /admins/audit-logs` - View audit logs
+
+### Super Admin
+- `POST /superadmin/toggle_maintenance` - Enable/disable maintenance mode
+- `GET /superadmin/users` - List all users (including super admins)
+- `PUT /superadmin/users/<id>` - Update any user
+- `DELETE /superadmin/users/<id>` - Delete any user
+
+### Other
+- `GET /areas` - List master areas (public)
+- `GET /subjects` - List master subjects (public)
+- `GET /settings/settings` - Get user settings
+- `POST /settings/settings` - Update user settings
+- `POST /notifications/register` - Register for notifications
+
+## ▶️ Running the Application
+
+1. **Start the Backend**
+   ```bash
+   cd grievance-system-backend
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python run.py
+   ```
+
+2. **Start the Frontend**
+   ```bash
+   cd main_ui
+   flutter run
+   ```
+
+3. **Access the App**
+   - Web: Open http://localhost:5000 (backend) and the Flutter app URL
+   - Mobile: Use an emulator or physical device via Flutter
+
+## 🧪 Testing
+
+### Backend Testing
+Run the test script to test all API endpoints:
+```bash
 python test_all_routes.py
+```
 
-This script tests routes for different roles (citizen, member_head, field_staff, admin). Update it to include super admin routes if needed.
+This script tests routes for different roles (citizen, member_head, field_staff, admin).
 
-Frontend Testing:Use Flutter's testing framework:
+### Frontend Testing
+Use Flutter's testing framework:
+```bash
 flutter test
+```
 
+## 🤝 Contributing
 
-
-Contributing
-
-Fork the repository.
-Create a feature branch (git checkout -b feature/your-feature).
-Commit changes (git commit -m 'Add your feature').
-Push to the branch (git push origin feature/your-feature).
-Open a pull request.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature`)
+3. Commit changes (`git commit -m 'Add your feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a pull request
 
 Please ensure code follows PEP 8 (Python) and Flutter style guidelines. Add tests for new features.
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
+
+## 📄 License
+
+
+---
+
+For any questions or support, please contact the development team.
