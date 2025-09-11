@@ -324,4 +324,4 @@ Please ensure code follows PEP 8 (Python) and Flutter style guidelines. Add test
 
 ---
 
-For any questions or support, please contact the development team.
+For any questions or support, please contact me.
