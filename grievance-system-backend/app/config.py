@@ -48,13 +48,13 @@ class Config:
     # The settings below are configured to use environment variables, with Google's SMTP as the default.
     # For this to work, you must enable 2-Step Verification on your Google account and generate an "App Password".
     # If you don't set these in your .env, email sending will likely fail.
-    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
-    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or ('Grievance System', os.environ.get('MAIL_USERNAME'))
+    # MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
+    # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
+    # MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
+    # MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
+    # MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    # MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    # MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or ('Grievance System', os.environ.get('MAIL_USERNAME'))
 
     # --- Google OAuth Settings ---
     # These are required for Google Sign-In to work.

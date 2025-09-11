@@ -128,12 +128,12 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     try {
       // Log before send
       // Log count
-      print("===============================================================================================================================================Sending multipart with ${_attachments.length} files");
+     
       for (var i = 0; i < _attachments.length; i++) {
         // Log each file added
-        print("Adding file[$i]: ${_attachments[i].name}");
+       
         // Log details like name size
-        print("  size: ${_attachments[i].size}");
+      
       }
       final grievanceService = GrievanceService();
       await grievanceService.createGrievance(

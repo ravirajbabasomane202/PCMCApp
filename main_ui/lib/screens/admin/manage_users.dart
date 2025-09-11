@@ -16,6 +16,20 @@ class ManageUsers extends ConsumerStatefulWidget {
 }
 
 class _ManageUsersState extends ConsumerState<ManageUsers> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _showAddUserDialog() async {
     final l10n = AppLocalizations.of(context)!;
     final formKey = GlobalKey<FormState>();
@@ -496,90 +510,140 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: l10n.addUser,
       ),
-      body: users.isEmpty
-          ? EmptyState(
-              icon: Icons.people_outline,
-              title: l10n.noUsers,
-              message: l10n.noUsersMessage,
-              actionButton: CustomButton(
-                text: l10n.addUser,
-                onPressed: _showAddUserDialog,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search by name...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: Card(
-                    elevation: 1,
-                    color: const Color(0xFFecf2fe), // Set card background color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primary,
-                        child: Text(
-                          (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
-                          style: TextStyle(color: theme.colorScheme.onPrimary),
-                        ),
-                      ),
-                      title: Text(user.name ?? "", 
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600
-                          )),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
-                            user.email ?? l10n.noEmail,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[700]
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: _getRoleColor(user.role),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              user.role ?? '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue[700]),
-                            onPressed: () => _showEditUserDialog(user),
-                            tooltip: l10n.editUser,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _confirmDeleteUser(user.id),
-                            tooltip: l10n.deleteUser,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+              onChanged: (value) => setState(() {}),
             ),
+          ),
+          Expanded(
+            child: users.isEmpty
+                ? EmptyState(
+                    icon: Icons.people_outline,
+                    title: l10n.noUsers,
+                    message: l10n.noUsersMessage,
+                    actionButton: CustomButton(
+                      text: l10n.addUser,
+                      onPressed: _showAddUserDialog,
+                    ),
+                  )
+                : _buildUserList(users, _searchController.text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserList(List<User> users, String query) {
+    final l10n = AppLocalizations.of(context)!;
+    final filteredUsers = users.where((user) {
+      final lowerQuery = query.toLowerCase();
+      return (user.name?.toLowerCase().contains(lowerQuery) ?? false) ||
+             (user.email?.toLowerCase().contains(lowerQuery) ?? false);
+    }).toList();
+
+    if (filteredUsers.isEmpty) {
+      return EmptyState(
+        icon: Icons.search_off,
+        title: 'No Results',
+        message: 'No users found matching your search',
+        actionButton: CustomButton(
+          text: l10n.retry,
+          onPressed: () => _searchController.clear(),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: filteredUsers.length,
+      itemBuilder: (context, index) {
+        final user = filteredUsers[index];
+        return _buildUserCard(user);
+      },
+    );
+  }
+
+  Widget _buildUserCard(User user) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 1,
+        color: const Color(0xFFecf2fe), // Set card background color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: CircleAvatar(
+            backgroundColor: theme.colorScheme.primary,
+            child: Text(
+              (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
+              style: TextStyle(color: theme.colorScheme.onPrimary),
+            ),
+          ),
+          title: Text(user.name ?? "", 
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600
+              )),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                user.email ?? l10n.noEmail,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[700]
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getRoleColor(user.role),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  user.role ?? '',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500
+                  ),
+                ),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue[700]),
+                onPressed: () => _showEditUserDialog(user),
+                tooltip: l10n.editUser,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () => _confirmDeleteUser(user.id),
+                tooltip: l10n.deleteUser,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

@@ -4,13 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/services/api_service.dart';
 import 'package:main_ui/services/auth_service.dart';
-import 'package:main_ui/utils/theme.dart';
 import 'package:main_ui/widgets/custom_button.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/file_upload_widget.dart';
 import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/providers/user_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:main_ui/utils/constants.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -23,11 +23,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
-  late TextEditingController _phoneController;
   late TextEditingController _addressController;
+  PlatformFile? _profilePic;
   bool _isEditing = false;
   bool _isLoading = false;
-  bool _twoFactorEnabled = false;
 
   @override
   void initState() {
@@ -35,16 +34,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.read(userNotifierProvider);
     _nameController = TextEditingController(text: user?.name);
     _emailController = TextEditingController(text: user?.email);
-    _phoneController = TextEditingController(text: user?.phoneNumber);
     _addressController = TextEditingController(text: user?.address);
-    _twoFactorEnabled = user?.twoFactorEnabled ?? false;
+    _profilePic = null;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     _addressController.dispose();
     super.dispose();
   }
@@ -53,58 +50,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        final userData = {
-          'id': ref.read(userNotifierProvider)!.id.toString(), // Convert to string
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'phoneNumber': _phoneController.text,
-          'address': _addressController.text,
-          'twoFactorEnabled': _twoFactorEnabled.toString(),
-        };
-        final updatedUser = await ApiService.addUpdateUser(userData);
-        ref.read(userNotifierProvider.notifier).setUser(User.fromJson(updatedUser));
-        setState(() => _isEditing = false);
+        final updatedUser = await ApiService.updateProfile(
+          name: _nameController.text,
+          email: _emailController.text,
+          password: null, // No password field, so null
+          address: _addressController.text,
+          profilePic: _profilePic,
+        );
+        ref.read(userNotifierProvider.notifier).setUser(updatedUser);
+        setState(() {
+          _isEditing = false;
+          _profilePic = null;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.userUpdatedSuccess)),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.failedToUpdateUser)),
-        );
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _uploadProfilePicture(List<PlatformFile> files) async {
-    if (files.isNotEmpty) {
-      setState(() => _isLoading = true);
-      try {
-        final file = files.first;
-        final response = await ApiService.uploadProfilePicture(file);
-        final user = ref.read(userNotifierProvider)!;
-        ref.read(userNotifierProvider.notifier).setUser(
-              User(
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role,
-                departmentId: user.departmentId,
-                address: user.address,
-                profilePicture: response['file_path'],
-                lastLogin: user.lastLogin,
-                twoFactorEnabled: user.twoFactorEnabled,
-                isActive: user.isActive,
-              ),
-            );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile picture uploaded successfully')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload profile picture')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.failedToUpdateUser}: $e')),
         );
       } finally {
         setState(() => _isLoading = false);
@@ -189,7 +152,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withAlpha(40), // Fixed: changed withValues to withAlpha
+                  color: theme.colorScheme.primary.withAlpha(40),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -199,10 +162,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 50,
-                          backgroundImage:
-                              user.profilePicture != null ? NetworkImage(user.profilePicture!) : null,
+                          backgroundImage: user.profilePicture != null && user.profilePicture!.isNotEmpty
+                              ? NetworkImage('${Constants.baseUrl}/uploads/${user.profilePicture}')
+                              : null,
                           backgroundColor: theme.colorScheme.primary,
-                          child: user.profilePicture == null
+                          onBackgroundImageError: user.profilePicture != null && user.profilePicture!.isNotEmpty
+                              ? (error, stackTrace) {
+                                  print('Error loading profile picture: $error : ${Constants.baseUrl}/uploads/${user.profilePicture}');
+                                }
+                              : null,
+                          child: user.profilePicture == null || user.profilePicture!.isEmpty
                               ? Text(
                                   user.name?.isNotEmpty == true ? user.name![0].toUpperCase() : '?',
                                   style: TextStyle(
@@ -220,7 +189,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (context) => FileUploadWidget(
-                                  onFilesSelected: _uploadProfilePicture,
+                                  onFilesSelected: (files) {
+                                    if (files.isNotEmpty) {
+                                      setState(() => _profilePic = files.first);
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Profile picture selected. Save to upload.')),
+                                      );
+                                    }
+                                  },
                                 ),
                               );
                             },
@@ -248,7 +225,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: 24),
               // Profile details card
-              Card( 
+              Card(
                 color: const Color(0xffecf2fe),
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -278,33 +255,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
-                        icon: Icons.phone,
-                        label: 'Phone',
-                        value: user.phoneNumber,
-                        controller: _phoneController,
-                        enabled: _isEditing,
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Phone number is required' : null,
-                      ),
-                      const Divider(),
-                      _buildProfileField(
                         icon: Icons.location_on,
                         label: 'Address',
                         value: user.address,
                         controller: _addressController,
                         enabled: _isEditing,
                       ),
-                      // const Divider(),
-                      // ListTile(
-                      //   leading: Icon(Icons.security, color: theme.colorScheme.primary),
-                      //   title: Text('Two-Factor Authentication'),
-                      //   trailing: Switch(
-                      //     value: _twoFactorEnabled,
-                      //     onChanged: _isEditing
-                      //         ? (value) => setState(() => _twoFactorEnabled = value)
-                      //         : null,
-                      //   ),
-                      // ),
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
@@ -345,8 +301,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Action buttons - FIXED: Added proper constraints
-              if (_isEditing) 
+              if (_isEditing)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -360,9 +315,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             _isEditing = false;
                             _nameController.text = user.name ?? '';
                             _emailController.text = user.email ?? '';
-                            _phoneController.text = user.phoneNumber ?? '';
                             _addressController.text = user.address ?? '';
-                            _twoFactorEnabled = user.twoFactorEnabled ?? false;
+                            _profilePic = null;
                           }),
                         ),
                       ),
@@ -390,29 +344,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-              // SizedBox(
-              //   width: double.infinity, // Make logout button full width
-              //   child: CustomButton(
-              //     text: localizations.logout,
-              //     icon: Icons.logout,
-              //     backgroundColor: theme.colorScheme.error,
-              //     foregroundColor: theme.colorScheme.onError,
-              //     onPressed: () async {
-              //       setState(() => _isLoading = true);
-              //       try {
-              //         await AuthService.logout();
-              //         ref.read(userNotifierProvider.notifier).setUser(null);
-              //         Navigator.pushReplacementNamed(context, '/login');
-              //       } catch (e) {
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text(localizations.logoutFailed)),
-              //         );
-              //       } finally {
-              //         setState(() => _isLoading = false);
-              //       }
-              //     },
-              //   ),
-              // ),
             ],
           ),
         ),

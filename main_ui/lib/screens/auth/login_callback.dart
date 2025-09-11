@@ -35,11 +35,10 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
         if (!mounted) return;
 
         if (user != null) {
-          print('User logged in: ${user.name}, Role: ${user.role}');
-          // Navigate to role-specific home screen
+          
           Navigator.pushReplacementNamed(context, '/${user.role != null ? user.role!.toLowerCase() : 'guest'}/home');
         } else {
-          print('Error: Unable to fetch user data after processing token.');
+          
           Navigator.pushReplacementNamed(context, '/login');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -49,7 +48,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
         }
       } else {
         if (!mounted) return;
-        print('Error: No token received in URL');
+        
         Navigator.pushReplacementNamed(context, '/login');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -59,7 +58,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
       }
     } catch (e, stackTrace) {
       if (!mounted) return;
-      print('Login callback error: $e\n$stackTrace');
+      
       Navigator.pushReplacementNamed(context, '/login');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

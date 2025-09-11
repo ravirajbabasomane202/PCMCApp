@@ -45,12 +45,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
             },
           ),
           if (user?.role?.toUpperCase() == 'ADMIN') ...[
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.history,
-            //   title: localizations.viewAuditLogs ?? 'View Audit Logs',
-            //   route: '/admin/audit',
-            // ),
+
             _buildDrawerItem(
               context: context,
               icon: Icons.report,
@@ -87,94 +82,56 @@ class CustomNavigationDrawer extends ConsumerWidget {
               title: localizations.manageAreas ?? 'Manage Areas',
               route: '/admin/areas',
             ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.assessment,
-            //   title: localizations.reports ?? 'Reports',
-            //   route: '/admin/reports',
-            // ),
+
           ],
           if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.view_list,
-            //   title: localizations.viewgrievanceetails ?? 'View Grievances',
-            //   route: '/member_head/view',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.assignment,
-            //   title: localizations.assignGrievance ?? 'Assign Grievance',
-            //   route: '/member_head/assign',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.cancel,
-            //   title: localizations.rejectGrievance ?? 'Reject Grievance',
-            //   route: '/member_head/reject',
-            // ),
+          
           ],
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.update,
-            //   title: localizations.updateStatus ?? 'Update Status',
-            //   route: '/employer/update',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.upload_file,
-            //   title: localizations.uploadWorkproof ?? 'Upload Work Proof',
-            //   route: '/employer/upload',
-            // ),
+          
           ],
           _buildDrawerItem(
             context: context,
             icon: Icons.person,
-            title: localizations.profile ?? 'Profile',
+            title: localizations.profile ,
             route: '/profile',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.settings,
-            title: localizations.settings ?? 'Settings',
+            title: localizations.settings,
             route: '/settings',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.announcement,
-            title: localizations.announcements ?? 'Announcements',
+            title: localizations.announcements,
             route: '/announcements',
           ),
-          // _buildDrawerItem(
-          //   context: context,
-          //   icon: Icons.notifications,
-          //   title: localizations.notifications ?? 'Notifications',
-          //   route: '/notifications',
-          // ),
+          
           _buildDrawerItem(
             context: context,
             icon: Icons.privacy_tip,
-            title: localizations.privacyPolicy ?? 'Privacy Policy',
+            title: localizations.privacyPolicy,
             route: '/privacy-policy',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.help,
-            title: localizations.faqs ?? 'FAQs',
+            title: localizations.faqs,
             route: '/faqs',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.support,
-            title: localizations.contactSupport ?? 'Contact Support',
+            title: localizations.contactSupport,
             route: '/contact-support',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.info,
-            title: localizations.appVersion ?? 'App Version',
+            title: localizations.appVersion,
             route: '/app-version',
           ),
           const Divider(),

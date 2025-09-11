@@ -75,7 +75,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Google login failed');
       }
     } catch (e) {
-      print('Google login failed: $e');
+      
       rethrow;
     }
   }
@@ -99,7 +99,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Registration failed');
       }
     } catch (e) {
-      print('Registration failed: $e');
+     
       rethrow;
     }
   }
@@ -119,7 +119,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Login failed');
       }
     } catch (e) {
-      print('Password login failed: $e');
+     
       rethrow;
     }
   }
@@ -136,7 +136,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Failed to request OTP');
       }
     } catch (e) {
-      print('OTP request failed: $e');
+      
       rethrow;
     }
   }
@@ -156,7 +156,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'OTP verification failed');
       }
     } catch (e) {
-      print('OTP verification failed: $e');
+      
       rethrow;
     }
   }
@@ -177,7 +177,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      print('Error fetching user: $e');
+      
       return null;
     }
   }
@@ -191,7 +191,7 @@ class AuthService {
       _authStateController.add(null); // Notify token cleared
       await _firebaseAuth.signOut();
     } catch (e) {
-      print('Logout failed: $e');
+      rethrow;
     }
   }
 

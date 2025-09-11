@@ -56,7 +56,7 @@ class ApiService {
         );
     
     final url = _dio.options.baseUrl + path;
-    print("📌 Requesting URL: $url");
+    
     try {
       return await _dio.get(path, options: mergedOptions);
     } on DioException catch (e) {
@@ -193,6 +193,59 @@ static Future<Response> postMultipart(
       throw Exception('Failed to upload profile picture: ${e.message}');
     }
   }
+  
+
+static Future<User> updateProfile({
+  String? name,
+  String? email,
+  String? password,
+  String? address,
+  PlatformFile? profilePic,
+}) async {
+  try {
+    final token = await AuthService.getToken();
+
+    final Map<String, dynamic> fields = {};
+
+    if (name != null) fields['name'] = name;
+    if (email != null) fields['email'] = email;
+    if (password != null && password.isNotEmpty) fields['password'] = password;
+    if (address != null) fields['address'] = address;
+
+    // Handle file upload (web vs mobile)
+    if (profilePic != null) {
+      if (kIsWeb) {
+        fields['profile_picture'] = MultipartFile.fromBytes(
+          profilePic.bytes!,
+          filename: profilePic.name,
+        );
+      } else {
+        fields['profile_picture'] = await MultipartFile.fromFile(
+          profilePic.path!,
+          filename: profilePic.name,
+        );
+      }
+    }
+
+    final formData = FormData.fromMap(fields);
+
+    final response = await _dio.put(
+      '/auth/me',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return User.fromJson(response.data as Map<String, dynamic>);
+  } on DioException catch (e) {
+    final errorMsg = e.response?.data ?? e.message;
+    _logger.severe('Failed to update profile: $errorMsg');
+    throw Exception('Failed to update profile: $errorMsg');
+  }
+}
 
   // Fetch area by ID
   static Future<Map<String, dynamic>?> getMasterArea(int areaId) async {

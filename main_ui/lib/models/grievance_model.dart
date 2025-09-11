@@ -76,7 +76,7 @@ class Grievance {
   });
 
   factory Grievance.fromJson(Map<String, dynamic> json) {
-  print("🔍 Parsing JSON: $json");
+  
   return Grievance(
     id: json['id'] as int,
     complaintId: json['complaint_id'] as String,

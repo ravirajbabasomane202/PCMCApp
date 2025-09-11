@@ -193,6 +193,9 @@
 "categorization":"वर्गीकरण",
 "subjectRequired":"विषय आवश्यक आहे",
 "areaRequired":"क्षेत्र आवश्यक आहे",
-"locationDetails":"स्थानाची माहिती"
-
+"locationDetails":"स्थानाची माहिती",
+"searchByName": "नावाने शोधा",
+    "noResultsFound": "कोणतेही निकाल सापडले नाहीत",
+    "noMatchingGrievances": "कोणत्याही जुळणाऱ्या तक्रारी सापडल्या नाहीत",
+"allUsersHistory":"सर्व वापरकर्त्यांचा इतिहास"
 }

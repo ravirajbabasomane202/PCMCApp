@@ -211,8 +211,11 @@
 "categorization":"श्रेणीकरण",
 "subjectRequired":"विषय आवश्यक है",
 "areaRequired":"क्षेत्र आवश्यक है",
-"locationDetails":"स्थान विवरण"
-
+"locationDetails":"स्थान विवरण",
+"searchByName": "नाम से खोजें",
+"noResultsFound": "कोई परिणाम नहीं मिला",
+"noMatchingGrievances": "कोई मिलान करने वाली शिकायतें नहीं मिलीं",
+"allUsersHistory":"सभी उपयोगकर्ताओं का इतिहास"
 }
 
 

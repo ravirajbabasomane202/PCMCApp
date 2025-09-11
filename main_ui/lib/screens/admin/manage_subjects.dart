@@ -100,11 +100,11 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                   final response = subject == null
                                       ? await ApiService.post('/admins/subjects', data)
                                       : await ApiService.put('/admins/subjects/${subject.id}', data);
-                                  print(response); // debug
+                                   
                                   ref.invalidate(subjectsProvider); // refresh list
                                   Navigator.pop(context);
                                 } catch (e) {
-                                  print("Error: $e");
+                                  
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Error: $e'),

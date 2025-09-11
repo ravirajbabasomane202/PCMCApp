@@ -591,13 +591,13 @@ class Config:
     # The settings below are configured to use environment variables, with Google's SMTP as the default.
     # For this to work, you must enable 2-Step Verification on your Google account and generate an "App Password".
     # If you don't set these in your .env, email sending will likely fail.
-    MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
-    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
-    MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or ('Grievance System', os.environ.get('MAIL_USERNAME'))
+    # MAIL_SERVER = os.environ.get('MAIL_SERVER') or 'smtp.gmail.com'
+    # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 587)
+    # MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
+    # MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
+    # MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    # MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    # MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER') or ('Grievance System', os.environ.get('MAIL_USERNAME'))
 
     # --- Google OAuth Settings ---
     # These are required for Google Sign-In to work.
@@ -1642,7 +1642,10 @@ from .. import db
 from ..schemas import UserSchema
 from werkzeug.security import check_password_hash
 from ..services.otp_service import send_otp, verify_otp
-
+from ..utils.file_utils import allowed_file
+from werkzeug.utils import secure_filename
+import os
+from sqlalchemy.exc import IntegrityError
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -1774,6 +1777,57 @@ def get_current_user():
     schema = UserSchema()
     return jsonify(schema.dump(user)), 200
 
+
+@auth_bp.route('/me', methods=['PUT'])
+@jwt_required()
+def update_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    # Handle form data (text fields)
+    data = request.form
+    if 'name' in data:
+        user.name = data['name']
+    if 'email' in data:
+        if User.query.filter(User.email == data['email'], User.id != current_user_id).first():
+            return jsonify({"msg": "Email already exists"}), 400
+        user.email = data['email']
+    if 'password' in data and data['password']:
+        user.set_password(data['password'])
+    if 'address' in data:
+        user.address = data['address']
+
+    # Handle file upload for profile_picture
+    if 'profile_picture' in request.files:
+        file = request.files['profile_picture']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            user_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], f'user_{user.id}')
+            os.makedirs(user_dir, exist_ok=True)
+            file_path = os.path.join(user_dir, filename)
+            file.save(file_path)
+            # Store relative path for easy serving (e.g., via /uploads/<path>)
+            user.profile_picture = f'user_{user.id}/{filename}'
+        else:
+            return jsonify({"msg": "Invalid file type"}), 400
+
+    try:
+        db.session.commit()
+        return jsonify(UserSchema().dump(user))
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"msg": "Update failed due to duplicate data"}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": f"Update failed: {str(e)}"}), 500
+
+
+
+
+
+
 @auth_bp.route('/otp/send', methods=['POST'])
 def send_otp():
     data = request.json
@@ -1883,14 +1937,8 @@ def create_grievance(user):
         else:
             data = request.json
 
-        # The frontend sends files with keys like attachments[0], attachments[1]
-        # We need to collect them into a list.
-        files = []
-        i = 0
-        # The frontend uses 'attachments' as the key for the list.
-        while f'attachments[{i}]' in request.files:
-            files.append(request.files[f'attachments[{i}]'])
-            i += 1
+        # Collect all files uploaded under the 'attachments' key
+        files = request.files.getlist('attachments')  # This gets all files with the same key
         
         current_app.logger.info(f"Collected {len(files)} files for upload")
         
@@ -3715,3 +3763,6 @@ def calculate_dept_wise_resolution():
 
 
 === Folder: uploads\3 ===
+
+
+=== Folder: uploads\grievance_11 ===

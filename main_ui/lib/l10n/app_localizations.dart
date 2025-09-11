@@ -1173,6 +1173,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Location details'**
   String get locationDetails;
+
+  /// No description provided for @searchByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get searchByName;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @noMatchingGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching grievances found'**
+  String get noMatchingGrievances;
+
+  /// No description provided for @allUsersHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'All Users History'**
+  String get allUsersHistory;
 }
 
 class _AppLocalizationsDelegate

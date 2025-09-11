@@ -58,7 +58,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
 
   Future<void> _updateStatus(int grievanceId, String newStatus) async {
   try {
-    print("➡️ Updating grievance $grievanceId with status: $newStatus");
+    
 
     // Perform the API call
     await ApiService.put('/grievances/$grievanceId/status', {
@@ -79,8 +79,8 @@ class _AssignedListState extends ConsumerState<AssignedList> {
       const SnackBar(content: Text('Status updated')),
     );
   } catch (e, stack) {
-    print("❌ Error updating status: $e");
-    print(stack);
+   
+    
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Failed to update status: $e')),

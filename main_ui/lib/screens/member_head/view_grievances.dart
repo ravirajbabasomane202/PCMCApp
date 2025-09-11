@@ -62,7 +62,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
     try {
       final response = await ApiService.get('/grievances/all');
-      print("📥 Raw API response: ${response.data}");
+     
 
       if (response.data is! List) {
         throw Exception("Expected a list from API, got ${response.data.runtimeType}");
@@ -70,17 +70,17 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
       grievances = (response.data as List).map((e) {
         try {
-          print("🔍 Parsing grievance: $e");
+         
           return Grievance.fromJson(e);
         } catch (e) {
-          print("❌ Error parsing grievance: $e");
+          
           rethrow;
         }
       }).toList();
 
-      print("✅ Parsed grievances list: $grievances");
+     
       filteredGrievances = List.from(grievances);
-      print("📌 Filtered grievances initialized: $filteredGrievances");
+    
 
       final areasResponse = await ApiService.get('/areas');
       areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
@@ -91,7 +91,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
       final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff');
       fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
     } catch (e) {
-      print("❌ Error in _loadData: $e");
+      
       if (mounted) {
         setState(() {
           errorMessage = e.toString();

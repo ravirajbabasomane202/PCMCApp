@@ -216,6 +216,9 @@
 "categorization":"Categorization",
 "subjectRequired":"Subject is required",
 "areaRequired":"Area is required",
-"locationDetails":"Location details"
-  
+"locationDetails":"Location details",
+"searchByName":"Search by name",
+"noResultsFound":"No results found",
+"noMatchingGrievances":"No matching grievances found",
+"allUsersHistory":"All Users History"
 }

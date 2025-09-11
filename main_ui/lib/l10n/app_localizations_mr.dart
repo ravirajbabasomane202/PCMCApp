@@ -549,4 +549,17 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get locationDetails => 'स्थानाची माहिती';
+
+  @override
+  String get searchByName => 'नावाने शोधा';
+
+  @override
+  String get noResultsFound => 'कोणतेही निकाल सापडले नाहीत';
+
+  @override
+  String get noMatchingGrievances =>
+      'कोणत्याही जुळणाऱ्या तक्रारी सापडल्या नाहीत';
+
+  @override
+  String get allUsersHistory => 'सर्व वापरकर्त्यांचा इतिहास';
 }

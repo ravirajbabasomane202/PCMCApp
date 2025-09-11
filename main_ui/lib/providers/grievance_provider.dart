@@ -20,9 +20,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
     _isFetching = true;
     try {
       state = await _service.getMyGrievances();
-      print('Grievances updated: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching grievances: $e');
+      
       state = [];
       rethrow;
     } finally {
@@ -33,9 +33,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
   Future<void> fetchNewGrievances() async {
     try {
       state = await _service.getNewGrievances();
-      print('New grievances fetched: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching new grievances: $e');
+      
       state = [];
       rethrow;
     }
@@ -44,9 +44,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
   Future<void> fetchAssignedGrievances() async {
     try {
       state = await _service.getAssignedGrievances();
-      print('Assigned grievances fetched: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching assigned grievances: $e');
+      
       state = [];
       rethrow;
     }

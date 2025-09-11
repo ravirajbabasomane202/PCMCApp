@@ -13,7 +13,7 @@ class CommentNotifier extends StateNotifier<List<Comment>> {
       final grievance = await _service.getGrievanceDetails(_grievanceId);
       state = grievance.comments ?? [];
     } catch (e) {
-      print('Error fetching comments: $e');
+      
       state = [];
     }
   }
@@ -23,7 +23,7 @@ class CommentNotifier extends StateNotifier<List<Comment>> {
       await _service.addComment(_grievanceId, content);
       await fetchComments();
     } catch (e) {
-      print('Error adding comment: $e');
+      rethrow;
     }
   }
 }

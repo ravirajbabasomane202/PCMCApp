@@ -16,7 +16,7 @@ class UserNotifier extends StateNotifier<User?> {
       final user = await AuthService.getCurrentUser();
       state = user;
     } catch (e) {
-      print('Error fetching current user: $e');
+      
       state = null;
     }
   }
@@ -32,8 +32,8 @@ class UserNotifier extends StateNotifier<User?> {
         state = User.fromJson(response.data); // Update state with new user data
       }
     } catch (e) {
-      print('Failed to update user: $e');
-      throw e; // Let UI handle errors
+      
+      rethrow; 
     }
   }
 
@@ -64,9 +64,9 @@ class UsersNotifier extends StateNotifier<List<User>> {
   Future<void> fetchUsers() async {
     try {
       final users = await ApiService.getUsers(); // Assume ApiService method
-      state = users ?? [];
+      state = users;
     } catch (e) {
-      print('Error fetching users: $e');
+    
       state = [];
     }
   }
@@ -79,8 +79,8 @@ class UsersNotifier extends StateNotifier<List<User>> {
       await ApiService.addUpdateUser(stringUserData);
       await fetchUsers(); // Refresh the user list
     } catch (e) {
-      print('Error adding user: $e');
-      throw e; // Let UI handle errors
+      
+      rethrow; // Let UI handle errors
     }
   }
 
@@ -102,7 +102,7 @@ class UsersNotifier extends StateNotifier<List<User>> {
     await ApiService.addUpdateUser(cleanData); // expects Map<String, String>
     await fetchUsers();
   } catch (e) {
-    print("Error updating user: $e");
+    
     rethrow;
   }
 }
@@ -118,8 +118,8 @@ class UsersNotifier extends StateNotifier<List<User>> {
         ref.read(userNotifierProvider.notifier).setUser(null);
       }
     } catch (e) {
-      print('Error deleting user: $e');
-      throw e;
+      
+      rethrow ;
     }
   }
 }

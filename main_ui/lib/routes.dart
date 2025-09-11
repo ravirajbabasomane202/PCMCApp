@@ -5,11 +5,7 @@ import 'screens/citizen/submit_grievance.dart';
 import 'screens/citizen/track_grievance.dart';
 import 'screens/citizen/grievance_detail.dart';
 import 'screens/member_head/view_grievances.dart';
-// import 'screens/member_head/assign_grievance.dart';
-// import 'screens/member_head/reject_grievance.dart';
 import 'screens/field_staff/assigned_list.dart';
-// import 'screens/field_staff/update_status.dart';
-// import 'screens/field_staff/upload_workproof.dart';
 import 'screens/admin/dashboard.dart';
 import 'screens/admin/manage_users.dart';
 import 'screens/admin/manage_subjects.dart';
@@ -44,11 +40,6 @@ Map<String, WidgetBuilder> appRoutes = {
     return GrievanceDetail(id: args);
   },
   '/member_head/view': (context) => const ViewGrievances(),
-  // '/member_head/assign': (context) => const AssignGrievance(),
-  // '/member_head/reject': (context) => const RejectGrievance(),
-  // '/employer/assigned': (context) => const AssignedList(),
-  // '/employer/update': (context) => const UpdateStatus(),
-  // '/employer/upload': (context) => const UploadWorkproof(),
   '/admin/dashboard': (context) => const Dashboard(),
   '/admin/users': (context) => const ManageUsers(),
   '/admin/subjects': (context) => const ManageSubjects(),
@@ -60,21 +51,19 @@ Map<String, WidgetBuilder> appRoutes = {
     if (args == null) {
       return const Scaffold(body: Center(child: Text('User ID required')));
     }
-    return UserHistoryScreen(userId: args); // Pass userId to screen
+    return UserHistoryScreen(userId: args); 
   },
   '/profile': (context) => const ProfileScreen(),
   '/settings': (context) => const SettingsScreen(),
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
-  // '/employer/home': (context) => const AssignedList(),
-  '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
+  '/field_staff/home': (context) => const AssignedList(), 
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
   '/admin/reports': (context) => const ReportsScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
-
   '/privacy-policy': (context) => const PrivacyPolicyScreen(),
   '/faqs': (context) => const FaqsScreen(),
   '/contact-support': (context) => const ContactSupportScreen(),

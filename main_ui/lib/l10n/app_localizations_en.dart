@@ -548,4 +548,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationDetails => 'Location details';
+
+  @override
+  String get searchByName => 'Search by name';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get noMatchingGrievances => 'No matching grievances found';
+
+  @override
+  String get allUsersHistory => 'All Users History';
 }

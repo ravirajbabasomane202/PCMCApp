@@ -11,7 +11,10 @@ from .. import db
 from ..schemas import UserSchema
 from werkzeug.security import check_password_hash
 from ..services.otp_service import send_otp, verify_otp
-
+from ..utils.file_utils import allowed_file
+from werkzeug.utils import secure_filename
+import os
+from sqlalchemy.exc import IntegrityError
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -142,6 +145,57 @@ def get_current_user():
         return jsonify({"msg": "User not found"}), 404
     schema = UserSchema()
     return jsonify(schema.dump(user)), 200
+
+
+@auth_bp.route('/me', methods=['PUT'])
+@jwt_required()
+def update_current_user():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+
+    # Handle form data (text fields)
+    data = request.form
+    if 'name' in data:
+        user.name = data['name']
+    if 'email' in data:
+        if User.query.filter(User.email == data['email'], User.id != current_user_id).first():
+            return jsonify({"msg": "Email already exists"}), 400
+        user.email = data['email']
+    if 'password' in data and data['password']:
+        user.set_password(data['password'])
+    if 'address' in data:
+        user.address = data['address']
+
+    # Handle file upload for profile_picture
+    if 'profile_picture' in request.files:
+        file = request.files['profile_picture']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            user_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], f'user_{user.id}')
+            os.makedirs(user_dir, exist_ok=True)
+            file_path = os.path.join(user_dir, filename)
+            file.save(file_path)
+            # Store relative path for easy serving (e.g., via /uploads/<path>)
+            user.profile_picture = f'user_{user.id}/{filename}'
+        else:
+            return jsonify({"msg": "Invalid file type"}), 400
+
+    try:
+        db.session.commit()
+        return jsonify(UserSchema().dump(user))
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"msg": "Update failed due to duplicate data"}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": f"Update failed: {str(e)}"}), 500
+
+
+
+
+
 
 @auth_bp.route('/otp/send', methods=['POST'])
 def send_otp():

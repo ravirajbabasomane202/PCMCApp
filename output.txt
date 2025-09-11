@@ -162,11 +162,7 @@ import 'screens/citizen/submit_grievance.dart';
 import 'screens/citizen/track_grievance.dart';
 import 'screens/citizen/grievance_detail.dart';
 import 'screens/member_head/view_grievances.dart';
-// import 'screens/member_head/assign_grievance.dart';
-// import 'screens/member_head/reject_grievance.dart';
 import 'screens/field_staff/assigned_list.dart';
-// import 'screens/field_staff/update_status.dart';
-// import 'screens/field_staff/upload_workproof.dart';
 import 'screens/admin/dashboard.dart';
 import 'screens/admin/manage_users.dart';
 import 'screens/admin/manage_subjects.dart';
@@ -201,11 +197,6 @@ Map<String, WidgetBuilder> appRoutes = {
     return GrievanceDetail(id: args);
   },
   '/member_head/view': (context) => const ViewGrievances(),
-  // '/member_head/assign': (context) => const AssignGrievance(),
-  // '/member_head/reject': (context) => const RejectGrievance(),
-  // '/employer/assigned': (context) => const AssignedList(),
-  // '/employer/update': (context) => const UpdateStatus(),
-  // '/employer/upload': (context) => const UploadWorkproof(),
   '/admin/dashboard': (context) => const Dashboard(),
   '/admin/users': (context) => const ManageUsers(),
   '/admin/subjects': (context) => const ManageSubjects(),
@@ -217,21 +208,19 @@ Map<String, WidgetBuilder> appRoutes = {
     if (args == null) {
       return const Scaffold(body: Center(child: Text('User ID required')));
     }
-    return UserHistoryScreen(userId: args); // Pass userId to screen
+    return UserHistoryScreen(userId: args); 
   },
   '/profile': (context) => const ProfileScreen(),
   '/settings': (context) => const SettingsScreen(),
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
-  // '/employer/home': (context) => const AssignedList(),
-  '/field_staff/home': (context) => const AssignedList(), // Added for FIELD_STAFF role
+  '/field_staff/home': (context) => const AssignedList(), 
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
   '/admin/reports': (context) => const ReportsScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
-
   '/privacy-policy': (context) => const PrivacyPolicyScreen(),
   '/faqs': (context) => const FaqsScreen(),
   '/contact-support': (context) => const ContactSupportScreen(),
@@ -1417,6 +1406,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Location details'**
   String get locationDetails;
+
+  /// No description provided for @searchByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get searchByName;
+
+  /// No description provided for @noResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResultsFound;
+
+  /// No description provided for @noMatchingGrievances.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching grievances found'**
+  String get noMatchingGrievances;
+
+  /// No description provided for @allUsersHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'All Users History'**
+  String get allUsersHistory;
 }
 
 class _AppLocalizationsDelegate
@@ -2006,6 +2019,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationDetails => 'Location details';
+
+  @override
+  String get searchByName => 'Search by name';
+
+  @override
+  String get noResultsFound => 'No results found';
+
+  @override
+  String get noMatchingGrievances => 'No matching grievances found';
+
+  @override
+  String get allUsersHistory => 'All Users History';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2559,6 +2584,18 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get locationDetails => 'स्थान विवरण';
+
+  @override
+  String get searchByName => 'नाम से खोजें';
+
+  @override
+  String get noResultsFound => 'कोई परिणाम नहीं मिला';
+
+  @override
+  String get noMatchingGrievances => 'कोई मिलान करने वाली शिकायतें नहीं मिलीं';
+
+  @override
+  String get allUsersHistory => 'सभी उपयोगकर्ताओं का इतिहास';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -3113,6 +3150,19 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get locationDetails => 'स्थानाची माहिती';
+
+  @override
+  String get searchByName => 'नावाने शोधा';
+
+  @override
+  String get noResultsFound => 'कोणतेही निकाल सापडले नाहीत';
+
+  @override
+  String get noMatchingGrievances =>
+      'कोणत्याही जुळणाऱ्या तक्रारी सापडल्या नाहीत';
+
+  @override
+  String get allUsersHistory => 'सर्व वापरकर्त्यांचा इतिहास';
 }
 
 
@@ -3283,7 +3333,7 @@ class Grievance {
   });
 
   factory Grievance.fromJson(Map<String, dynamic> json) {
-  print("🔍 Parsing JSON: $json");
+  
   return Grievance(
     id: json['id'] as int,
     complaintId: json['complaint_id'] as String,
@@ -3827,7 +3877,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.googleLogin();
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Google login failed: $e');
+      
       rethrow;
     }
   }
@@ -3837,7 +3887,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.register(name, email, password);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Registration failed: $e');
+      
       rethrow;
     }
   }
@@ -3847,7 +3897,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.passwordLogin(email, password);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Login failed: $e');
+      
       rethrow;
     }
   }
@@ -3857,7 +3907,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.verifyOtp(phoneNumber, otp);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('OTP login failed: $e');
+      
       rethrow;
     }
   }
@@ -3866,13 +3916,13 @@ class AuthNotifier extends StateNotifier<User?> {
     try {
       await AuthService.requestOtp(phoneNumber);
     } catch (e) {
-      print('OTP request failed: $e');
+     
       rethrow;
     }
   }
 
   Future<void> logout() async {
-    print('Logging out');
+    
     await AuthService.logout();
     state = null;
   }
@@ -3880,10 +3930,10 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> checkAuth() async {
     final user = await AuthService.getCurrentUser();
     if (user != null) {
-      print('Found authenticated user: ${user.name}');
+      
       state = user;
     } else {
-      print('No authenticated user found');
+      
       state = null;
     }
   }
@@ -3893,7 +3943,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.storeToken(token);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Error processing token: $e');
+      
       rethrow;
     }
   }
@@ -3901,10 +3951,10 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> _fetchUserAndUpdateState() async {
     try {
       final userData = await AuthService.getCurrentUser();
-      print('Fetched user data: ${userData?.toJson()}');
+      
       state = userData;
     } catch (e) {
-      print('Error fetching user data: $e. Logging out.');
+      
       await logout();
     }
   }
@@ -3935,7 +3985,7 @@ class CommentNotifier extends StateNotifier<List<Comment>> {
       final grievance = await _service.getGrievanceDetails(_grievanceId);
       state = grievance.comments ?? [];
     } catch (e) {
-      print('Error fetching comments: $e');
+      
       state = [];
     }
   }
@@ -3945,7 +3995,7 @@ class CommentNotifier extends StateNotifier<List<Comment>> {
       await _service.addComment(_grievanceId, content);
       await fetchComments();
     } catch (e) {
-      print('Error adding comment: $e');
+      rethrow;
     }
   }
 }
@@ -3977,9 +4027,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
     _isFetching = true;
     try {
       state = await _service.getMyGrievances();
-      print('Grievances updated: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching grievances: $e');
+      
       state = [];
       rethrow;
     } finally {
@@ -3990,9 +4040,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
   Future<void> fetchNewGrievances() async {
     try {
       state = await _service.getNewGrievances();
-      print('New grievances fetched: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching new grievances: $e');
+      
       state = [];
       rethrow;
     }
@@ -4001,9 +4051,9 @@ class GrievanceNotifier extends StateNotifier<List<Grievance>> {
   Future<void> fetchAssignedGrievances() async {
     try {
       state = await _service.getAssignedGrievances();
-      print('Assigned grievances fetched: ${state.length} items');
+      
     } catch (e) {
-      print('Error fetching assigned grievances: $e');
+      
       state = [];
       rethrow;
     }
@@ -4072,7 +4122,7 @@ class UserNotifier extends StateNotifier<User?> {
       final user = await AuthService.getCurrentUser();
       state = user;
     } catch (e) {
-      print('Error fetching current user: $e');
+      
       state = null;
     }
   }
@@ -4088,8 +4138,8 @@ class UserNotifier extends StateNotifier<User?> {
         state = User.fromJson(response.data); // Update state with new user data
       }
     } catch (e) {
-      print('Failed to update user: $e');
-      throw e; // Let UI handle errors
+      
+      rethrow; 
     }
   }
 
@@ -4120,9 +4170,9 @@ class UsersNotifier extends StateNotifier<List<User>> {
   Future<void> fetchUsers() async {
     try {
       final users = await ApiService.getUsers(); // Assume ApiService method
-      state = users ?? [];
+      state = users;
     } catch (e) {
-      print('Error fetching users: $e');
+    
       state = [];
     }
   }
@@ -4135,8 +4185,8 @@ class UsersNotifier extends StateNotifier<List<User>> {
       await ApiService.addUpdateUser(stringUserData);
       await fetchUsers(); // Refresh the user list
     } catch (e) {
-      print('Error adding user: $e');
-      throw e; // Let UI handle errors
+      
+      rethrow; // Let UI handle errors
     }
   }
 
@@ -4158,7 +4208,7 @@ class UsersNotifier extends StateNotifier<List<User>> {
     await ApiService.addUpdateUser(cleanData); // expects Map<String, String>
     await fetchUsers();
   } catch (e) {
-    print("Error updating user: $e");
+    
     rethrow;
   }
 }
@@ -4174,8 +4224,8 @@ class UsersNotifier extends StateNotifier<List<User>> {
         ref.read(userNotifierProvider.notifier).setUser(null);
       }
     } catch (e) {
-      print('Error deleting user: $e');
-      throw e;
+      
+      rethrow ;
     }
   }
 }
@@ -4186,11 +4236,13 @@ class UsersNotifier extends StateNotifier<List<User>> {
 === Folder: screens\admin ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\all_users_history.dart ---
-
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:main_ui/services/api_service.dart'; // Import your API service
-import 'package:main_ui/models/user_model.dart'; // Adjust imports as needed
+import 'package:main_ui/services/api_service.dart';
+import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/models/grievance_model.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import '../../widgets/empty_state.dart';
 
 class AllUsersHistoryScreen extends StatefulWidget {
   const AllUsersHistoryScreen({super.key});
@@ -4203,11 +4255,24 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
   List<dynamic> usersHistory = [];
   bool isLoading = true;
   String? error;
+  String _searchText = '';
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(_onSearchChanged);
     fetchAllHistories();
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        _searchText = _searchController.text;
+      });
+    });
   }
 
   Future<void> fetchAllHistories() async {
@@ -4226,35 +4291,340 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold( // Add Scaffold here
-      appBar: AppBar(
-        title: const Text('All Users History'),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : error != null
-              ? Center(child: Text(error!))
-              : ListView.builder(
-                  itemCount: usersHistory.length,
-                  itemBuilder: (context, index) {
-                    final userData = usersHistory[index];
-                    final user = User.fromJson(userData['user']); // Parse user
-                    final grievances = (userData['grievances'] as List)
-                        .map((g) => Grievance.fromJson(g))
-                        .toList();
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
 
-                    return ExpansionTile(
-                      title: Text('${user.name} (${user.email})'),
-                      children: grievances
-                          .map((g) => ListTile(
-                                title: Text(g.title),
-                                subtitle: Text(g.status ?? 'Unknown'),
-                              ))
-                          .toList(),
-                    );
-                  },
+  // Helper method to get status color
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'resolved':
+        return Colors.green;
+      case 'pending':
+        return Colors.orange;
+      case 'rejected':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // Helper method to get status icon
+  IconData _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'resolved':
+        return Icons.check_circle;
+      case 'pending':
+        return Icons.access_time;
+      case 'rejected':
+        return Icons.cancel;
+      default:
+        return Icons.help_outline;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    // Filter users based on search text
+    final filteredUsersHistory = usersHistory.where((userData) {
+      final user = User.fromJson(userData['user']);
+      final name = user.name?.toLowerCase() ?? '';
+      final email = user.email?.toLowerCase() ?? '';
+      final searchText = _searchText.toLowerCase();
+      return name.contains(searchText) || email.contains(searchText);
+    }).toList();
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFf8fbff),
+      appBar: AppBar(
+        title: Text(
+          l10n.allUsersHistory ?? 'All Users History',
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        shadowColor: Colors.black12,
+        foregroundColor: theme.primaryColor,
+        centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(16),
+          ),
+        ),
+      ),
+      body: Container(
+        color: const Color(0xFFf8fbff),
+        child: Column(
+          children: [
+            // Search Field
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: l10n.searchByName ?? 'Search by name or email',
+                    prefixIcon: const Icon(Icons.search, color: Colors.blueGrey),
+                    suffixIcon: _searchText.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, color: Colors.blueGrey),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() {
+                                _searchText = '';
+                              });
+                            },
+                          )
+                        : null,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                      ),
+                    )
+                  : error != null
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                                const SizedBox(height: 16),
+                                Text(
+                                  error!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: fetchAllHistories,
+                                  child: const Text('Retry'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : filteredUsersHistory.isEmpty
+                          ? Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: EmptyState(
+                                icon: _searchText.isEmpty ? Icons.history_toggle_off : Icons.search_off,
+                                title: _searchText.isEmpty
+                                    ? l10n.noGrievancesFound ?? 'No Histories Found'
+                                    : l10n.noResultsFound ?? 'No Results Found',
+                                message: _searchText.isEmpty
+                                    ? l10n.noGrievancesMessage ?? 'No user histories available'
+                                    : l10n.noMatchingGrievances ?? 'No matching users found',
+                              ),
+                            )
+                          : ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              itemCount: filteredUsersHistory.length,
+                              itemBuilder: (context, index) {
+                                final userData = filteredUsersHistory[index];
+                                final user = User.fromJson(userData['user']);
+                                final grievances = (userData['grievances'] as List)
+                                    .map((g) => Grievance.fromJson(g))
+                                    .toList();
+
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.08),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: ExpansionTile(
+                                      backgroundColor: const Color(0xFFecf2fe),
+                                      collapsedBackgroundColor: const Color(0xFFecf2fe),
+                                      tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                      title: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            backgroundColor: theme.primaryColor.withOpacity(0.2),
+                                            child: Icon(
+                                              Icons.person,
+                                              color: theme.primaryColor,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  user.name ?? 'Unknown',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  user.email ?? 'No email',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.grey[700],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Chip(
+                                            label: Text(
+                                              '${grievances.length}',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            backgroundColor: theme.primaryColor,
+                                          ),
+                                        ],
+                                      ),
+                                      children: [
+                                        Container(
+                                          color: Colors.white,
+                                          padding: const EdgeInsets.all(16),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              const Text(
+                                                'Grievance History:',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              ...grievances.map((g) => Container(
+                                                margin: const EdgeInsets.only(bottom: 12),
+                                                padding: const EdgeInsets.all(12),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey[50],
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  border: Border.all(
+                                                    color: Colors.grey[200]!,
+                                                    width: 1,
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Icon(
+                                                      _getStatusIcon(g.status ?? 'Unknown'),
+                                                      color: _getStatusColor(g.status ?? 'Unknown'),
+                                                      size: 20,
+                                                    ),
+                                                    const SizedBox(width: 12),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Text(
+                                                            g.title,
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 4),
+                                                          Text(
+                                                            g.description ?? 'No description',
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: TextStyle(
+                                                              fontSize: 14,
+                                                              color: Colors.grey[600],
+                                                            ),
+                                                          ),
+                                                          const SizedBox(height: 8),
+                                                          Row(
+                                                            children: [
+                                                              Container(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                                decoration: BoxDecoration(
+                                                                  color: _getStatusColor(g.status ?? 'Unknown').withOpacity(0.1),
+                                                                  borderRadius: BorderRadius.circular(8),
+                                                                ),
+                                                                child: Text(
+                                                                  g.status ?? 'Unknown',
+                                                                  style: TextStyle(
+                                                                    color: _getStatusColor(g.status ?? 'Unknown'),
+                                                                    fontSize: 12,
+                                                                    fontWeight: FontWeight.w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const Spacer(),
+                                                              Text(
+                                                                g.createdAt != null 
+                                                                  ? '${g.createdAt!.day}/${g.createdAt!.month}/${g.createdAt!.year}'
+                                                                  : 'No date',
+                                                                style: TextStyle(
+                                                                  fontSize: 12,
+                                                                  color: Colors.grey[500],
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )).toList(),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -6707,11 +7077,11 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                   final response = subject == null
                                       ? await ApiService.post('/admins/subjects', data)
                                       : await ApiService.put('/admins/subjects/${subject.id}', data);
-                                  print(response); // debug
+                                   
                                   ref.invalidate(subjectsProvider); // refresh list
                                   Navigator.pop(context);
                                 } catch (e) {
-                                  print("Error: $e");
+                                  
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text('Error: $e'),
@@ -6891,6 +7261,20 @@ class ManageUsers extends ConsumerStatefulWidget {
 }
 
 class _ManageUsersState extends ConsumerState<ManageUsers> {
+  late TextEditingController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _showAddUserDialog() async {
     final l10n = AppLocalizations.of(context)!;
     final formKey = GlobalKey<FormState>();
@@ -7371,90 +7755,140 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
         child: const Icon(Icons.add, color: Colors.white),
         tooltip: l10n.addUser,
       ),
-      body: users.isEmpty
-          ? EmptyState(
-              icon: Icons.people_outline,
-              title: l10n.noUsers,
-              message: l10n.noUsersMessage,
-              actionButton: CustomButton(
-                text: l10n.addUser,
-                onPressed: _showAddUserDialog,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search by name...',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                filled: true,
+                fillColor: Colors.grey[100],
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                final user = users[index];
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: Card(
-                    elevation: 1,
-                    color: const Color(0xFFecf2fe), // Set card background color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      leading: CircleAvatar(
-                        backgroundColor: theme.colorScheme.primary,
-                        child: Text(
-                          (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
-                          style: TextStyle(color: theme.colorScheme.onPrimary),
-                        ),
-                      ),
-                      title: Text(user.name ?? "", 
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600
-                          )),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
-                            user.email ?? l10n.noEmail,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[700]
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: _getRoleColor(user.role),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              user.role ?? '',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.blue[700]),
-                            onPressed: () => _showEditUserDialog(user),
-                            tooltip: l10n.editUser,
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _confirmDeleteUser(user.id),
-                            tooltip: l10n.deleteUser,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
+              onChanged: (value) => setState(() {}),
             ),
+          ),
+          Expanded(
+            child: users.isEmpty
+                ? EmptyState(
+                    icon: Icons.people_outline,
+                    title: l10n.noUsers,
+                    message: l10n.noUsersMessage,
+                    actionButton: CustomButton(
+                      text: l10n.addUser,
+                      onPressed: _showAddUserDialog,
+                    ),
+                  )
+                : _buildUserList(users, _searchController.text),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserList(List<User> users, String query) {
+    final l10n = AppLocalizations.of(context)!;
+    final filteredUsers = users.where((user) {
+      final lowerQuery = query.toLowerCase();
+      return (user.name?.toLowerCase().contains(lowerQuery) ?? false) ||
+             (user.email?.toLowerCase().contains(lowerQuery) ?? false);
+    }).toList();
+
+    if (filteredUsers.isEmpty) {
+      return EmptyState(
+        icon: Icons.search_off,
+        title: 'No Results',
+        message: 'No users found matching your search',
+        actionButton: CustomButton(
+          text: l10n.retry,
+          onPressed: () => _searchController.clear(),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: filteredUsers.length,
+      itemBuilder: (context, index) {
+        final user = filteredUsers[index];
+        return _buildUserCard(user);
+      },
+    );
+  }
+
+  Widget _buildUserCard(User user) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: 1,
+        color: const Color(0xFFecf2fe), // Set card background color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: CircleAvatar(
+            backgroundColor: theme.colorScheme.primary,
+            child: Text(
+              (user.name?.isNotEmpty ?? false) ? user.name![0] : '?',
+              style: TextStyle(color: theme.colorScheme.onPrimary),
+            ),
+          ),
+          title: Text(user.name ?? "", 
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600
+              )),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                user.email ?? l10n.noEmail,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.grey[700]
+                ),
+              ),
+              const SizedBox(height: 2),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getRoleColor(user.role),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  user.role ?? '',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500
+                  ),
+                ),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue[700]),
+                onPressed: () => _showEditUserDialog(user),
+                tooltip: l10n.editUser,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () => _confirmDeleteUser(user.id),
+                tooltip: l10n.deleteUser,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -7506,6 +7940,7 @@ class ReportsScreen extends StatelessWidget {
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\user_history.dart ---
+import 'dart:async'; // For debouncing
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/grievance_model.dart';
@@ -7514,16 +7949,49 @@ import '../../widgets/grievance_card.dart';
 import '../../widgets/empty_state.dart';
 import '../../l10n/app_localizations.dart';
 
-class UserHistoryScreen extends ConsumerWidget {
+class UserHistoryScreen extends ConsumerStatefulWidget {
   final int? userId;
   const UserHistoryScreen({super.key, this.userId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _UserHistoryScreenState createState() => _UserHistoryScreenState();
+}
+
+class _UserHistoryScreenState extends ConsumerState<UserHistoryScreen> {
+  String _searchText = '';
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_onSearchChanged);
+  }
+
+  void _onSearchChanged() {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      setState(() {
+        _searchText = _searchController.text;
+       
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
-    if (userId == null) {
+    if (widget.userId == null) {
       return Scaffold(
         backgroundColor: const Color(0xFFf8fbff),
         appBar: AppBar(
@@ -7542,7 +8010,7 @@ class UserHistoryScreen extends ConsumerWidget {
       );
     }
 
-    final history = ref.watch(citizenHistoryProvider(userId!));
+    final history = ref.watch(citizenHistoryProvider(widget.userId!));
 
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
@@ -7565,78 +8033,131 @@ class UserHistoryScreen extends ConsumerWidget {
           ),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFf8fbff),
-              Color(0xFFe8f1ff),
-            ],
-          ),
-        ),
-        child: history.when(
-          data: (grievances) => grievances.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: EmptyState(
-                    icon: Icons.history_toggle_off,
-                    title: l10n.noGrievancesFound,
-                    message: l10n.noGrievancesMessage,
-                  ),
-                )
-              : RefreshIndicator(
-                  backgroundColor: Colors.white,
-                  color: theme.primaryColor,
-                  onRefresh: () async {
-                    ref.refresh(citizenHistoryProvider(userId!));
-                  },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: grievances.length,
-                    itemBuilder: (context, index) => Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: GrievanceCard(grievance: grievances[index]),
-                    ),
-                  ),
-                ),
-          loading: () => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(
-                  strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.loading,
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 16,
-                  ),
-                ),
+      body: SingleChildScrollView( // Added to handle potential overflow
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFFf8fbff),
+                Color(0xFFe8f1ff),
               ],
             ),
           ),
-          error: (err, stack) => Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: EmptyState(
-              icon: Icons.error_outline_rounded,
-              title: l10n.error,
-              message: '${l10n.error}: $err',
-            ),
+          child: Column(
+            children: [
+              // Search Field
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: SizedBox(
+                  height: 56.0, // Ensure sufficient height
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: l10n.searchByName ?? 'Search by name', // Fallback
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchText.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _searchText = '';
+                                 
+                                });
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.blue), // Debug border
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: history.when(
+                  data: (grievances) {
+                    // Filter grievances based on search text
+                    final filteredGrievances = grievances.where((grievance) {
+                      final name = grievance.citizen?.name?.toLowerCase() ?? '';
+                      final searchText = _searchText.toLowerCase();
+                      // Debugging print to check data
+                     
+                      return name.contains(searchText);
+                    }).toList();
+
+                    if (filteredGrievances.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: EmptyState(
+                          icon: _searchText.isEmpty ? Icons.history_toggle_off : Icons.search_off,
+                          title: _searchText.isEmpty ? l10n.noGrievancesFound : l10n.noResultsFound,
+                          message: _searchText.isEmpty ? l10n.noGrievancesMessage : l10n.noMatchingGrievances,
+                        ),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      backgroundColor: Colors.white,
+                      color: theme.primaryColor,
+                      onRefresh: () async {
+                        ref.refresh(citizenHistoryProvider(widget.userId!));
+                      },
+                      child: ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: filteredGrievances.length,
+                        itemBuilder: (context, index) => Container(
+                          margin: const EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: GrievanceCard(grievance: filteredGrievances[index]),
+                        ),
+                      ),
+                    );
+                  },
+                  loading: () => Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CircularProgressIndicator(
+                          strokeWidth: 3,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.loading,
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  error: (err, stack) => Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: EmptyState(
+                      icon: Icons.error_outline_rounded,
+                      title: l10n.error,
+                      message: '${l10n.error}: $err',
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -7684,11 +8205,10 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
         if (!mounted) return;
 
         if (user != null) {
-          print('User logged in: ${user.name}, Role: ${user.role}');
-          // Navigate to role-specific home screen
+          
           Navigator.pushReplacementNamed(context, '/${user.role != null ? user.role!.toLowerCase() : 'guest'}/home');
         } else {
-          print('Error: Unable to fetch user data after processing token.');
+          
           Navigator.pushReplacementNamed(context, '/login');
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -7698,7 +8218,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
         }
       } else {
         if (!mounted) return;
-        print('Error: No token received in URL');
+        
         Navigator.pushReplacementNamed(context, '/login');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -7708,7 +8228,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
       }
     } catch (e, stackTrace) {
       if (!mounted) return;
-      print('Login callback error: $e\n$stackTrace');
+      
       Navigator.pushReplacementNamed(context, '/login');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -8805,12 +9325,12 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
     try {
       // Log before send
       // Log count
-      print("===============================================================================================================================================Sending multipart with ${_attachments.length} files");
+     
       for (var i = 0; i < _attachments.length; i++) {
         // Log each file added
-        print("Adding file[$i]: ${_attachments[i].name}");
+       
         // Log details like name size
-        print("  size: ${_attachments[i].size}");
+      
       }
       final grievanceService = GrievanceService();
       await grievanceService.createGrievance(
@@ -10859,7 +11379,7 @@ import 'package:intl/intl.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/services/api_service.dart';
 import 'package:main_ui/services/auth_service.dart';
-import 'package:main_ui/utils/theme.dart';
+
 import 'package:main_ui/widgets/custom_button.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/file_upload_widget.dart';
@@ -11149,17 +11669,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         controller: _addressController,
                         enabled: _isEditing,
                       ),
-                      // const Divider(),
-                      // ListTile(
-                      //   leading: Icon(Icons.security, color: theme.colorScheme.primary),
-                      //   title: Text('Two-Factor Authentication'),
-                      //   trailing: Switch(
-                      //     value: _twoFactorEnabled,
-                      //     onChanged: _isEditing
-                      //         ? (value) => setState(() => _twoFactorEnabled = value)
-                      //         : null,
-                      //   ),
-                      // ),
+
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
@@ -11217,7 +11727,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             _emailController.text = user.email ?? '';
                             _phoneController.text = user.phoneNumber ?? '';
                             _addressController.text = user.address ?? '';
-                            _twoFactorEnabled = user.twoFactorEnabled ?? false;
+                            _twoFactorEnabled = user.twoFactorEnabled ;
                           }),
                         ),
                       ),
@@ -11245,29 +11755,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-              // SizedBox(
-              //   width: double.infinity, // Make logout button full width
-              //   child: CustomButton(
-              //     text: localizations.logout,
-              //     icon: Icons.logout,
-              //     backgroundColor: theme.colorScheme.error,
-              //     foregroundColor: theme.colorScheme.onError,
-              //     onPressed: () async {
-              //       setState(() => _isLoading = true);
-              //       try {
-              //         await AuthService.logout();
-              //         ref.read(userNotifierProvider.notifier).setUser(null);
-              //         Navigator.pushReplacementNamed(context, '/login');
-              //       } catch (e) {
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text(localizations.logoutFailed)),
-              //         );
-              //       } finally {
-              //         setState(() => _isLoading = false);
-              //       }
-              //     },
-              //   ),
-              // ),
+             
             ],
           ),
         ),
@@ -11798,7 +12286,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
 
   Future<void> _updateStatus(int grievanceId, String newStatus) async {
   try {
-    print("➡️ Updating grievance $grievanceId with status: $newStatus");
+    
 
     // Perform the API call
     await ApiService.put('/grievances/$grievanceId/status', {
@@ -11819,8 +12307,8 @@ class _AssignedListState extends ConsumerState<AssignedList> {
       const SnackBar(content: Text('Status updated')),
     );
   } catch (e, stack) {
-    print("❌ Error updating status: $e");
-    print(stack);
+   
+    
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Failed to update status: $e')),
@@ -12469,7 +12957,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
     try {
       final response = await ApiService.get('/grievances/all');
-      print("📥 Raw API response: ${response.data}");
+     
 
       if (response.data is! List) {
         throw Exception("Expected a list from API, got ${response.data.runtimeType}");
@@ -12477,17 +12965,17 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
       grievances = (response.data as List).map((e) {
         try {
-          print("🔍 Parsing grievance: $e");
+         
           return Grievance.fromJson(e);
         } catch (e) {
-          print("❌ Error parsing grievance: $e");
+          
           rethrow;
         }
       }).toList();
 
-      print("✅ Parsed grievances list: $grievances");
+     
       filteredGrievances = List.from(grievances);
-      print("📌 Filtered grievances initialized: $filteredGrievances");
+    
 
       final areasResponse = await ApiService.get('/areas');
       areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
@@ -12498,7 +12986,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
       final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff');
       fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
     } catch (e) {
-      print("❌ Error in _loadData: $e");
+      
       if (mounted) {
         setState(() {
           errorMessage = e.toString();
@@ -13085,7 +13573,7 @@ class ApiService {
         );
     
     final url = _dio.options.baseUrl + path;
-    print("📌 Requesting URL: $url");
+    
     try {
       return await _dio.get(path, options: mergedOptions);
     } on DioException catch (e) {
@@ -13222,6 +13710,59 @@ static Future<Response> postMultipart(
       throw Exception('Failed to upload profile picture: ${e.message}');
     }
   }
+  
+
+static Future<User> updateProfile({
+  String? name,
+  String? email,
+  String? password,
+  String? address,
+  PlatformFile? profilePic,
+}) async {
+  try {
+    final token = await AuthService.getToken();
+
+    final Map<String, dynamic> fields = {};
+
+    if (name != null) fields['name'] = name;
+    if (email != null) fields['email'] = email;
+    if (password != null && password.isNotEmpty) fields['password'] = password;
+    if (address != null) fields['address'] = address;
+
+    // Handle file upload (web vs mobile)
+    if (profilePic != null) {
+      if (kIsWeb) {
+        fields['profile_picture'] = MultipartFile.fromBytes(
+          profilePic.bytes!,
+          filename: profilePic.name,
+        );
+      } else {
+        fields['profile_picture'] = await MultipartFile.fromFile(
+          profilePic.path!,
+          filename: profilePic.name,
+        );
+      }
+    }
+
+    final formData = FormData.fromMap(fields);
+
+    final response = await _dio.put(
+      '/users/me',
+      data: formData,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+
+    return User.fromJson(response.data as Map<String, dynamic>);
+  } on DioException catch (e) {
+    final errorMsg = e.response?.data ?? e.message;
+    _logger.severe('Failed to update profile: $errorMsg');
+    throw Exception('Failed to update profile: $errorMsg');
+  }
+}
 
   // Fetch area by ID
   static Future<Map<String, dynamic>?> getMasterArea(int areaId) async {
@@ -13340,7 +13881,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Google login failed');
       }
     } catch (e) {
-      print('Google login failed: $e');
+      
       rethrow;
     }
   }
@@ -13364,7 +13905,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Registration failed');
       }
     } catch (e) {
-      print('Registration failed: $e');
+     
       rethrow;
     }
   }
@@ -13384,7 +13925,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Login failed');
       }
     } catch (e) {
-      print('Password login failed: $e');
+     
       rethrow;
     }
   }
@@ -13401,7 +13942,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'Failed to request OTP');
       }
     } catch (e) {
-      print('OTP request failed: $e');
+      
       rethrow;
     }
   }
@@ -13421,7 +13962,7 @@ class AuthService {
         throw Exception(json.decode(response.body)['msg'] ?? 'OTP verification failed');
       }
     } catch (e) {
-      print('OTP verification failed: $e');
+      
       rethrow;
     }
   }
@@ -13442,7 +13983,7 @@ class AuthService {
         return null;
       }
     } catch (e) {
-      print('Error fetching user: $e');
+      
       return null;
     }
   }
@@ -13456,7 +13997,7 @@ class AuthService {
       _authStateController.add(null); // Notify token cleared
       await _firebaseAuth.signOut();
     } catch (e) {
-      print('Logout failed: $e');
+      rethrow;
     }
   }
 
@@ -13542,7 +14083,7 @@ class GrievanceService {
 
   Future<Grievance> getGrievanceDetails(int id) async {
   try {
-    print('GrievanceService: Sending GET /grievances/mine');
+    
     final response = await _dio.get('/grievances/mine');
     
     // Check if response.data is a List
@@ -13563,10 +14104,10 @@ class GrievanceService {
       return Grievance.fromJson(response.data as Map<String, dynamic>);
     }
   } on DioException catch (e) {
-    print('GrievanceService: DioError fetching grievance details: ${e.response?.statusCode} - ${e.response?.data}');
+   
     throw _handleDioException(e, 'fetch grievance details');
   } catch (e) {
-    print('GrievanceService: Unexpected error fetching grievance details: $e');
+    
     rethrow;
   }
 }
@@ -13579,7 +14120,7 @@ class GrievanceService {
 
 Future<Grievance> GGDBID(int id) async {
   try {
-    print('GrievanceService: Sending GET /grievances/$id');
+    
     final response = await _dio.get('/grievances/$id');
     
     // Check if response.data is a List
@@ -13600,10 +14141,10 @@ Future<Grievance> GGDBID(int id) async {
       return Grievance.fromJson(response.data as Map<String, dynamic>);
     }
   } on DioException catch (e) {
-    print('GrievanceService: DioError fetching grievance details: ${e.response?.statusCode} - ${e.response?.data}');
+   
     throw _handleDioException(e, 'fetch grievance details');
   } catch (e) {
-    print('GrievanceService: Unexpected error fetching grievance details: $e');
+   
     rethrow;
   }
 }
@@ -13613,39 +14154,37 @@ Future<Grievance> GGDBID(int id) async {
 
   Future<List<Grievance>> getAllGrievances() async {
   try {
-    print('GrievanceService: Sending GET /admin/grievances/all');
+    
     final response = await _dio.get('/admin/grievances/all');
-    print('Full request URL: ${response.requestOptions.uri}');
+    
     return _parseGrievanceList(response);
   } on DioException catch (e) {
-    print('GrievanceService: DioError fetching all grievances: ${e.response?.statusCode} - ${e.response?.data}');    
+    
     throw _handleDioException(e, 'fetch all grievances');
   } catch (e) {
-    print('GrievanceService: Unexpected error fetching all grievances: $e');
+   
     rethrow;
   }
 }
 
   Future<List<Grievance>> getGrievancesByUserId(int userId) async {
     try {
-      // NOTE: The endpoint was changed from '/grievance/track' to use the userId.
-      // Ensure your backend has a corresponding route like '/grievances/user/<int:user_id>'.
-      print('GrievanceService: Sending GET /track');
+      
       final response = await _dio.get('/grievances/track');
-      print('Response: ${response.data}');
+      
       return _parseGrievanceList(response);
     } on DioException catch (e) {
-      print('GrievanceService: DioError fetching user grievances: ${e.response?.statusCode} - ${e.response?.data}');
+      
       throw _handleDioException(e, 'fetch user grievances');
     } catch (e) {
-      print('GrievanceService: Unexpected error fetching user grievances: $e');
+      
       rethrow;
     }
   }
 
   Future<void> addComment(int id, String commentText) async {
     try {
-      print('GrievanceService: Sending POST /grievances/$id/comments with comment: $commentText');
+      
       final response = await _dio.post(
         '/grievances/$id/comments',
         data: {'comment_text': commentText},
@@ -13654,52 +14193,52 @@ Future<Grievance> GGDBID(int id) async {
         throw Exception('Failed to add comment: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError adding comment: ${e.response?.statusCode} - ${e.response?.data}');
+      
       throw _handleDioException(e, 'add comment');
     } catch (e) {
-      print('GrievanceService: Unexpected error adding comment: $e');
+      
       rethrow;
     }
   }
 
   Future<List<Grievance>> getMyGrievances() async {
     try {
-      print('GrievanceService: Sending GET /grievances/mine with headers: ${_dio.options.headers}');
+      
       final response = await _dio.get('/grievances/mine');
       return _parseGrievanceList(response);
     } on DioException catch (e) {
-      print('GrievanceService: DioError fetching my grievances: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'fetch my grievances');
     } catch (e) {
-      print('GrievanceService: Unexpected error fetching my grievances: $e');
+      
       rethrow;
     }
   }
 
   Future<List<Grievance>> getNewGrievances() async {
     try {
-      print('GrievanceService: Sending GET /grievances/new');
+    
       final response = await _dio.get('/grievances/new');
       return _parseGrievanceList(response);
     } on DioException catch (e) {
-      print('GrievanceService: DioError fetching new grievances: ${e.response?.statusCode} - ${e.response?.data}');
+    
       throw _handleDioException(e, 'fetch new grievances');
     } catch (e) {
-      print('GrievanceService: Unexpected error fetching new grievances: $e');
+     
       rethrow;
     }
   }
 
   Future<List<Grievance>> getAssignedGrievances() async {
     try {
-      print('GrievanceService: Sending GET /grievances/assigned');
+     
       final response = await _dio.get('/grievances/assigned');
       return _parseGrievanceList(response);
     } on DioException catch (e) {
-      print('GrievanceService: DioError fetching assigned grievances: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'fetch assigned grievances');
     } catch (e) {
-      print('GrievanceService: Unexpected error fetching assigned grievances: $e');
+     
       rethrow;
     }
   }
@@ -13737,22 +14276,22 @@ Future<Grievance> GGDBID(int id) async {
       });
       final response = await _dio.post('/grievances/', data: formData);
       if (response.statusCode == 201) {
-        print('GrievanceService: Grievance created successfully');
+        
       } else {
         throw Exception('Failed to create grievance: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError submitting grievance: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'create grievance');
     } catch (e) {
-      print('GrievanceService: Unexpected error submitting grievance: $e');
+      
       rethrow;
     }
   }
 
   Future<void> submitFeedback(int grievanceId, int rating, String feedbackText) async {
     try {
-      print('GrievanceService: Sending POST /grievances/$grievanceId/feedback with rating: $rating, feedback: $feedbackText');
+     
       final response = await _dio.post(
         '/grievances/$grievanceId/feedback',
         data: {
@@ -13764,17 +14303,17 @@ Future<Grievance> GGDBID(int id) async {
         throw Exception('Failed to submit feedback: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError submitting feedback: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'submit feedback');
     } catch (e) {
-      print('GrievanceService: Unexpected error submitting feedback: $e');
+    
       rethrow;
     }
   }
 
   Future<void> reassignGrievance(int grievanceId, int assigneeId) async {
     try {
-      print('GrievanceService: Sending PUT /grievances/$grievanceId/reassign with assignee_id: $assigneeId');
+     
       final response = await _dio.put(
         '/grievances/$grievanceId/reassign',
         data: {'assignee_id': assigneeId},
@@ -13783,17 +14322,17 @@ Future<Grievance> GGDBID(int id) async {
         throw Exception('Failed to reassign grievance: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError reassigning grievance: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'reassign grievance');
     } catch (e) {
-      print('GrievanceService: Unexpected error reassigning grievance: $e');
+     
       rethrow;
     }
   }
 
   Future<void> updateGrievanceStatus(int grievanceId, String status) async {
     try {
-      print('GrievanceService: Sending PUT /grievances/$grievanceId/status with status: $status');
+     
       final response = await _dio.put(
         '/grievances/$grievanceId/status',
         data: {'status': status},
@@ -13802,17 +14341,17 @@ Future<Grievance> GGDBID(int id) async {
         throw Exception('Failed to update grievance status: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError updating grievance status: ${e.response?.statusCode} - ${e.response?.data}');
+    
       throw _handleDioException(e, 'update grievance status');
     } catch (e) {
-      print('GrievanceService: Unexpected error updating grievance status: $e');
+     
       rethrow;
     }
   }
 
   Future<void> escalateGrievance(int grievanceId, {int? assigneeId}) async {
     try {
-      print('GrievanceService: Sending POST /grievances/$grievanceId/escalate');
+     
       final data = assigneeId != null ? {'assignee_id': assigneeId} : {};
       final response = await _dio.post(
         '/grievances/$grievanceId/escalate',
@@ -13822,10 +14361,10 @@ Future<Grievance> GGDBID(int id) async {
         throw Exception('Failed to escalate grievance: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      print('GrievanceService: DioError escalating grievance: ${e.response?.statusCode} - ${e.response?.data}');
+     
       throw _handleDioException(e, 'escalate grievance');
     } catch (e) {
-      print('GrievanceService: Unexpected error escalating grievance: $e');
+      
       rethrow;
     }
   }
@@ -13935,7 +14474,7 @@ class UserService {
   /// Fetch all users
   static Future<List<User>> getUsers() async {
     try {
-      print('Fetching all users...'); // Debug log
+      
       final response = await ApiService.get(
         '/admins/users',
         headers: {
@@ -13947,14 +14486,12 @@ class UserService {
         throw Exception('Invalid response format: Expected a list of users');
       }
 
-      print('Fetched users: ${response.data.length}'); // Debug log
+      
       return (response.data as List)
           .map((user) => User.fromJson(user as Map<String, dynamic>))
           .toList();
     } on DioException catch (e) {
-      print('DioError during getUsers: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status: ${e.response?.statusCode}');
+      
 
       if (e.response?.statusCode == 404) {
         throw Exception('Users endpoint not found. Check backend routes.');
@@ -13973,7 +14510,7 @@ class UserService {
   /// Add a new user
   static Future<User> addUser(Map<String, dynamic> data) async {
     try {
-      print('Adding new user with data: $data'); // Debug log
+      
       final response = await ApiService.post(
         '/admin/users',
         data,
@@ -13983,12 +14520,10 @@ class UserService {
         },
       );
 
-      print('Add user response: ${response.data}'); // Debug log
+      
       return User.fromJson(response.data);
     } on DioException catch (e) {
-      print('DioError during addUser: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status: ${e.response?.statusCode}');
+      
       throw Exception('Failed to add user: ${e.response?.data?['msg'] ?? e.message}');
     } catch (e) {
       throw Exception('Unexpected error while adding user: $e');
@@ -13998,7 +14533,7 @@ class UserService {
   /// Update an existing user
   static Future<User> updateUser(int id, Map<String, dynamic> data) async {
     try {
-      print('Updating user $id with data: $data'); // Debug log
+      
       final response = await ApiService.put(
         '/admin/users/$id',
         data,
@@ -14008,12 +14543,10 @@ class UserService {
         },
       );
 
-      print('Update response: ${response.data}'); // Debug log
+      
       return User.fromJson(response.data);
     } on DioException catch (e) {
-      print('DioError during update: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status: ${e.response?.statusCode}');
+      
 
       if (e.type == DioExceptionType.connectionError) {
         throw Exception('Network error: Unable to connect to the server. Check if the server is running.');
@@ -14022,7 +14555,7 @@ class UserService {
       }
       throw Exception('Failed to update user: ${e.message}');
     } catch (e) {
-      print('Unexpected error during update: $e');
+      
       throw Exception('Unexpected error while updating user: $e');
     }
   }
@@ -14030,18 +14563,16 @@ class UserService {
   /// Delete a user
   static Future<void> deleteUser(int id) async {
     try {
-      print('Deleting user $id...'); // Debug log
+      
       final response = await ApiService.delete(
         '/admin/users/$id',
         headers: {
           'Accept': 'application/json',
         },
       );
-      print('Delete response: ${response.data}'); // Debug log
+      
     } on DioException catch (e) {
-      print('DioError during deleteUser: ${e.message}');
-      print('Response: ${e.response?.data}');
-      print('Status: ${e.response?.statusCode}');
+      
       throw Exception('Failed to delete user: ${e.response?.data?['msg'] ?? e.message}');
     } catch (e) {
       throw Exception('Unexpected error while deleting user: $e');
@@ -15176,12 +15707,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
             },
           ),
           if (user?.role?.toUpperCase() == 'ADMIN') ...[
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.history,
-            //   title: localizations.viewAuditLogs ?? 'View Audit Logs',
-            //   route: '/admin/audit',
-            // ),
+
             _buildDrawerItem(
               context: context,
               icon: Icons.report,
@@ -15218,94 +15744,56 @@ class CustomNavigationDrawer extends ConsumerWidget {
               title: localizations.manageAreas ?? 'Manage Areas',
               route: '/admin/areas',
             ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.assessment,
-            //   title: localizations.reports ?? 'Reports',
-            //   route: '/admin/reports',
-            // ),
+
           ],
           if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.view_list,
-            //   title: localizations.viewgrievanceetails ?? 'View Grievances',
-            //   route: '/member_head/view',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.assignment,
-            //   title: localizations.assignGrievance ?? 'Assign Grievance',
-            //   route: '/member_head/assign',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.cancel,
-            //   title: localizations.rejectGrievance ?? 'Reject Grievance',
-            //   route: '/member_head/reject',
-            // ),
+          
           ],
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.update,
-            //   title: localizations.updateStatus ?? 'Update Status',
-            //   route: '/employer/update',
-            // ),
-            // _buildDrawerItem(
-            //   context: context,
-            //   icon: Icons.upload_file,
-            //   title: localizations.uploadWorkproof ?? 'Upload Work Proof',
-            //   route: '/employer/upload',
-            // ),
+          
           ],
           _buildDrawerItem(
             context: context,
             icon: Icons.person,
-            title: localizations.profile ?? 'Profile',
+            title: localizations.profile ,
             route: '/profile',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.settings,
-            title: localizations.settings ?? 'Settings',
+            title: localizations.settings,
             route: '/settings',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.announcement,
-            title: localizations.announcements ?? 'Announcements',
+            title: localizations.announcements,
             route: '/announcements',
           ),
-          // _buildDrawerItem(
-          //   context: context,
-          //   icon: Icons.notifications,
-          //   title: localizations.notifications ?? 'Notifications',
-          //   route: '/notifications',
-          // ),
+          
           _buildDrawerItem(
             context: context,
             icon: Icons.privacy_tip,
-            title: localizations.privacyPolicy ?? 'Privacy Policy',
+            title: localizations.privacyPolicy,
             route: '/privacy-policy',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.help,
-            title: localizations.faqs ?? 'FAQs',
+            title: localizations.faqs,
             route: '/faqs',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.support,
-            title: localizations.contactSupport ?? 'Contact Support',
+            title: localizations.contactSupport,
             route: '/contact-support',
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.info,
-            title: localizations.appVersion ?? 'App Version',
+            title: localizations.appVersion,
             route: '/app-version',
           ),
           const Divider(),

@@ -548,4 +548,16 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get locationDetails => 'स्थान विवरण';
+
+  @override
+  String get searchByName => 'नाम से खोजें';
+
+  @override
+  String get noResultsFound => 'कोई परिणाम नहीं मिला';
+
+  @override
+  String get noMatchingGrievances => 'कोई मिलान करने वाली शिकायतें नहीं मिलीं';
+
+  @override
+  String get allUsersHistory => 'सभी उपयोगकर्ताओं का इतिहास';
 }

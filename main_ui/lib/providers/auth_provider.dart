@@ -10,7 +10,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.googleLogin();
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Google login failed: $e');
+      
       rethrow;
     }
   }
@@ -20,7 +20,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.register(name, email, password);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Registration failed: $e');
+      
       rethrow;
     }
   }
@@ -30,7 +30,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.passwordLogin(email, password);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Login failed: $e');
+      
       rethrow;
     }
   }
@@ -40,7 +40,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.verifyOtp(phoneNumber, otp);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('OTP login failed: $e');
+      
       rethrow;
     }
   }
@@ -49,13 +49,13 @@ class AuthNotifier extends StateNotifier<User?> {
     try {
       await AuthService.requestOtp(phoneNumber);
     } catch (e) {
-      print('OTP request failed: $e');
+     
       rethrow;
     }
   }
 
   Future<void> logout() async {
-    print('Logging out');
+    
     await AuthService.logout();
     state = null;
   }
@@ -63,10 +63,10 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> checkAuth() async {
     final user = await AuthService.getCurrentUser();
     if (user != null) {
-      print('Found authenticated user: ${user.name}');
+      
       state = user;
     } else {
-      print('No authenticated user found');
+      
       state = null;
     }
   }
@@ -76,7 +76,7 @@ class AuthNotifier extends StateNotifier<User?> {
       await AuthService.storeToken(token);
       await _fetchUserAndUpdateState();
     } catch (e) {
-      print('Error processing token: $e');
+      
       rethrow;
     }
   }
@@ -84,10 +84,10 @@ class AuthNotifier extends StateNotifier<User?> {
   Future<void> _fetchUserAndUpdateState() async {
     try {
       final userData = await AuthService.getCurrentUser();
-      print('Fetched user data: ${userData?.toJson()}');
+      
       state = userData;
     } catch (e) {
-      print('Error fetching user data: $e. Logging out.');
+      
       await logout();
     }
   }
