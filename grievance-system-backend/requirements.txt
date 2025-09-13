@@ -18,3 +18,5 @@ reportlab
 gunicorn
 flask-cors
 authlib
+flask-admin
+flask-security-too

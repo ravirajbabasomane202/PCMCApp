@@ -358,9 +358,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
                                                               ),
                                                               const Spacer(),
                                                               Text(
-                                                                g.createdAt != null 
-                                                                  ? '${g.createdAt!.day}/${g.createdAt!.month}/${g.createdAt!.year}'
-                                                                  : 'No date',
+                                                                '${g.createdAt!.day}/${g.createdAt!.month}/${g.createdAt!.year}',
                                                                 style: TextStyle(
                                                                   fontSize: 12,
                                                                   color: Colors.grey[500],
@@ -373,7 +371,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                              )).toList(),
+                                              )),
                                             ],
                                           ),
                                         ),

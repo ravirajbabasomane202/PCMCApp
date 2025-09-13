@@ -17,7 +17,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
   void _showSubjectDialog({MasterSubject? subject}) {
     final nameController = TextEditingController(text: subject?.name ?? '');
     final descriptionController = TextEditingController(text: subject?.description ?? '');
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -32,7 +32,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,7 +90,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                           child: CustomButton(
                             text: 'Save',
                             onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
+                              if (formKey.currentState!.validate()) {
                                 final data = {
                                   "name": nameController.text.trim(),
                                   "description": descriptionController.text.trim(),

@@ -45,15 +45,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _isLoading = true);
     try {
       final response = await ApiService.get('/settings/');
-      if (response != null) {
-        setState(() {
-          _notificationsEnabled = response.data['notifications_enabled'] ?? true;
-          final user = ref.read(userNotifierProvider);
-          _nameController.text = user?.name ?? '';
-          _emailController.text = user?.email ?? '';
-        });
-      }
-    } catch (e) {
+      setState(() {
+        _notificationsEnabled = response.data['notifications_enabled'] ?? true;
+        final user = ref.read(userNotifierProvider);
+        _nameController.text = user?.name ?? '';
+        _emailController.text = user?.email ?? '';
+      });
+        } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load settings: $e'),
@@ -195,7 +193,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: SwitchListTile(
-                        title: Text(localizations.enableNotifications ?? 'Enable Notifications',
+                        title: Text(localizations.enableNotifications ,
                             style: const TextStyle(fontWeight: FontWeight.w500)),
                         value: _notificationsEnabled,
                         onChanged: (value) => setState(() => _notificationsEnabled = value),
@@ -215,7 +213,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
                         child: DropdownButtonFormField<Locale>(
-                          value: locale,
+                          initialValue: locale,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             filled: true,
@@ -234,7 +232,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // Privacy & Security
-                    _buildSectionTitle(localizations.privacySecurity ?? 'Privacy & Security'),
+                    _buildSectionTitle(localizations.privacySecurity ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -245,7 +243,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(localizations.viewPrivacyPolicy ?? 'View Privacy Policy'),
+                            title: Text(localizations.viewPrivacyPolicy),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/privacy-policy'),
                           ),
@@ -255,7 +253,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // Help & Support
-                    _buildSectionTitle(localizations.helpSupport ?? 'Help & Support'),
+                    _buildSectionTitle(localizations.helpSupport ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -266,13 +264,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(localizations.faqs ?? 'FAQs'),
+                            title: Text(localizations.faqs ),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/faqs'),
                           ),
                           const Divider(height: 1),
                           ListTile(
-                            title: Text(localizations.contactSupport ?? 'Contact Support'),
+                            title: Text(localizations.contactSupport ),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/contact-support'),
                           ),
@@ -282,7 +280,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // About
-                    _buildSectionTitle(localizations.about ?? 'About'),
+                    _buildSectionTitle(localizations.about ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -291,7 +289,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        title: Text(localizations.appVersion ?? 'App Version: 1.0.0'),
+                        title: Text(localizations.appVersion ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () => Navigator.pushNamed(context, '/app-version'),
                       ),
@@ -302,7 +300,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
-                        text: localizations.save ?? 'Save',
+                        text: localizations.save ,
                         onPressed: _saveSettings,
                       ),
                     ),
@@ -310,7 +308,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
-                        text: localizations.logout ?? 'Logout',
+                        text: localizations.logout ,
                         backgroundColor: Colors.red,
                         onPressed: () async {
                           await AuthService.logout();

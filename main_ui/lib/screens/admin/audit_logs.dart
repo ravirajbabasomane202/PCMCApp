@@ -249,8 +249,6 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   IconData _getActionIcon(String action) {
-    if (action == null) return Icons.info;
-    
     final lowerAction = action.toLowerCase();
     if (lowerAction.contains('login')) return Icons.login;
     if (lowerAction.contains('create') || lowerAction.contains('add')) return Icons.add_circle;
@@ -263,8 +261,6 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   String _formatTimestamp(String timestamp) {
-    if (timestamp == null) return 'Unknown time';
-    
     try {
       final dateTime = DateTime.parse(timestamp);
       return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';

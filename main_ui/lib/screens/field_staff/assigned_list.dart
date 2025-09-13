@@ -78,7 +78,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Status updated')),
     );
-  } catch (e, stack) {
+  } catch (e) {
    
     
     if (!mounted) return;
@@ -150,7 +150,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                   fillColor: Colors.grey[50],
                 ),
                 hint: const Text('Select New Status'),
-                value: selectedStatus,
+                initialValue: selectedStatus,
                 items: ['in_progress', 'on_hold', 'resolved'].map((status) {
                   return DropdownMenuItem<String>(
                     value: status,
@@ -412,11 +412,11 @@ class _AssignedListState extends ConsumerState<AssignedList> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Created: ${grievance.createdAt != null ? dateFormat.format(grievance.createdAt!) : 'N/A'}',
+              'Created: ${dateFormat.format(grievance.createdAt!)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             Text(
-              'Updated: ${grievance.updatedAt != null ? dateFormat.format(grievance.updatedAt!) : 'N/A'}',
+              'Updated: ${dateFormat.format(grievance.updatedAt!)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (grievance.resolvedAt != null)
@@ -467,7 +467,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
             ),
             const SizedBox(height: 4),
             Text(
-              '${grievance.subject?.name ?? 'N/A'}',
+              grievance.subject?.name ?? 'N/A',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (grievance.subject?.description != null)

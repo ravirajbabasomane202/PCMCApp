@@ -56,7 +56,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
           ),
         );
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (!mounted) return;
       
       Navigator.pushReplacementNamed(context, '/login');

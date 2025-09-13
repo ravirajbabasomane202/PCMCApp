@@ -15,7 +15,7 @@ user_bp = Blueprint('user', __name__)
 def get_users(user):
     """Retrieve all users."""
     try:
-        users = User.query.all()
+        users = User.query.filter(User.role != Role.ADMIN).all()
         schema = UserSchema(many=True)
         return jsonify(schema.dump(users)), 200
     except Exception as e:

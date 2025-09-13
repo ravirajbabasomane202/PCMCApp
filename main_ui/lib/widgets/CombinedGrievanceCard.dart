@@ -65,9 +65,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          grievance.createdAt != null
-                              ? _formatDate(grievance.createdAt!)
-                              : 'Unknown date',
+                          _formatDate(grievance.createdAt!),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(128),
                           ),

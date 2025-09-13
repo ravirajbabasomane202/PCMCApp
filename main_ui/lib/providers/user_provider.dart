@@ -28,7 +28,7 @@ class UserNotifier extends StateNotifier<User?> {
   Future<void> updateUser() async {
     try {
       final response = await ApiService.get('/settings/user'); // Fetch updated user data
-      if (response != null && response.data != null) {
+      if (response.data != null) {
         state = User.fromJson(response.data); // Update state with new user data
       }
     } catch (e) {

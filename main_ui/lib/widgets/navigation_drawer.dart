@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/providers/user_provider.dart';
 

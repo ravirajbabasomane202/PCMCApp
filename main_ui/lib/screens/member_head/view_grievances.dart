@@ -188,7 +188,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
-          value: newStatus,
+          initialValue: newStatus,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xffecf2fe),
@@ -243,7 +243,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
-          value: assigneeId,
+          initialValue: assigneeId,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xffecf2fe),

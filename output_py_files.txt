@@ -540,6 +540,61 @@ if __name__ == "__main__":
 
 === Folder: app ===
 
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\admin_views.py ---
+# app/admin_views.py
+from flask_admin.contrib.sqla import ModelView
+from flask_admin import BaseView, expose
+from flask_security import current_user
+from ..models import User, Grievance, MasterSubjects, MasterAreas, MasterCategories, AuditLog, Announcement
+from .. import db
+
+class SecureModelView(ModelView):
+    """Base view with access checks."""
+    def is_accessible(self):
+        return current_user.is_authenticated and current_user.role == Role.ADMIN
+    
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('security.login', next=request.url))
+
+# Custom Dashboard View (example: show KPIs)
+class DashboardView(BaseView):
+    @expose('/')
+    def index(self):
+        # Fetch some stats (reuse your kpi_utils if needed)
+        total_grievances = Grievance.query.count()
+        return self.render('admin/dashboard.html', total_grievances=total_grievances)  # Create this template later
+
+# Model Views
+class UserAdmin(SecureModelView):
+    column_exclude_list = ['password_hash']  # Hide sensitive fields
+    column_searchable_list = ['name', 'email']
+    column_filters = ['role']
+    form_excluded_columns = ['password_hash']  # Don't edit hash directly
+    can_export = True  # Allow CSV export
+
+class GrievanceAdmin(SecureModelView):
+    column_list = ['id', 'title', 'status', 'priority', 'created_at']
+    column_searchable_list = ['title', 'description']
+    column_filters = ['status', 'priority', 'area.name']
+    form_excluded_columns = ['attachments', 'comments']  # Handle separately if needed
+    can_export = True
+
+# Add more for other models...
+class SubjectAdmin(SecureModelView):
+    pass
+
+class AreaAdmin(SecureModelView):
+    pass
+
+class CategoryAdmin(SecureModelView):
+    pass
+
+class AuditLogAdmin(SecureModelView):
+    can_edit = False  # Read-only
+    can_delete = False
+
+class AnnouncementAdmin(SecureModelView):
+    pass
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\config.py ---
 # app/config.py
 
@@ -584,6 +639,19 @@ class Config:
     UPLOAD_FOLDER = os.path.join(basedir, '..', 'uploads')
     ALLOWED_EXTENSIONS = {'pdf', 'txt', 'jpg', 'jpeg', 'png', 'mp4', 'mov'}
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 16MB max file size
+
+
+    # Security Settings (for Flask-Security-Too)
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'a-salt-for-hashing'
+    SECURITY_TRACKABLE = True  # Track logins
+    SECURITY_REGISTERABLE = False  # Disable public registration (admins only)
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_LOGIN_URL = '/admin/login'  # Custom login for admin
+    SECURITY_LOGOUT_URL = '/admin/logout'
+    SECURITY_POST_LOGIN_VIEW = '/admin/'  # Redirect to admin after login
+    SECURITY_POST_LOGOUT_VIEW = '/auth/login'  # Back to main login
+    SECURITY_UNAUTHORIZED_VIEW = '/auth/unauthorized'  # Handle forbidden access
+
 
     # --- Email Settings ---
     # To send emails, you need to configure an SMTP server.
@@ -1078,6 +1146,8 @@ from flask_mail import Mail
 from .config import Config
 from flask_cors import CORS
 from .extensions import oauth
+from flask_admin import Admin
+from flask_security import Security, SQLAlchemyUserDatastore
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -1085,6 +1155,8 @@ jwt = JWTManager()
 mail = Mail()
 import logging
 # oauth is defined in extensions.py
+from .models import User, Role
+from .models import Grievance, MasterSubjects, MasterAreas, MasterCategories, AuditLog, Announcement, UserPreference, MasterConfig
 
 def create_app():
     logging.basicConfig(level=logging.DEBUG)
@@ -1092,14 +1164,36 @@ def create_app():
     app = Flask(__name__)
     
     app.config.from_object(Config)
+    admin = Admin(app, name='Grievance Admin', template_mode='bootstrap4')
+
+
+    from .admin_views import (
+    DashboardView, UserAdmin, GrievanceAdmin, SubjectAdmin, 
+    AreaAdmin, CategoryAdmin, AuditLogAdmin, AnnouncementAdmin
+    )
+
+    # Add views to admin
+    admin.add_view(DashboardView(name='Dashboard', endpoint='dashboard'))
+    admin.add_view(UserAdmin(User, db.session))
+    admin.add_view(GrievanceAdmin(Grievance, db.session))
+    admin.add_view(SubjectAdmin(MasterSubjects, db.session))
+    admin.add_view(AreaAdmin(MasterAreas, db.session))
+    admin.add_view(CategoryAdmin(MasterCategories, db.session))
+    admin.add_view(AuditLogAdmin(AuditLog, db.session))
+    admin.add_view(AnnouncementAdmin(Announcement, db.session))
 
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
     oauth.init_app(app)
+
+
+    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    security = Security(app, user_datastore)
+
     cors_origins = ["http://localhost:*", "http://127.0.0.1:*", "http://localhost:5500", "http://127.0.0.1:5500", "https://pcmcapp.onrender.com"]
-    CORS(app, resources={r"/*": {
+    CORS(app, resources={r"/*": { # This line is already correct, no change needed here.
         "origins": cors_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Authorization", "Content-Type"],
@@ -1646,6 +1740,7 @@ from ..utils.file_utils import allowed_file
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy.exc import IntegrityError
+from flask_security import login_user
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -1873,6 +1968,16 @@ def guest_login():
         "msg": "Logged in as Guest"
     }), 200
 
+
+@auth_bp.route('/admin/login', methods=['POST'])
+def admin_login():
+    data = request.json
+    user = User.query.filter_by(email=data['email']).first()
+    if user and user.check_password(data['password']) and user.role == Role.ADMIN:
+        login_user(user)  # Use Flask-Security login
+        access_token = create_access_token(identity=user.id)
+        return jsonify(access_token=access_token)
+    return jsonify({"msg": "Invalid credentials or not admin"}), 401
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\field_routes.py ---
 # app/routes/user_routes.py
 from flask import Blueprint, request, jsonify
@@ -2406,7 +2511,7 @@ user_bp = Blueprint('user', __name__)
 def get_users(user):
     """Retrieve all users."""
     try:
-        users = User.query.all()
+        users = User.query.filter(User.role != Role.ADMIN).all()
         schema = UserSchema(many=True)
         return jsonify(schema.dump(users)), 200
     except Exception as e:
@@ -3766,3 +3871,6 @@ def calculate_dept_wise_resolution():
 
 
 === Folder: uploads\grievance_11 ===
+
+
+=== Folder: uploads\user_1 ===

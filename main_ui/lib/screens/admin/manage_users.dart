@@ -9,7 +9,7 @@ import 'package:main_ui/widgets/loading_indicator.dart';
 import '../../providers/user_provider.dart';
 
 class ManageUsers extends ConsumerStatefulWidget {
-  const ManageUsers({Key? key}) : super(key: key);
+  const ManageUsers({super.key});
 
   @override
   ConsumerState<ManageUsers> createState() => _ManageUsersState();
@@ -139,7 +139,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          value: role,
+                          initialValue: role,
                           decoration: InputDecoration(
                             labelText: l10n.role,
                             border: OutlineInputBorder(
@@ -318,7 +318,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          value: role,
+                          initialValue: role,
                           decoration: InputDecoration(
                             labelText: l10n.role,
                             border: OutlineInputBorder(
@@ -507,8 +507,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddUserDialog,
         backgroundColor: theme.colorScheme.primary,
-        child: const Icon(Icons.add, color: Colors.white),
         tooltip: l10n.addUser,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Column(
         children: [

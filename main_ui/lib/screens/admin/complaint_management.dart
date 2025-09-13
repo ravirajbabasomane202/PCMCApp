@@ -1,4 +1,3 @@
-// lib/screens/admin/complaint_management.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
@@ -12,6 +11,7 @@ import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/providers/admin_provider.dart';
 import 'package:main_ui/widgets/custom_button_.dart';
+
 class ComplaintManagement extends ConsumerStatefulWidget {
   const ComplaintManagement({super.key});
 
@@ -43,7 +43,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       _errorMessage = null;
     });
     try {
-      // Fetch grievances using adminProvider with proper parameters
       final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
             status: _selectedStatus,
             priority: _selectedPriority,
@@ -146,7 +145,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       ),
       body: Column(
         children: [
-          // Filters Card
           Card(
             margin: const EdgeInsets.all(16),
             elevation: 2,
@@ -168,7 +166,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                     spacing: 12.0,
                     runSpacing: 12.0,
                     children: [
-                      // Status Filter
                       FilterChip(
                         label: Text(_selectedStatus?.capitalize() ?? l10n.filterByStatus),
                         selected: _selectedStatus != null,
@@ -186,8 +183,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Priority Filter
                       FilterChip(
                         label: Text(_selectedPriority?.capitalize() ?? l10n.filterByPriority),
                         selected: _selectedPriority != null,
@@ -205,8 +200,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Area Filter
                       FilterChip(
                         label: Text(
                           _selectedAreaId != null 
@@ -228,8 +221,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Subject Filter
                       FilterChip(
                         label: Text(
                           _selectedSubjectId != null 
@@ -251,8 +242,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Clear Filters Button
                       ActionChip(
                         label: Text(l10n.clearFilters),
                         onPressed: () {
@@ -274,7 +263,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
               ),
             ),
           ),
-          
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchData,
@@ -293,72 +281,91 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         children: [
                           GrievanceCard(grievance: grievance),
                           const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 8.0,
+                          Column(
                             children: [
-                              CustomButton2(
-                                text: l10n.reassignComplaint,
-                                onPressed: () => _showReassignDialog(grievance.id),
-                                icon: Icons.person_add,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.reassignComplaint,
+                                      onPressed: () => _showReassignDialog(grievance.id),
+                                      icon: Icons.person_add,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.escalateComplaint,
+                                      onPressed: () async {
+                                        try {
+                                          int newAssigneeId = 13;
+                                          int admin = 4;
+                                          await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('${l10n.escalateComplaint} Successful'),
+                                              backgroundColor: theme.colorScheme.primary,
+                                            ),
+                                          );
+                                          _fetchData();
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(e.toString()),
+                                              backgroundColor: theme.colorScheme.error,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: Icons.arrow_upward,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              CustomButton2(
-                                text: l10n.escalateComplaint,
-                                onPressed: () async {
-                                  try {
-                                    int newAssigneeId = 13;
-                                    int admin = 4;
-                                    await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('${l10n.escalateComplaint} Successful'),
-                                        backgroundColor: theme.colorScheme.primary,
-                                      ),
-                                    );
-                                    _fetchData();
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(e.toString()),
-                                        backgroundColor: theme.colorScheme.error,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: Icons.arrow_upward,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
-                              ),
-                              CustomButton2(
-                                text: l10n.updateStatus,
-                                onPressed: () => _showStatusDialog(grievance.id),
-                                icon: Icons.update,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
-                              ),
-                              CustomButton2(
-                                text: l10n.viewDetails,
-                                onPressed: () {
-                                  if (grievance.id > 0) {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/citizen/detail',
-                                      arguments: grievance.id,
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text("Invalid grievance ID"),
-                                        backgroundColor: theme.colorScheme.error,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: Icons.info,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.updateStatus,
+                                      onPressed: () => _showStatusDialog(grievance.id),
+                                      icon: Icons.update,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.viewDetails,
+                                      onPressed: () {
+                                        if (grievance.id > 0) {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/citizen/detail',
+                                            arguments: grievance.id,
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Text("Invalid grievance ID"),
+                                              backgroundColor: theme.colorScheme.error,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: Icons.info,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -374,9 +381,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        child: const Icon(Icons.filter_list),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
+        child: const Icon(Icons.filter_list),
       ),
     );
   }
@@ -401,7 +408,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Status Filter
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByStatus,
@@ -415,15 +421,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByStatus)),
                         ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
                             .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempStatus = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Priority Filter
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByPriority,
@@ -437,15 +441,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByPriority)),
                         ...['low', 'medium', 'high', 'urgent']
                             .map((p) => DropdownMenuItem(value: p, child: Text(p.capitalize())))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempPriority = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Area Filter
                     DropdownButtonFormField<int>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByArea,
@@ -459,15 +461,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByArea)),
                         ..._areas
                             .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempAreaId = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Subject Filter
                     DropdownButtonFormField<int>(
                       decoration: InputDecoration(
                         labelText: l10n.filterBySubject,
@@ -481,7 +481,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterBySubject)),
                         ..._subjects
                             .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempSubjectId = value);
@@ -619,7 +619,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   DropdownMenuItem(value: null, child: Text(l10n.selectStatus)),
                   ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
                       .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                      .toList(),
+                      ,
                 ],
                 onChanged: (value) {
                   setState(() => selectedStatus = value);

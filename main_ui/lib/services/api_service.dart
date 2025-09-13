@@ -99,7 +99,7 @@ static Future<Response> postMultipart(
     final formData = FormData.fromMap({
       ...?data,
       fieldName: files.length == 1
-          ? await MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
+          ? MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
           : files
               .map((file) => MultipartFile.fromBytes(file.bytes!, filename: file.name))
               .toList(),

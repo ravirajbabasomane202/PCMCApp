@@ -42,6 +42,19 @@ class Config:
     ALLOWED_EXTENSIONS = {'pdf', 'txt', 'jpg', 'jpeg', 'png', 'mp4', 'mov'}
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 16MB max file size
 
+
+    # Security Settings (for Flask-Security-Too)
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT') or 'a-salt-for-hashing'
+    SECURITY_TRACKABLE = True  # Track logins
+    SECURITY_REGISTERABLE = False  # Disable public registration (admins only)
+    SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_LOGIN_URL = '/admin/login'  # Custom login for admin
+    SECURITY_LOGOUT_URL = '/admin/logout'
+    SECURITY_POST_LOGIN_VIEW = '/admin/'  # Redirect to admin after login
+    SECURITY_POST_LOGOUT_VIEW = '/auth/login'  # Back to main login
+    SECURITY_UNAUTHORIZED_VIEW = '/auth/unauthorized'  # Handle forbidden access
+
+
     # --- Email Settings ---
     # To send emails, you need to configure an SMTP server.
     # For development, you can use a service like Mailtrap.io or a local debugging server.

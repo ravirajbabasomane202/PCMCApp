@@ -1,7 +1,6 @@
 import 'dart:async'; // For debouncing
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/grievance_model.dart';
 import '../../providers/grievance_provider.dart';
 import '../../widgets/grievance_card.dart';
 import '../../widgets/empty_state.dart';

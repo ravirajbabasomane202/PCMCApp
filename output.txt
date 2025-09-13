@@ -4134,7 +4134,7 @@ class UserNotifier extends StateNotifier<User?> {
   Future<void> updateUser() async {
     try {
       final response = await ApiService.get('/settings/user'); // Fetch updated user data
-      if (response != null && response.data != null) {
+      if (response.data != null) {
         state = User.fromJson(response.data); // Update state with new user data
       }
     } catch (e) {
@@ -4596,9 +4596,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
                                                               ),
                                                               const Spacer(),
                                                               Text(
-                                                                g.createdAt != null 
-                                                                  ? '${g.createdAt!.day}/${g.createdAt!.month}/${g.createdAt!.year}'
-                                                                  : 'No date',
+                                                                '${g.createdAt!.day}/${g.createdAt!.month}/${g.createdAt!.year}',
                                                                 style: TextStyle(
                                                                   fontSize: 12,
                                                                   color: Colors.grey[500],
@@ -4611,7 +4609,7 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                              )).toList(),
+                                              )),
                                             ],
                                           ),
                                         ),
@@ -4880,8 +4878,6 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   IconData _getActionIcon(String action) {
-    if (action == null) return Icons.info;
-    
     final lowerAction = action.toLowerCase();
     if (lowerAction.contains('login')) return Icons.login;
     if (lowerAction.contains('create') || lowerAction.contains('add')) return Icons.add_circle;
@@ -4894,8 +4890,6 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 
   String _formatTimestamp(String timestamp) {
-    if (timestamp == null) return 'Unknown time';
-    
     try {
       final dateTime = DateTime.parse(timestamp);
       return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
@@ -4905,7 +4899,6 @@ class _AuditLogsState extends ConsumerState<AuditLogs> {
   }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\complaint_management.dart ---
-// lib/screens/admin/complaint_management.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
@@ -4919,6 +4912,7 @@ import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/providers/admin_provider.dart';
 import 'package:main_ui/widgets/custom_button_.dart';
+
 class ComplaintManagement extends ConsumerStatefulWidget {
   const ComplaintManagement({super.key});
 
@@ -4950,7 +4944,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       _errorMessage = null;
     });
     try {
-      // Fetch grievances using adminProvider with proper parameters
       final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
             status: _selectedStatus,
             priority: _selectedPriority,
@@ -5053,7 +5046,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       ),
       body: Column(
         children: [
-          // Filters Card
           Card(
             margin: const EdgeInsets.all(16),
             elevation: 2,
@@ -5075,7 +5067,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                     spacing: 12.0,
                     runSpacing: 12.0,
                     children: [
-                      // Status Filter
                       FilterChip(
                         label: Text(_selectedStatus?.capitalize() ?? l10n.filterByStatus),
                         selected: _selectedStatus != null,
@@ -5093,8 +5084,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Priority Filter
                       FilterChip(
                         label: Text(_selectedPriority?.capitalize() ?? l10n.filterByPriority),
                         selected: _selectedPriority != null,
@@ -5112,8 +5101,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Area Filter
                       FilterChip(
                         label: Text(
                           _selectedAreaId != null 
@@ -5135,8 +5122,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Subject Filter
                       FilterChip(
                         label: Text(
                           _selectedSubjectId != null 
@@ -5158,8 +5143,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                             : theme.colorScheme.onSurface,
                         ),
                       ),
-                      
-                      // Clear Filters Button
                       ActionChip(
                         label: Text(l10n.clearFilters),
                         onPressed: () {
@@ -5181,7 +5164,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
               ),
             ),
           ),
-          
           Expanded(
             child: RefreshIndicator(
               onRefresh: _fetchData,
@@ -5200,72 +5182,91 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         children: [
                           GrievanceCard(grievance: grievance),
                           const SizedBox(height: 16),
-                          Wrap(
-                            spacing: 8.0,
-                            runSpacing: 8.0,
+                          Column(
                             children: [
-                              CustomButton2(
-                                text: l10n.reassignComplaint,
-                                onPressed: () => _showReassignDialog(grievance.id),
-                                icon: Icons.person_add,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.reassignComplaint,
+                                      onPressed: () => _showReassignDialog(grievance.id),
+                                      icon: Icons.person_add,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.escalateComplaint,
+                                      onPressed: () async {
+                                        try {
+                                          int newAssigneeId = 13;
+                                          int admin = 4;
+                                          await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('${l10n.escalateComplaint} Successful'),
+                                              backgroundColor: theme.colorScheme.primary,
+                                            ),
+                                          );
+                                          _fetchData();
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(e.toString()),
+                                              backgroundColor: theme.colorScheme.error,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: Icons.arrow_upward,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              CustomButton2(
-                                text: l10n.escalateComplaint,
-                                onPressed: () async {
-                                  try {
-                                    int newAssigneeId = 13;
-                                    int admin = 4;
-                                    await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('${l10n.escalateComplaint} Successful'),
-                                        backgroundColor: theme.colorScheme.primary,
-                                      ),
-                                    );
-                                    _fetchData();
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(e.toString()),
-                                        backgroundColor: theme.colorScheme.error,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: Icons.arrow_upward,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
-                              ),
-                              CustomButton2(
-                                text: l10n.updateStatus,
-                                onPressed: () => _showStatusDialog(grievance.id),
-                                icon: Icons.update,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
-                              ),
-                              CustomButton2(
-                                text: l10n.viewDetails,
-                                onPressed: () {
-                                  if (grievance.id > 0) {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/citizen/detail',
-                                      arguments: grievance.id,
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text("Invalid grievance ID"),
-                                        backgroundColor: theme.colorScheme.error,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: Icons.info,
-                                variant: ButtonVariant.outlined,
-                                size: ButtonSize.small,
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.updateStatus,
+                                      onPressed: () => _showStatusDialog(grievance.id),
+                                      icon: Icons.update,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: CustomButton2(
+                                      text: l10n.viewDetails,
+                                      onPressed: () {
+                                        if (grievance.id > 0) {
+                                          Navigator.pushNamed(
+                                            context,
+                                            '/citizen/detail',
+                                            arguments: grievance.id,
+                                          );
+                                        } else {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: const Text("Invalid grievance ID"),
+                                              backgroundColor: theme.colorScheme.error,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      icon: Icons.info,
+                                      variant: ButtonVariant.outlined,
+                                      size: ButtonSize.small,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -5281,9 +5282,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showFilterDialog,
-        child: const Icon(Icons.filter_list),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
+        child: const Icon(Icons.filter_list),
       ),
     );
   }
@@ -5308,7 +5309,6 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Status Filter
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByStatus,
@@ -5322,15 +5322,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByStatus)),
                         ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
                             .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempStatus = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Priority Filter
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByPriority,
@@ -5344,15 +5342,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByPriority)),
                         ...['low', 'medium', 'high', 'urgent']
                             .map((p) => DropdownMenuItem(value: p, child: Text(p.capitalize())))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempPriority = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Area Filter
                     DropdownButtonFormField<int>(
                       decoration: InputDecoration(
                         labelText: l10n.filterByArea,
@@ -5366,15 +5362,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterByArea)),
                         ..._areas
                             .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempAreaId = value);
                       },
                     ),
                     const SizedBox(height: 16),
-                    
-                    // Subject Filter
                     DropdownButtonFormField<int>(
                       decoration: InputDecoration(
                         labelText: l10n.filterBySubject,
@@ -5388,7 +5382,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                         DropdownMenuItem(value: null, child: Text(l10n.filterBySubject)),
                         ..._subjects
                             .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (value) {
                         setState(() => tempSubjectId = value);
@@ -5526,7 +5520,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   DropdownMenuItem(value: null, child: Text(l10n.selectStatus)),
                   ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
                       .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                      .toList(),
+                      ,
                 ],
                 onChanged: (value) {
                   setState(() => selectedStatus = value);
@@ -5596,13 +5590,10 @@ import 'package:open_file/open_file.dart';
 import 'dart:io' as io;
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/models/kpi_model.dart';
-import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
-import 'dart:convert';
 import 'package:universal_html/html.dart' as html;
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
@@ -6502,7 +6493,7 @@ import 'package:main_ui/models/master_data_model.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 
 class ManageAreasScreen extends StatefulWidget {
-  const ManageAreasScreen({Key? key}) : super(key: key);
+  const ManageAreasScreen({super.key});
 
   @override
   _ManageAreasScreenState createState() => _ManageAreasScreenState();
@@ -6607,7 +6598,7 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
 class AreaFormDialog extends StatefulWidget {
   final VoidCallback onAreaAdded;
 
-  const AreaFormDialog({Key? key, required this.onAreaAdded}) : super(key: key);
+  const AreaFormDialog({super.key, required this.onAreaAdded});
 
   @override
   _AreaFormDialogState createState() => _AreaFormDialogState();
@@ -6994,7 +6985,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
   void _showSubjectDialog({MasterSubject? subject}) {
     final nameController = TextEditingController(text: subject?.name ?? '');
     final descriptionController = TextEditingController(text: subject?.description ?? '');
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     showDialog(
       context: context,
@@ -7009,7 +7000,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Form(
-                key: _formKey,
+                key: formKey,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -7067,7 +7058,7 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                           child: CustomButton(
                             text: 'Save',
                             onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
+                              if (formKey.currentState!.validate()) {
                                 final data = {
                                   "name": nameController.text.trim(),
                                   "description": descriptionController.text.trim(),
@@ -7254,7 +7245,7 @@ import 'package:main_ui/widgets/loading_indicator.dart';
 import '../../providers/user_provider.dart';
 
 class ManageUsers extends ConsumerStatefulWidget {
-  const ManageUsers({Key? key}) : super(key: key);
+  const ManageUsers({super.key});
 
   @override
   ConsumerState<ManageUsers> createState() => _ManageUsersState();
@@ -7384,7 +7375,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          value: role,
+                          initialValue: role,
                           decoration: InputDecoration(
                             labelText: l10n.role,
                             border: OutlineInputBorder(
@@ -7563,7 +7554,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          value: role,
+                          initialValue: role,
                           decoration: InputDecoration(
                             labelText: l10n.role,
                             border: OutlineInputBorder(
@@ -7752,8 +7743,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddUserDialog,
         backgroundColor: theme.colorScheme.primary,
-        child: const Icon(Icons.add, color: Colors.white),
         tooltip: l10n.addUser,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Column(
         children: [
@@ -7943,7 +7934,6 @@ class ReportsScreen extends StatelessWidget {
 import 'dart:async'; // For debouncing
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../models/grievance_model.dart';
 import '../../providers/grievance_provider.dart';
 import '../../widgets/grievance_card.dart';
 import '../../widgets/empty_state.dart';
@@ -8226,7 +8216,7 @@ class _LoginCallbackScreenState extends ConsumerState<LoginCallbackScreen> {
           ),
         );
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       if (!mounted) return;
       
       Navigator.pushReplacementNamed(context, '/login');
@@ -8545,7 +8535,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/providers/auth_provider.dart';
-import 'package:main_ui/routes.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -9017,7 +9006,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                         if (grievance.comments != null && grievance.comments!.isNotEmpty)
                           ...grievance.comments!.map((comment) {
                             return CommentTile(comment: comment);
-                          }).toList()
+                          })
                         else
                           EmptyState(
                             icon: Icons.comment,
@@ -9227,7 +9216,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
 
   int? _selectedSubjectId;
   int? _selectedAreaId;
-  List<PlatformFile> _attachments = [];
+  final List<PlatformFile> _attachments = [];
   Position? _currentPosition;
   bool _isSubmitting = false;
 
@@ -9435,7 +9424,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
                               filled: true,
                               fillColor: Colors.white,
                             ),
-                            value: _selectedSubjectId,
+                            initialValue: _selectedSubjectId,
                             items: subjects
                                 .map((subject) => DropdownMenuItem<int>(
                                       value: subject.id,
@@ -9457,7 +9446,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
                               filled: true,
                               fillColor: Colors.white,
                             ),
-                            value: _selectedAreaId,
+                            initialValue: _selectedAreaId,
                             items: areas
                                 .map((area) => DropdownMenuItem<int>(
                                       value: area.id,
@@ -9584,7 +9573,6 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\citizen\track_grievance.dart ---
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/providers/grievance_provider.dart';
 // import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/empty_state.dart';
@@ -9975,42 +9963,42 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.addAnnouncement ?? 'Add Announcement',
+                      AppLocalizations.of(context)!.addAnnouncement ,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _titleController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.title ?? 'Title',
+                        labelText: AppLocalizations.of(context)!.title,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.message ?? 'Message',
+                        labelText: AppLocalizations.of(context)!.message ,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error ?? 'Required' : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
                       maxLines: 3,
                     ),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
-                      value: _type,
+                      initialValue: _type,
                       items: ['general', 'emergency'].map((t) => DropdownMenuItem(
                         value: t, 
                         child: Text(t.capitalize(), style: const TextStyle(fontSize: 14)),
                       )).toList(),
                       onChanged: (value) => setState(() => _type = value!),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.type ?? 'Type',
+                        labelText: AppLocalizations.of(context)!.type ,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -10027,7 +10015,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       child: ListTile(
                         title: Text(
                           _expiresAt == null
-                              ? AppLocalizations.of(context)!.selectExpiration ?? 'Select Expiration'
+                              ? AppLocalizations.of(context)!.selectExpiration 
                               : DateFormat('yyyy-MM-dd').format(_expiresAt!),
                           style: const TextStyle(fontSize: 14),
                         ),
@@ -10057,7 +10045,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       )).toList(),
                       onChanged: (value) => setState(() => _targetRole = value),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.targetRole ?? 'Target Role (Optional)',
+                        labelText: AppLocalizations.of(context)!.targetRole ,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -10070,7 +10058,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text(AppLocalizations.of(context)!.cancel ?? 'Cancel'),
+                          child: Text(AppLocalizations.of(context)!.cancel ),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -10095,7 +10083,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                 _targetRole = null;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!.announcementAdded ?? 'Announcement added'),
+                                    content: Text(AppLocalizations.of(context)!.announcementAdded ),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -10114,7 +10102,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          child: Text(AppLocalizations.of(context)!.submit ?? 'Submit'),
+                          child: Text(AppLocalizations.of(context)!.submit ),
                         ),
                       ],
                     ),
@@ -10138,7 +10126,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(localizations.announcements ?? 'Announcements'),
+        title: Text(localizations.announcements ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.blue,
         elevation: 1,
@@ -10161,7 +10149,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                     Icon(Icons.announcement, size: 64, color: Colors.grey.shade400),
                     const SizedBox(height: 16),
                     Text(
-                      localizations.noAnnouncements ?? 'No announcements available',
+                      localizations.noAnnouncements ,
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
                     ),
                   ],
@@ -11379,13 +11367,13 @@ import 'package:intl/intl.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/services/api_service.dart';
 import 'package:main_ui/services/auth_service.dart';
-
 import 'package:main_ui/widgets/custom_button.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/file_upload_widget.dart';
 import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/providers/user_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:main_ui/utils/constants.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -11398,11 +11386,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
-  late TextEditingController _phoneController;
   late TextEditingController _addressController;
+  PlatformFile? _profilePic;
   bool _isEditing = false;
   bool _isLoading = false;
-  bool _twoFactorEnabled = false;
 
   @override
   void initState() {
@@ -11410,16 +11397,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.read(userNotifierProvider);
     _nameController = TextEditingController(text: user?.name);
     _emailController = TextEditingController(text: user?.email);
-    _phoneController = TextEditingController(text: user?.phoneNumber);
     _addressController = TextEditingController(text: user?.address);
-    _twoFactorEnabled = user?.twoFactorEnabled ?? false;
+    _profilePic = null;
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     _addressController.dispose();
     super.dispose();
   }
@@ -11428,58 +11413,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
       try {
-        final userData = {
-          'id': ref.read(userNotifierProvider)!.id.toString(), // Convert to string
-          'name': _nameController.text,
-          'email': _emailController.text,
-          'phoneNumber': _phoneController.text,
-          'address': _addressController.text,
-          'twoFactorEnabled': _twoFactorEnabled.toString(),
-        };
-        final updatedUser = await ApiService.addUpdateUser(userData);
-        ref.read(userNotifierProvider.notifier).setUser(User.fromJson(updatedUser));
-        setState(() => _isEditing = false);
+        final updatedUser = await ApiService.updateProfile(
+          name: _nameController.text,
+          email: _emailController.text,
+          password: null, // No password field, so null
+          address: _addressController.text,
+          profilePic: _profilePic,
+        );
+        ref.read(userNotifierProvider.notifier).setUser(updatedUser);
+        setState(() {
+          _isEditing = false;
+          _profilePic = null;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(AppLocalizations.of(context)!.userUpdatedSuccess)),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.failedToUpdateUser)),
-        );
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _uploadProfilePicture(List<PlatformFile> files) async {
-    if (files.isNotEmpty) {
-      setState(() => _isLoading = true);
-      try {
-        final file = files.first;
-        final response = await ApiService.uploadProfilePicture(file);
-        final user = ref.read(userNotifierProvider)!;
-        ref.read(userNotifierProvider.notifier).setUser(
-              User(
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role,
-                departmentId: user.departmentId,
-                address: user.address,
-                profilePicture: response['file_path'],
-                lastLogin: user.lastLogin,
-                twoFactorEnabled: user.twoFactorEnabled,
-                isActive: user.isActive,
-              ),
-            );
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile picture uploaded successfully')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload profile picture')),
+          SnackBar(content: Text('${AppLocalizations.of(context)!.failedToUpdateUser}: $e')),
         );
       } finally {
         setState(() => _isLoading = false);
@@ -11564,7 +11515,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withAlpha(40), // Fixed: changed withValues to withAlpha
+                  color: theme.colorScheme.primary.withAlpha(40),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -11574,10 +11525,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         CircleAvatar(
                           radius: 50,
-                          backgroundImage:
-                              user.profilePicture != null ? NetworkImage(user.profilePicture!) : null,
+                          backgroundImage: user.profilePicture != null && user.profilePicture!.isNotEmpty
+                              ? NetworkImage('${Constants.baseUrl}/uploads/${user.profilePicture}')
+                              : null,
                           backgroundColor: theme.colorScheme.primary,
-                          child: user.profilePicture == null
+                          onBackgroundImageError: user.profilePicture != null && user.profilePicture!.isNotEmpty
+                              ? (error, stackTrace) {
+                                  print('Error loading profile picture: $error : ${Constants.baseUrl}/uploads/${user.profilePicture}');
+                                }
+                              : null,
+                          child: user.profilePicture == null || user.profilePicture!.isEmpty
                               ? Text(
                                   user.name?.isNotEmpty == true ? user.name![0].toUpperCase() : '?',
                                   style: TextStyle(
@@ -11595,7 +11552,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               showModalBottomSheet(
                                 context: context,
                                 builder: (context) => FileUploadWidget(
-                                  onFilesSelected: _uploadProfilePicture,
+                                  onFilesSelected: (files) {
+                                    if (files.isNotEmpty) {
+                                      setState(() => _profilePic = files.first);
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Profile picture selected. Save to upload.')),
+                                      );
+                                    }
+                                  },
                                 ),
                               );
                             },
@@ -11623,7 +11588,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               const SizedBox(height: 24),
               // Profile details card
-              Card( 
+              Card(
                 color: const Color(0xffecf2fe),
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -11653,23 +11618,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
-                        icon: Icons.phone,
-                        label: 'Phone',
-                        value: user.phoneNumber,
-                        controller: _phoneController,
-                        enabled: _isEditing,
-                        validator: (value) =>
-                            value == null || value.isEmpty ? 'Phone number is required' : null,
-                      ),
-                      const Divider(),
-                      _buildProfileField(
                         icon: Icons.location_on,
                         label: 'Address',
                         value: user.address,
                         controller: _addressController,
                         enabled: _isEditing,
                       ),
-
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
@@ -11710,8 +11664,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Action buttons - FIXED: Added proper constraints
-              if (_isEditing) 
+              if (_isEditing)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -11725,9 +11678,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             _isEditing = false;
                             _nameController.text = user.name ?? '';
                             _emailController.text = user.email ?? '';
-                            _phoneController.text = user.phoneNumber ?? '';
                             _addressController.text = user.address ?? '';
-                            _twoFactorEnabled = user.twoFactorEnabled ;
+                            _profilePic = null;
                           }),
                         ),
                       ),
@@ -11755,7 +11707,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
               const SizedBox(height: 16),
-             
             ],
           ),
         ),
@@ -11835,15 +11786,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     setState(() => _isLoading = true);
     try {
       final response = await ApiService.get('/settings/');
-      if (response != null) {
-        setState(() {
-          _notificationsEnabled = response.data['notifications_enabled'] ?? true;
-          final user = ref.read(userNotifierProvider);
-          _nameController.text = user?.name ?? '';
-          _emailController.text = user?.email ?? '';
-        });
-      }
-    } catch (e) {
+      setState(() {
+        _notificationsEnabled = response.data['notifications_enabled'] ?? true;
+        final user = ref.read(userNotifierProvider);
+        _nameController.text = user?.name ?? '';
+        _emailController.text = user?.email ?? '';
+      });
+        } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to load settings: $e'),
@@ -11985,7 +11934,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: SwitchListTile(
-                        title: Text(localizations.enableNotifications ?? 'Enable Notifications',
+                        title: Text(localizations.enableNotifications ,
                             style: const TextStyle(fontWeight: FontWeight.w500)),
                         value: _notificationsEnabled,
                         onChanged: (value) => setState(() => _notificationsEnabled = value),
@@ -12005,7 +11954,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4),
                         child: DropdownButtonFormField<Locale>(
-                          value: locale,
+                          initialValue: locale,
                           decoration: InputDecoration(
                             border: InputBorder.none,
                             filled: true,
@@ -12024,7 +11973,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // Privacy & Security
-                    _buildSectionTitle(localizations.privacySecurity ?? 'Privacy & Security'),
+                    _buildSectionTitle(localizations.privacySecurity ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -12035,7 +11984,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(localizations.viewPrivacyPolicy ?? 'View Privacy Policy'),
+                            title: Text(localizations.viewPrivacyPolicy),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/privacy-policy'),
                           ),
@@ -12045,7 +11994,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // Help & Support
-                    _buildSectionTitle(localizations.helpSupport ?? 'Help & Support'),
+                    _buildSectionTitle(localizations.helpSupport ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -12056,13 +12005,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text(localizations.faqs ?? 'FAQs'),
+                            title: Text(localizations.faqs ),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/faqs'),
                           ),
                           const Divider(height: 1),
                           ListTile(
-                            title: Text(localizations.contactSupport ?? 'Contact Support'),
+                            title: Text(localizations.contactSupport ),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () => Navigator.pushNamed(context, '/contact-support'),
                           ),
@@ -12072,7 +12021,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     const SizedBox(height: 24),
 
                     // About
-                    _buildSectionTitle(localizations.about ?? 'About'),
+                    _buildSectionTitle(localizations.about ),
                     const SizedBox(height: 12),
                     Card(
                       elevation: 0,
@@ -12081,7 +12030,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        title: Text(localizations.appVersion ?? 'App Version: 1.0.0'),
+                        title: Text(localizations.appVersion ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () => Navigator.pushNamed(context, '/app-version'),
                       ),
@@ -12092,7 +12041,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
-                        text: localizations.save ?? 'Save',
+                        text: localizations.save ,
                         onPressed: _saveSettings,
                       ),
                     ),
@@ -12100,7 +12049,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: CustomButton(
-                        text: localizations.logout ?? 'Logout',
+                        text: localizations.logout ,
                         backgroundColor: Colors.red,
                         onPressed: () async {
                           await AuthService.logout();
@@ -12306,7 +12255,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Status updated')),
     );
-  } catch (e, stack) {
+  } catch (e) {
    
     
     if (!mounted) return;
@@ -12378,7 +12327,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                   fillColor: Colors.grey[50],
                 ),
                 hint: const Text('Select New Status'),
-                value: selectedStatus,
+                initialValue: selectedStatus,
                 items: ['in_progress', 'on_hold', 'resolved'].map((status) {
                   return DropdownMenuItem<String>(
                     value: status,
@@ -12640,11 +12589,11 @@ class _AssignedListState extends ConsumerState<AssignedList> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Created: ${grievance.createdAt != null ? dateFormat.format(grievance.createdAt!) : 'N/A'}',
+              'Created: ${dateFormat.format(grievance.createdAt!)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             Text(
-              'Updated: ${grievance.updatedAt != null ? dateFormat.format(grievance.updatedAt!) : 'N/A'}',
+              'Updated: ${dateFormat.format(grievance.updatedAt!)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (grievance.resolvedAt != null)
@@ -12695,7 +12644,7 @@ class _AssignedListState extends ConsumerState<AssignedList> {
             ),
             const SizedBox(height: 4),
             Text(
-              '${grievance.subject?.name ?? 'N/A'}',
+              grievance.subject?.name ?? 'N/A',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             if (grievance.subject?.description != null)
@@ -13083,7 +13032,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
-          value: newStatus,
+          initialValue: newStatus,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xffecf2fe),
@@ -13138,7 +13087,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: DropdownButtonFormField<String>(
-          value: assigneeId,
+          initialValue: assigneeId,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color(0xffecf2fe),
@@ -13490,7 +13439,6 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 === Folder: services ===
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\services\admin_service.dart ---
-import 'package:dio/dio.dart';
 import 'api_service.dart';  // Add this import
 
 class AdminService {
@@ -13616,7 +13564,7 @@ static Future<Response> postMultipart(
     final formData = FormData.fromMap({
       ...?data,
       fieldName: files.length == 1
-          ? await MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
+          ? MultipartFile.fromBytes(files.first.bytes!, filename: files.first.name)
           : files
               .map((file) => MultipartFile.fromBytes(file.bytes!, filename: file.name))
               .toList(),
@@ -13747,7 +13695,7 @@ static Future<User> updateProfile({
     final formData = FormData.fromMap(fields);
 
     final response = await _dio.put(
-      '/users/me',
+      '/auth/me',
       data: formData,
       options: Options(
         headers: {
@@ -14595,8 +14543,8 @@ class Constants {
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return "http://10.0.2.2:5000"; // Android emulator
-        // return "https://pcmcapp.onrender.com"; 
+        // return "http://10.0.2.2:5000"; // Android emulator
+        return "https://pcmcapp.onrender.com"; 
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
@@ -14684,12 +14632,10 @@ final ThemeData lightTheme = ThemeData(
     primary: primaryColor,
     secondary: secondaryColor,
     surface: surfaceColor,
-    background: backgroundColor,
     error: errorColor,
     onPrimary: onPrimaryColor,
     onSecondary: onSecondaryColor,
     onSurface: onSurfaceColor,
-    onBackground: onBackgroundColor,
     onError: onPrimaryColor,
   ),
   scaffoldBackgroundColor: backgroundColor,
@@ -14794,12 +14740,10 @@ final ThemeData darkTheme = ThemeData(
     primary: primaryColor,
     secondary: secondaryColor,
     surface: Color(0xFF121212),
-    background: Color(0xFF000000),
     error: errorColor,
     onPrimary: onPrimaryColor,
     onSecondary: onSecondaryColor,
     onSurface: Color(0xFFFFFFFF),
-    onBackground: Color(0xFFFFFFFF),
     onError: onPrimaryColor,
   ),
   scaffoldBackgroundColor: const Color(0xFF000000),
@@ -14898,7 +14842,6 @@ final ThemeData darkTheme = ThemeData(
 );
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\utils\validators.dart ---
 // lib/utils/validators.dart
-import 'package:flutter/material.dart';
 
 String? validateRequired(String? value) {
   if (value == null || value.isEmpty) {
@@ -14984,9 +14927,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          grievance.createdAt != null
-                              ? _formatDate(grievance.createdAt!)
-                              : 'Unknown date',
+                          _formatDate(grievance.createdAt!),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(128),
                           ),
@@ -15613,9 +15554,7 @@ class GrievanceCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    grievance.createdAt != null
-                        ? _formatDate(grievance.createdAt!)
-                        : 'Unknown date',
+                    _formatDate(grievance.createdAt!),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withValues (alpha:0.5),
                     ),
@@ -15649,7 +15588,7 @@ class GrievanceCard extends StatelessWidget {
 import 'package:flutter/material.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({Key? key}) : super(key: key);
+  const LoadingIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15663,7 +15602,6 @@ class LoadingIndicator extends StatelessWidget {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
-import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/providers/user_provider.dart';
 

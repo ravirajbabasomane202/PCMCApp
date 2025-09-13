@@ -9,8 +9,8 @@ class Constants {
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return "http://10.0.2.2:5000"; // Android emulator
-        // return "https://pcmcapp.onrender.com"; 
+        // return "http://10.0.2.2:5000"; // Android emulator
+        return "https://pcmcapp.onrender.com"; 
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:

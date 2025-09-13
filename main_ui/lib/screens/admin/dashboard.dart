@@ -9,13 +9,10 @@ import 'package:open_file/open_file.dart';
 import 'dart:io' as io;
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/models/kpi_model.dart';
-import 'package:main_ui/providers/auth_provider.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
-import 'dart:convert';
 import 'package:universal_html/html.dart' as html;
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 class Dashboard extends ConsumerStatefulWidget {

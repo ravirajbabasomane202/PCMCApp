@@ -4,7 +4,7 @@ import 'package:main_ui/models/master_data_model.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 
 class ManageAreasScreen extends StatefulWidget {
-  const ManageAreasScreen({Key? key}) : super(key: key);
+  const ManageAreasScreen({super.key});
 
   @override
   _ManageAreasScreenState createState() => _ManageAreasScreenState();
@@ -109,7 +109,7 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
 class AreaFormDialog extends StatefulWidget {
   final VoidCallback onAreaAdded;
 
-  const AreaFormDialog({Key? key, required this.onAreaAdded}) : super(key: key);
+  const AreaFormDialog({super.key, required this.onAreaAdded});
 
   @override
   _AreaFormDialogState createState() => _AreaFormDialogState();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/providers/grievance_provider.dart';
 // import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/empty_state.dart';

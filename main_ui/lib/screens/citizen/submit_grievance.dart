@@ -30,7 +30,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
 
   int? _selectedSubjectId;
   int? _selectedAreaId;
-  List<PlatformFile> _attachments = [];
+  final List<PlatformFile> _attachments = [];
   Position? _currentPosition;
   bool _isSubmitting = false;
 
@@ -238,7 +238,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
                               filled: true,
                               fillColor: Colors.white,
                             ),
-                            value: _selectedSubjectId,
+                            initialValue: _selectedSubjectId,
                             items: subjects
                                 .map((subject) => DropdownMenuItem<int>(
                                       value: subject.id,
@@ -260,7 +260,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
                               filled: true,
                               fillColor: Colors.white,
                             ),
-                            value: _selectedAreaId,
+                            initialValue: _selectedAreaId,
                             items: areas
                                 .map((area) => DropdownMenuItem<int>(
                                       value: area.id,

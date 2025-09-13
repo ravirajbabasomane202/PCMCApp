@@ -285,7 +285,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                         if (grievance.comments != null && grievance.comments!.isNotEmpty)
                           ...grievance.comments!.map((comment) {
                             return CommentTile(comment: comment);
-                          }).toList()
+                          })
                         else
                           EmptyState(
                             icon: Icons.comment,

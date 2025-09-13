@@ -15,6 +15,7 @@ from ..utils.file_utils import allowed_file
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy.exc import IntegrityError
+
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
