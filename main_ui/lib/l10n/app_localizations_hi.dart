@@ -9,7 +9,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'शिकायत प्रणाली';
+  String get appTitle => 'निवारण';
 
   @override
   String get login => 'लॉगिन';

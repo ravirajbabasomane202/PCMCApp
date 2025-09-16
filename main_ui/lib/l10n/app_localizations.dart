@@ -103,7 +103,7 @@ abstract class AppLocalizations {
   /// App title displayed on home screen
   ///
   /// In en, this message translates to:
-  /// **'Grievance System'**
+  /// **'NIVARAN'**
   String get appTitle;
 
   /// Label for login button
