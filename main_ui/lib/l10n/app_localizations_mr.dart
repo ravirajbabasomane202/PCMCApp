@@ -562,4 +562,22 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'सर्व वापरकर्त्यांचा इतिहास';
+
+  @override
+  String get edit => 'संपादित करा';
+
+  @override
+  String get areYouSureDeleteGrievance => 'आपण नक्कीच तक्रार हटवू इच्छिता?';
+
+  @override
+  String get confirmDelete => 'हटवण्याची पुष्टी करा';
+
+  @override
+  String get failedToDeleteGrievance => 'तक्रार हटवण्यात अयशस्वी';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'तक्रार यशस्वीपणे हटवली गेली';
+
+  @override
+  String get editGrievance => 'तक्रार संपादित करा';
 }

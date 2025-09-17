@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 from marshmallow import ValidationError
-from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, NotificationToken, Role
+from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, NotificationToken, Role, CommentAttachment
 from ..schemas import GrievanceSchema, GrievanceAttachmentSchema, GrievanceCommentSchema, WorkproofSchema
 from ..utils.file_utils import upload_files, upload_workproof
 from .. import db
@@ -123,16 +123,32 @@ def get_grievance_details(id, user_id):
         current_app.logger.error(f"Error fetching grievance details for ID {id}: {str(e)}")
         raise
 
-def add_comment(id, user_id, text):
-    try:
-        comment = GrievanceComment(grievance_id=id, user_id=user_id, comment_text=text)
-        db.session.add(comment)
-        db.session.commit()
-        schema = GrievanceCommentSchema()
-        return schema.dump(comment)
-    except Exception as e:
-        current_app.logger.error(f"Error adding comment to grievance {id}: {str(e)}")
-        raise
+def add_comment(grievance_id, user_id, comment_text, files=None):
+    grievance = Grievance.query.get_or_404(grievance_id)
+    comment = GrievanceComment(
+        grievance_id=grievance_id,
+        user_id=user_id,
+        comment_text=comment_text,
+        is_public=True  # Default, or from data
+    )
+    db.session.add(comment)
+    db.session.flush()  # Get comment.id before commit
+
+    uploaded_paths = []
+    if files:
+        uploaded_paths = upload_files(files, grievance_id)  # Reuse, or create a new folder like 'comment_{comment.id}'
+
+        for path, file_type, file_size in uploaded_paths:
+            attachment = CommentAttachment(
+                comment_id=comment.id,
+                file_path=path,
+                file_type=file_type,
+                file_size=file_size
+            )
+            db.session.add(attachment)
+
+    db.session.commit()
+    return GrievanceCommentSchema().dump(comment)
 
 def confirm_closure(id, citizen_id):
     try:
@@ -141,7 +157,7 @@ def confirm_closure(id, citizen_id):
             current_app.logger.error(f"Invalid closure attempt for grievance {id} by citizen {citizen_id}")
             raise ValueError("Invalid operation")
         grievance.status = GrievanceStatus.CLOSED
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit('Grievance closed', citizen_id, id)
         send_notification(grievance.citizen.email, 'Grievance Closed', 'Your grievance has been closed.')
@@ -227,7 +243,7 @@ def update_status(id, employer_id, new_status):
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
-            grievance.resolved_at = datetime.utcnow()
+            grievance.resolved_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit(f'Status updated from {old_status} to {grievance.status}', employer_id, id)
         send_notification(grievance.citizen.email, 'Status Updated', f'Your grievance status is now {new_status}.')
@@ -327,7 +343,7 @@ def _check_auto_close(grievance):
     try:
         if grievance.status == GrievanceStatus.RESOLVED and grievance.resolved_at:
             sla_days = int(Config.SLA_CLOSURE_DAYS) if hasattr(Config, 'SLA_CLOSURE_DAYS') else 7
-            if datetime.utcnow() - grievance.resolved_at > timedelta(days=sla_days):
+            if datetime.now(timezone.utc) - grievance.resolved_at > timedelta(days=sla_days):
                 grievance.status = GrievanceStatus.CLOSED
                 db.session.commit()
                 log_audit('Auto-closed due to SLA', grievance.assigned_to, grievance.id)
@@ -364,7 +380,7 @@ def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
             grievance.assigned_to = new_assignee_id
             grievance.assigned_by = escalated_by
 
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         db.session.commit()
 
         log_audit(

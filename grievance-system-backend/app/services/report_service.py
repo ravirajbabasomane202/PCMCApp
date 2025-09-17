@@ -7,7 +7,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from io import BytesIO
 from sqlalchemy import func, and_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 from sqlalchemy import func, case
 from ..models import Grievance, GrievanceStatus, User, MasterAreas, AuditLog, Role
@@ -41,7 +41,7 @@ def generate_report(filter_type='all', format='pdf', user_id=None, area_id=None)
     query = Grievance.query
     
     # Apply time filters
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if filter_type == 'day':
         query = query.filter(Grievance.created_at >= now - timedelta(days=1))
     elif filter_type == 'week':
@@ -131,7 +131,7 @@ def generate_pdf_report(data, filter_type, user_id, area_id):
     
     query = Grievance.query
     if filter_type != 'all':
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if filter_type == 'day':
             query = query.filter(Grievance.created_at >= now - timedelta(days=1))
         elif filter_type == 'week':
@@ -242,7 +242,7 @@ def get_advanced_kpis(time_period='all'):
 
     try:
         # Calculate time filter
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if time_period == 'day':
             time_filter = Grievance.created_at >= now - timedelta(days=1)
         elif time_period == 'week':
@@ -391,7 +391,7 @@ def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
             grievance.assigned_by = escalated_by
         
         # Update timestamps
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         # Log the escalation
         log_audit(f'Grievance escalated to level {grievance.escalation_level}', escalated_by, grievance_id)
@@ -530,11 +530,11 @@ def update_grievance_status(grievance_id, new_status, updated_by):
         
         # Update status
         grievance.status = GrievanceStatus(new_status)
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         # If status is resolved or closed, set resolved_at
         if new_status in [GrievanceStatus.RESOLVED.value, GrievanceStatus.CLOSED.value]:
-            grievance.resolved_at = datetime.utcnow()
+            grievance.resolved_at = datetime.now(timezone.utc)
         
         # Log the status update
         log_audit(f'Grievance status updated to {new_status}', updated_by, grievance_id)

@@ -104,6 +104,27 @@ def update_subject(user, id):
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to update subject"}), 500
 
+@admin_bp.route('/subjects/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_subject(user, id):
+    """Delete a specific subject by ID."""
+    try:
+        subject_to_delete = MasterSubjects.query.get(id)
+        if not subject_to_delete:
+            return jsonify({"msg": "Subject not found"}), 404
+        
+        db.session.delete(subject_to_delete)
+        db.session.commit()
+        return jsonify({"msg": "Subject deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        # Check for foreign key constraint error
+        error_info = str(e).lower()
+        if 'foreign key constraint' in error_info or 'violates foreign key' in error_info:
+            return jsonify({"msg": "Cannot delete subject. It is in use by existing grievances."}), 409
+        
+        return jsonify({"msg": "Failed to delete subject", "error": str(e)}), 500
+
 
 @admin_bp.route('/areas', methods=['POST'])
 @admin_required
@@ -117,6 +138,36 @@ def manage_areas(user):
     db.session.add(area)
     db.session.commit()
     return schema.dump(area), 201
+
+@admin_bp.route('/areas/<int:id>', methods=['PUT'])
+@admin_required
+def update_area(user, id):
+    data = request.json
+    schema = MasterAreasSchema(partial=True)
+    errors = schema.validate(data)
+    if errors:
+        return jsonify(errors), 400
+    
+    area = db.session.get(MasterAreas, id)
+    if not area:
+        return jsonify({"error": "Area not found"}), 404
+    
+    area.name = data.get('name', area.name)
+    area.description = data.get('description', area.description)
+    db.session.commit()
+    
+    return MasterAreasSchema().dump(area), 200
+
+@admin_bp.route('/areas/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_area(user, id):
+    area_to_delete = MasterAreas.query.get(id)
+    if not area_to_delete:
+        return jsonify({"msg": "Area not found"}), 404
+    
+    db.session.delete(area_to_delete)
+    db.session.commit()
+    return jsonify({"msg": "Area deleted successfully"}), 200
 
 @admin_bp.route('/reassign/<int:grievance_id>', methods=['POST'])
 @admin_required
@@ -141,7 +192,7 @@ def reassign_grievance(user, grievance_id):
         
         grievance.assigned_to = new_assignee_id
         grievance.assigned_by = user.id
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         db.session.commit()
         
@@ -335,7 +386,7 @@ def update_config( key):
     if not config:
         return jsonify({"error": "Config not found"}), 404
     config.value = data.get('value')
-    config.updated_at = datetime.utcnow()
+    config.updated_at = datetime.now(timezone.utc)
     db.session.commit()
     return jsonify({'key': config.key, 'value': config.value}), 200
 

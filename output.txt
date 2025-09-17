@@ -182,6 +182,9 @@ import 'screens/common/view_privacy_policy_screen.dart';
 import 'screens/common/faqs_screen.dart';
 import 'screens/common/contact_support_screen.dart';
 import 'screens/common/app_version_screen.dart';
+import 'screens/citizen/edit_grievance.dart';
+
+
 
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
@@ -225,7 +228,10 @@ Map<String, WidgetBuilder> appRoutes = {
   '/faqs': (context) => const FaqsScreen(),
   '/contact-support': (context) => const ContactSupportScreen(),
   '/app-version': (context) => const AppVersionScreen(),
-
+  '/citizen/edit': (context) {
+  final args = ModalRoute.of(context)!.settings.arguments as int;
+  return EditGrievance(id: args);
+},
 };
 
 === Folder: l10n ===
@@ -336,7 +342,7 @@ abstract class AppLocalizations {
   /// App title displayed on home screen
   ///
   /// In en, this message translates to:
-  /// **'Grievance System'**
+  /// **'NIVARAN'**
   String get appTitle;
 
   /// Label for login button
@@ -1430,6 +1436,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Users History'**
   String get allUsersHistory;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @areYouSureDeleteGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the grievance?'**
+  String get areYouSureDeleteGrievance;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get confirmDelete;
+
+  /// No description provided for @failedToDeleteGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete grievance'**
+  String get failedToDeleteGrievance;
+
+  /// No description provided for @grievanceDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance deleted successfully'**
+  String get grievanceDeletedSuccessfully;
+
+  /// No description provided for @editGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Grievance'**
+  String get editGrievance;
 }
 
 class _AppLocalizationsDelegate
@@ -1480,7 +1522,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Grievance System';
+  String get appTitle => 'NIVARAN';
 
   @override
   String get login => 'Login';
@@ -2031,6 +2073,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'All Users History';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get areYouSureDeleteGrievance =>
+      'Are you sure you want to delete the grievance?';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String get failedToDeleteGrievance => 'Failed to delete grievance';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'Grievance deleted successfully';
+
+  @override
+  String get editGrievance => 'Edit Grievance';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2045,7 +2106,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'शिकायत प्रणाली';
+  String get appTitle => 'निवारण';
 
   @override
   String get login => 'लॉगिन';
@@ -2596,6 +2657,25 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'सभी उपयोगकर्ताओं का इतिहास';
+
+  @override
+  String get edit => 'संपादित करें';
+
+  @override
+  String get areYouSureDeleteGrievance =>
+      'क्या आप वाकई शिकायत हटाना चाहते हैं?';
+
+  @override
+  String get confirmDelete => 'हटाने की पुष्टि करें';
+
+  @override
+  String get failedToDeleteGrievance => 'शिकायत हटाने में विफल';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'शिकायत सफलतापूर्वक हटाई गई';
+
+  @override
+  String get editGrievance => 'शिकायत संपादित करें';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2610,7 +2690,7 @@ class AppLocalizationsMr extends AppLocalizations {
   AppLocalizationsMr([String locale = 'mr']) : super(locale);
 
   @override
-  String get appTitle => 'तक्रार प्रणाली';
+  String get appTitle => 'निवारण';
 
   @override
   String get login => 'लॉगिन';
@@ -3163,6 +3243,24 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'सर्व वापरकर्त्यांचा इतिहास';
+
+  @override
+  String get edit => 'संपादित करा';
+
+  @override
+  String get areYouSureDeleteGrievance => 'आपण नक्कीच तक्रार हटवू इच्छिता?';
+
+  @override
+  String get confirmDelete => 'हटवण्याची पुष्टी करा';
+
+  @override
+  String get failedToDeleteGrievance => 'तक्रार हटवण्यात अयशस्वी';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'तक्रार यशस्वीपणे हटवली गेली';
+
+  @override
+  String get editGrievance => 'तक्रार संपादित करा';
 }
 
 
@@ -3219,19 +3317,42 @@ class Announcement {
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\models\comment_model.dart ---
 // lib/models/comment_model.dart
+class CommentAttachment {
+  final int id;
+  final String filePath;
+  final String fileType;
+
+  CommentAttachment({
+    required this.id,
+    required this.filePath,
+    required this.fileType,
+  });
+
+  factory CommentAttachment.fromJson(Map<String, dynamic> json) {
+    return CommentAttachment(
+      id: json['id'] as int,
+      filePath: json['file_path'] as String,
+      fileType: json['file_type'] as String,
+    );
+  }
+}
 class Comment {
   final int id;
   final int grievanceId;
   final int userId;
+  final String? userName;
   final String? commentText;
   final DateTime createdAt;
+  final List<CommentAttachment>? attachments;
 
   Comment({
     required this.id,
     required this.grievanceId,
     required this.userId,
+    this.userName,
     this.commentText,
     required this.createdAt,
+    this.attachments,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -3239,8 +3360,12 @@ class Comment {
       id: json['id'] as int,
       grievanceId: json['grievance_id'] ,
       userId: json['user_id'],
+      userName: json['user']?['name'] as String?,
       commentText: json['comment_text'] ?? '',
       createdAt: DateTime.parse(json['created_at']),
+      attachments: json['attachments'] != null
+          ? (json['attachments'] as List).map((item) => CommentAttachment.fromJson(item)).toList()
+          : null,
     );
   }
 
@@ -6489,6 +6614,7 @@ extension StringExtension on String {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\ManageAreasScreen.dart ---
 import 'package:flutter/material.dart';
 import 'package:main_ui/services/master_data_service.dart';
+import 'package:dio/dio.dart';
 import 'package:main_ui/models/master_data_model.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 
@@ -6514,11 +6640,46 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
     });
   }
 
-  void _showAddAreaDialog() {
+  void _showAreaDialog({MasterArea? area}) {
     showDialog(
       context: context,
-      builder: (context) => AreaFormDialog(onAreaAdded: _refreshAreas),
+      builder: (context) => AreaFormDialog(onSuccess: _refreshAreas, area: area),
     );
+  }
+
+  Future<void> _confirmDeleteArea(MasterArea area) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Area'),
+        content: Text(
+            'Are you sure you want to delete "${area.name}"? This might fail if it is being used by any grievances.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await MasterDataService.deleteArea(area.id);
+        _refreshAreas();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Area deleted successfully'), backgroundColor: Colors.green),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   @override
@@ -6535,7 +6696,7 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade600,
-        onPressed: _showAddAreaDialog,
+        onPressed: () => _showAreaDialog(),
         child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<MasterArea>>(
@@ -6585,6 +6746,22 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
                     area.description ?? 'No description',
                     style: const TextStyle(color: Colors.black54),
                   ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue.shade800),
+                        onPressed: () => _showAreaDialog(area: area),
+                        tooltip: 'Edit Area',
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red.shade700),
+                        onPressed: () => _confirmDeleteArea(area),
+                        tooltip: 'Delete Area',
+                      ),
+                    ],
+                  ),
+                  onTap: () => _showAreaDialog(area: area),
                 ),
               );
             },
@@ -6596,9 +6773,10 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
 }
 
 class AreaFormDialog extends StatefulWidget {
-  final VoidCallback onAreaAdded;
+  final VoidCallback onSuccess;
+  final MasterArea? area;
 
-  const AreaFormDialog({super.key, required this.onAreaAdded});
+  const AreaFormDialog({super.key, required this.onSuccess, this.area});
 
   @override
   _AreaFormDialogState createState() => _AreaFormDialogState();
@@ -6606,9 +6784,16 @@ class AreaFormDialog extends StatefulWidget {
 
 class _AreaFormDialogState extends State<AreaFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.area?.name ?? '');
+    _descriptionController = TextEditingController(text: widget.area?.description ?? '');
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -6622,17 +6807,24 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
         'name': _nameController.text,
         'description': _descriptionController.text,
       };
-      await MasterDataService.addArea(data);
-      widget.onAreaAdded();
+      if (widget.area == null) {
+        await MasterDataService.addArea(data);
+      } else {
+        await MasterDataService.updateArea(widget.area!.id, data);
+      }
+      widget.onSuccess();
       Navigator.of(context).pop();
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add area: $e')),
+        SnackBar(content: Text('Failed to save area: $e')),
       );
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -6645,11 +6837,12 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.area != null;
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text(
-        'Add Area',
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Text(
+        isEditing ? 'Edit Area' : 'Add Area',
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       content: Form(
         key: _formKey,
@@ -6700,7 +6893,7 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: Colors.white),
                 )
-              : const Text('Add'),
+              : Text(isEditing ? 'Update' : 'Add'),
         ),
       ],
     );
@@ -6969,7 +7162,6 @@ class _ManageConfigsState extends ConsumerState<ManageConfigs> {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/master_data_model.dart';
-import '../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/empty_state.dart';
 import '../../services/master_data_service.dart';
@@ -7065,10 +7257,11 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                 };
 
                                 try {
-                                  final response = subject == null
-                                      ? await ApiService.post('/admins/subjects', data)
-                                      : await ApiService.put('/admins/subjects/${subject.id}', data);
-                                   
+                                  if (subject == null) {
+                                    await MasterDataService.addSubject(data);
+                                  } else {
+                                    await MasterDataService.updateSubject(subject.id, data);
+                                  }
                                   ref.invalidate(subjectsProvider); // refresh list
                                   Navigator.pop(context);
                                 } catch (e) {
@@ -7094,6 +7287,44 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
         );
       },
     );
+  }
+
+  Future<void> _confirmDeleteSubject(MasterSubject subject) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Subject'),
+        content: Text(
+            'Are you sure you want to delete "${subject.name}"? This might fail if it is being used by any grievances.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await MasterDataService.deleteSubject(subject.id);
+        ref.invalidate(subjectsProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Subject deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   @override
@@ -7205,13 +7436,26 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                   overflow: TextOverflow.ellipsis,
                                 )
                               : null,
-                          trailing: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: theme.colorScheme.primary,
-                            ),
-                            onPressed: () => _showSubjectDialog(subject: subject),
-                            tooltip: 'Edit Subject',
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                onPressed: () => _showSubjectDialog(subject: subject),
+                                tooltip: 'Edit Subject',
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: theme.colorScheme.error,
+                                ),
+                                onPressed: () => _confirmDeleteSubject(subject),
+                                tooltip: 'Delete Subject',
+                              ),
+                            ],
                           ),
                           onTap: () => _showSubjectDialog(subject: subject),
                         ),
@@ -8534,6 +8778,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 // lib/screens/auth/splash_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:main_ui/providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -8597,131 +8842,471 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   // Alternative branded splash screen
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Colors.blue.shade800,
-            Colors.blue.shade600,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.blue.shade800,
+              Colors.blue.shade600,
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Background pattern
+            Positioned(
+              right: -50,
+              bottom: -50,
+              child: Opacity(
+                opacity: 0.1,
+                child: Icon(
+                  Icons.gavel_rounded,
+                  size: 200,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Animated logo container replaced with Lottie animation
+                  SizedBox(
+                    width: 200, // Adjust size as needed
+                    height: 200, // Adjust size as needed
+                    child: Lottie.asset(
+                      'assets/animations/niwaran.json', // Ensure the JSON file is added to assets/animations/niwaran.json in pubspec.yaml
+                      fit: BoxFit.contain,
+                      repeat: true, // Set to false if you don't want it to loop
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // App title with animation
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 800),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    builder: (context, double value, child) {
+                      return Transform.translate(
+                        offset: Offset(0, 20 * (1 - value)),
+                        child: Opacity(
+                          opacity: value,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'NIVARAN',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 8),
+                  
+                  // Tagline
+                  Text(
+                    'Easy Solutions for smart punawale',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.9),
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 40),
+                  
+                  // Loading indicator with delayed appearance
+                  TweenAnimationBuilder(
+                    duration: const Duration(milliseconds: 500),
+                    tween: Tween<double>(begin: 0, end: 1),
+                    builder: (context, double value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: child,
+                      );
+                    },
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      strokeWidth: 3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
-      child: Stack(
-        children: [
-          // Background pattern
-          Positioned(
-            right: -50,
-            bottom: -50,
-            child: Opacity(
-              opacity: 0.1,
-              child: Icon(
-                Icons.gavel_rounded,
-                size: 200,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Animated logo container
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 15,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    Icons.gavel_rounded,
-                    size: 60,
-                    color: Colors.blue.shade800,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                
-                // App title with animation
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 800),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double value, child) {
-                    return Transform.translate(
-                      offset: Offset(0, 20 * (1 - value)),
-                      child: Opacity(
-                        opacity: value,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: Text(
-                    'Grievance System',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ),
-                
-                const SizedBox(height: 8),
-                
-                // Tagline
-                Text(
-                  'Redressal Made Easy',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                ),
-                
-                const SizedBox(height: 40),
-                
-                // Loading indicator with delayed appearance
-                TweenAnimationBuilder(
-                  duration: const Duration(milliseconds: 500),
-                  tween: Tween<double>(begin: 0, end: 1),
-                  builder: (context, double value, child) {
-                    return Opacity(
-                      opacity: value,
-                      child: child,
-                    );
-                  },
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    strokeWidth: 3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+    );
+  }
 }
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\auth\splash_screen2.dart ---
+// File: main_ui/lib/screens/auth/splash_screen2.dart
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+
+class Niwaran extends StatefulWidget {
+  final double? width;
+  final double? height;
+
+  const Niwaran({
+    super.key,
+    this.width,
+    this.height,
+  });
+
+  @override
+  NiwaranState createState() => NiwaranState();
+}
+
+class NiwaranState extends State<Niwaran> {
+  final _key = UniqueKey();
+  late final WebViewController _svgatorController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize WebViewController
+    _svgatorController = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.transparent)
+      ..loadRequest(Uri.parse('about:blank'));
+
+    // Load HTML after the widget is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadHtmlFromAssets(_svgatorController);
+    });
+  }
+
+  Future<void> _loadHtmlFromAssets(WebViewController controller) async {
+    try {
+      // SVG content (replace with full SVG if truncated)
+      String svgContent = '''
+<svg id="eI13lcKwgeY1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 300" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" project-id="72b0ba56ca7d43f3b12d798b2f76873c" export-id="0bf18e892d9d478eb3ec06150c7b0d78" cached="false">
+  <defs>
+    <image id="eI13lcKwgeY2" width="91" height="91" xlink:href="data:image/png;base64,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"/>
+    <image id="eI13lcKwgeY7" width="204" height="38" xlink:href="data:image/png;base64,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
+      </svg>
+      ''';
+
+      // Placeholder for the SVGator player JavaScript (replace with actual player code)
+      String playerJs = '''
+      // Replace with actual SVGator player JavaScript from _PLAYERS["91c80d77"]
+      // Example placeholder (simplified):
+      (function() {
+        window.__SVGATOR_PLAYER__ = window.__SVGATOR_PLAYER__ || {};
+        window.__SVGATOR_PLAYER__["91c80d77"] = {
+          play: function() { console.log("Playing SVG animation"); },
+          // Add actual animation logic here
+        };
+      })();
+      ''';
+
+      // Combine SVG and JavaScript
+      String bodyContent = '$svgContent<script type="text/javascript">${shortenCode(playerJs)}</script>';
+
+      // Wrap in HTML
+      String html = wrapPage(bodyContent);
+
+      // Load the HTML string into WebView
+      await controller.loadHtmlString(html);
+    } catch (e) {
+      debugPrint('Error loading SVG animation: $e');
+      // Fallback to a static image or placeholder if animation fails
+      if (mounted) {
+        setState(() {
+          // Optionally trigger a rebuild or show a fallback UI
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: widget.width,
+      height: widget.height,
+      child: WebViewWidget(
+        key: _key,
+        controller: _svgatorController,
+      ),
+    );
+  }
+
+  static String shortenCode(String str) {
+    return str
+        .replaceAll(RegExp(r'\s{2,}'), '')
+        .replaceAllMapped(
+          RegExp(r'[\n\r\t\s]*([,{}=;:()?|&])[\n\r\t\s]*'),
+          (Match m) => m[1]!,
+        )
+        .replaceAll(RegExp(r';}'), '}');
+  }
+
+  static String wrapPage(String svg) {
+    const String header = '''<!doctype html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        width: 100%;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+      }
+      svg {
+        height: 100%;
+        left: 0;
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+''';
+    const String footer = '''
+  </body>
+</html>''';
+    return shortenCode(header) + svg + shortenCode(footer);
+  }
 }
 
 === Folder: screens\citizen ===
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\citizen\edit_grievance.dart ---
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+import 'package:main_ui/models/grievance_model.dart';
+import 'package:main_ui/providers/master_data_provider.dart';
+import 'package:main_ui/services/grievance_service.dart';
+import 'package:main_ui/widgets/custom_button.dart';
+import 'package:main_ui/widgets/loading_indicator.dart';
+
+// Provider to fetch a single grievance
+final editGrievanceProvider = FutureProvider.family<Grievance, int>((ref, id) {
+  return GrievanceService().getGrievanceDetails(id);
+});
+
+class EditGrievance extends ConsumerStatefulWidget {
+  final int id;
+  const EditGrievance({super.key, required this.id});
+
+  @override
+  ConsumerState<EditGrievance> createState() => _EditGrievanceState();
+}
+
+class _EditGrievanceState extends ConsumerState<EditGrievance> {
+  final _formKey = GlobalKey<FormState>();
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _addressController = TextEditingController();
+
+  int? _selectedAreaId;
+  int? _selectedSubjectId;
+
+  bool _isSubmitting = false;
+  bool _initialDataLoaded = false;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
+
+  void _loadGrievanceData(Grievance grievance) {
+    if (!_initialDataLoaded) {
+      _titleController.text = grievance.title ?? '';
+      _descriptionController.text = grievance.description ?? '';
+      _addressController.text = grievance.address ?? '';
+      _selectedAreaId = grievance.areaId;
+      _selectedSubjectId = grievance.subjectId;
+      _initialDataLoaded = true;
+    }
+  }
+
+  Future<void> _submitUpdate() async {
+  if (!_formKey.currentState!.validate() ||
+      _selectedAreaId == null ||
+      _selectedSubjectId == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.pleaseFillAllFields ?? 'Please fill all required fields')),
+    );
+    return;
+  }
+
+  setState(() => _isSubmitting = true);
+
+  try {
+    // Construct the data map with snake_case keys to match backend
+    final Map<String, dynamic> data = {
+      'title': _titleController.text.trim(),
+      'description': _descriptionController.text.trim(),
+      'area_id': _selectedAreaId,
+      'subject_id': _selectedSubjectId,
+      'address': _addressController.text.trim(),
+    };
+
+    // Create an instance of GrievanceService
+    final grievanceService = GrievanceService();
+    await grievanceService.updateGrievance(widget.id, data);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Grievance updated successfully'),
+          backgroundColor: Colors.green),
+    );
+    Navigator.of(context).pop(true); // Pop with a result to indicate success
+  } catch (e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          content: Text('Failed to update: $e'), backgroundColor: Colors.red),
+    );
+  } finally {
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+    }
+  }
+}
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final grievanceAsync = ref.watch(editGrievanceProvider(widget.id));
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.editGrievance ?? 'Edit Grievance')),
+      body: grievanceAsync.when(
+        loading: () => const Center(child: LoadingIndicator()),
+        error: (err, stack) =>
+            Center(child: Text('Error loading grievance: $err')),
+        data: (grievance) {
+          _loadGrievanceData(grievance);
+
+          final areasAsync = ref.watch(areasProvider);
+          final subjectsAsync = ref.watch(subjectsProvider);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: l10n.title ?? 'Title',
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? (l10n.titleRequired ?? 'Title is required') : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      labelText: l10n.description ?? 'Description',
+                      border: const OutlineInputBorder(),
+                    ),
+                    maxLines: 4,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? (l10n.descriptionRequired ?? 'Description is required') : null,
+                  ),
+                  const SizedBox(height: 16),
+                  areasAsync.when(
+                    data: (areas) => DropdownButtonFormField<int>(
+                      value: _selectedAreaId,
+                      decoration: InputDecoration(
+                        labelText: l10n.filterByArea ?? 'Area',
+                        border: const OutlineInputBorder(),
+                      ),
+                      items: areas
+                          .map((area) => DropdownMenuItem(
+                                value: area.id,
+                                child: Text(area.name),
+                              ))
+                          .toList(),
+                      onChanged: (value) => setState(() => _selectedAreaId = value),
+                      validator: (value) =>
+                          value == null ? (l10n.areaRequired ?? 'Area is required') : null,
+                    ),
+                    loading: () => const LoadingIndicator(),
+                    error: (e, s) => Text('Error: $e'),
+                  ),
+                  const SizedBox(height: 16),
+                  subjectsAsync.when(
+                    data: (subjects) => DropdownButtonFormField<int>(
+                      value: _selectedSubjectId,
+                      decoration: InputDecoration(
+                        labelText: l10n.filterBySubject ?? 'Subject',
+                        border: const OutlineInputBorder(),
+                      ),
+                      items: subjects
+                          .map((subject) => DropdownMenuItem(
+                                value: subject.id,
+                                child: Text(subject.name),
+                              ))
+                          .toList(),
+                      onChanged: (value) =>
+                          setState(() => _selectedSubjectId = value),
+                      validator: (value) =>
+                          value == null ? (l10n.subjectRequired ?? 'Subject is required') : null,
+                    ),
+                    loading: () => const LoadingIndicator(),
+                    error: (e, s) => Text('Error: $e'),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _addressController,
+                    decoration: const InputDecoration(
+                      labelText: 'Address (optional)',
+                      border: OutlineInputBorder(),
+                    ),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 24),
+                  CustomButton(
+                    text: l10n.submit ?? 'Submit',
+                    isLoading: _isSubmitting,
+                    onPressed: _submitUpdate,
+                    fullWidth: true,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  } 
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\citizen\grievance_detail.dart ---
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
 import '../../models/comment_model.dart';
@@ -8732,6 +9317,7 @@ import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
 import '../../services/api_service.dart'; // Import ApiService for baseUrl
+import '../../providers/user_provider.dart';
 import 'package:main_ui/utils/constants.dart';
 // Provider for grievance details
 final grievanceProvider = FutureProvider.family<Grievance, int>((ref, id) async {
@@ -8751,6 +9337,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
   final TextEditingController _feedbackController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
   int? _rating;
+  List<PlatformFile> _selectedFiles = [];
 
   @override
   void dispose() {
@@ -8782,8 +9369,11 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     }
     
     try {
-      await GrievanceService().addComment(widget.id, _commentController.text);
+      await GrievanceService().addComment(widget.id, _commentController.text, attachments: _selectedFiles);
       _commentController.clear();
+      setState(() {
+        _selectedFiles = [];
+      });
       ref.refresh(grievanceProvider(widget.id));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -8793,7 +9383,62 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToAddComment),
+          content: Text('${AppLocalizations.of(context)!.failedToAddComment}: $e'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteGrievance() async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await GrievanceService().deleteGrievance(widget.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.grievanceDeletedSuccessfully ?? 'Grievance deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop(true); // Pop with a result to indicate success
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${l10n.failedToDeleteGrievance}: $e')),
+      );
+    }
+  }
+
+  void _onMenuSelected(String value) {
+    final l10n = AppLocalizations.of(context)!;
+    if (value == 'edit') {
+      // The route '/citizen/edit' is not defined in your routes.dart.
+      // Assuming you have an EditGrievance screen.
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => EditGrievance(id: widget.id))).then((_) {
+      Navigator.pushNamed(context, '/citizen/edit', arguments: widget.id).then((result) {
+        // Refresh data after returning from edit screen
+        ref.refresh(grievanceProvider(widget.id));
+      });
+    } else if (value == 'delete') {
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(l10n.confirmDelete),
+          content: Text(l10n.areYouSureDeleteGrievance),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _deleteGrievance();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: Text(l10n.delete),
+            ),
+          ],
         ),
       );
     }
@@ -8804,10 +9449,24 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     final grievanceAsync = ref.watch(grievanceProvider(widget.id));
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final currentUser = ref.watch(userNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.grievanceDetails),
+        actions: [
+          // Show menu only if user is the owner (citizen) or admin
+          if (currentUser != null &&
+              (grievanceAsync.value?.citizenId == currentUser.id ||
+                  currentUser.role?.toLowerCase() == 'admin'))
+            PopupMenuButton<String>(
+              onSelected: _onMenuSelected,
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
+                PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
+              ],
+            )
+        ],
       ),
       body: grievanceAsync.when(
         data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance),
@@ -9133,21 +9792,53 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
             color: Theme.of(context).cardColor,
             border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: l10n.addComment,
-                    border: const OutlineInputBorder(),
+              if (_selectedFiles.isNotEmpty)
+                SizedBox(
+                  height: 50,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: _selectedFiles.map((file) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Chip(
+                        label: Text(file.name, overflow: TextOverflow.ellipsis),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedFiles.remove(file);
+                          });
+                        },
+                      ),
+                    )).toList(),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: _addComment,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _commentController,
+                      decoration: InputDecoration(
+                        hintText: l10n.addComment,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.attach_file),
+                    onPressed: () async {
+                      final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                      if (result != null) {
+                        setState(() => _selectedFiles.addAll(result.files));
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _addComment,
+                  ),
+                ],
               ),
             ],
           ),
@@ -9894,11 +10585,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   const SizedBox(height: 4),
                   Text(
                     banner['subtitle'],
-                    style: TextStyle(
-                      color: theme.colorScheme.onPrimaryContainer.withValues ( alpha: 
-                        0.8,
-                      ),
-                    ),
+                    style:
+                        TextStyle(color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)),
                   ),
                 ],
               ),
@@ -13658,6 +14346,13 @@ static Future<Response> postMultipart(
       throw Exception('Failed to upload profile picture: ${e.message}');
     }
   }
+
+
+
+
+
+
+
   
 
 static Future<User> updateProfile({
@@ -13732,11 +14427,6 @@ static Future<User> updateProfile({
       throw Exception('Failed to delete user: ${e.message}');
     }
   }
-
-
-
-
-
 
   // Fetch a specific grievance by ID
   static Future<Response> getGrievance(int id) async {
@@ -14062,37 +14752,13 @@ class GrievanceService {
 
 
 
-
-
-
-
-Future<Grievance> GGDBID(int id) async {
+Future<Grievance> getGrievanceById(int id) async {
   try {
-    
     final response = await _dio.get('/grievances/$id');
-    
-    // Check if response.data is a List
-    if (response.data is List) {
-      final grievances = (response.data as List)
-          .map((json) => Grievance.fromJson(json as Map<String, dynamic>))
-          .toList();
-      
-      // Find the grievance with the matching id
-      final grievance = grievances.firstWhere(
-        (g) => g.id == id,
-        orElse: () => throw Exception('Grievance with id $id not found'),
-      );
-      
-      return grievance;
-    } else {
-      // If response.data is already a single object
-      return Grievance.fromJson(response.data as Map<String, dynamic>);
-    }
+    return Grievance.fromJson(response.data as Map<String, dynamic>);
   } on DioException catch (e) {
-   
     throw _handleDioException(e, 'fetch grievance details');
   } catch (e) {
-   
     rethrow;
   }
 }
@@ -14115,6 +14781,12 @@ Future<Grievance> GGDBID(int id) async {
   }
 }
 
+
+
+
+
+
+
   Future<List<Grievance>> getGrievancesByUserId(int userId) async {
     try {
       
@@ -14130,21 +14802,37 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
-  Future<void> addComment(int id, String commentText) async {
+  Future<void> addComment(int id, String commentText, {List<PlatformFile>? attachments}) async {
     try {
-      
+      final formData = FormData.fromMap({
+        'comment_text': commentText,
+      });
+
+      if (attachments != null && attachments.isNotEmpty) {
+        for (var file in attachments) {
+          if (kIsWeb) {
+            formData.files.add(MapEntry(
+              'attachments',
+              MultipartFile.fromBytes(file.bytes!, filename: file.name),
+            ));
+          } else {
+            formData.files.add(MapEntry(
+              'attachments',
+              await MultipartFile.fromFile(file.path!, filename: file.name),
+            ));
+          }
+        }
+      }
       final response = await _dio.post(
         '/grievances/$id/comments',
-        data: {'comment_text': commentText},
+        data: formData,
       );
       if (response.statusCode != 201) {
         throw Exception('Failed to add comment: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      
       throw _handleDioException(e, 'add comment');
     } catch (e) {
-      
       rethrow;
     }
   }
@@ -14237,6 +14925,31 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
+  Future<Map<String, dynamic>> updateGrievance(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _dio.put(
+        '/grievances/$id',
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception(
+          'Failed to update grievance: ${response.data?['msg'] ?? response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e, 'update grievance');
+    }
+  }
+
+
+
+
+
   Future<void> submitFeedback(int grievanceId, int rating, String feedbackText) async {
     try {
      
@@ -14297,6 +15010,24 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   Future<void> escalateGrievance(int grievanceId, {int? assigneeId}) async {
     try {
      
@@ -14313,6 +15044,19 @@ Future<Grievance> GGDBID(int id) async {
       throw _handleDioException(e, 'escalate grievance');
     } catch (e) {
       
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGrievance(int grievanceId) async {
+    try {
+      final response = await _dio.delete('/grievances/$grievanceId');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete grievance: ${response.data?['message'] ?? response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e, 'delete grievance');
+    } catch (e) {
       rethrow;
     }
   }
@@ -14344,12 +15088,76 @@ class MasterDataService {
     }
   }
 
-  static Future<void> addArea(Map<String, dynamic> data) async {
+  static Future<MasterArea> addArea(Map<String, dynamic> data) async {
     try {
-      print('MasterDataService: Sending POST /areas with data: $data');
-      await ApiService.post('/areas', data);
+      print('MasterDataService: Sending POST /admins/areas with data: $data');
+      final response = await ApiService.post('/admins/areas', data);
+      return MasterArea.fromJson(response.data);
     } catch (e) {
       print('Error adding area: $e');
+      rethrow;
+    }
+  }
+
+  static Future<MasterArea> updateArea(int id, Map<String, dynamic> data) async {
+    try {
+      print('MasterDataService: Sending PUT /admins/areas/$id with data: $data');
+      final response = await ApiService.put('/admins/areas/$id', data);
+      return MasterArea.fromJson(response.data);
+    } catch (e) {
+      print('Error updating area: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> deleteArea(int areaId) async {
+    try {
+      print('MasterDataService: Sending DELETE /admins/areas/$areaId');
+      await ApiService.delete('/admins/areas/$areaId');
+    } on DioException catch (e) {
+      print('Error deleting area: ${e.response?.data}');
+      // Extract user-friendly message from backend
+      final errorMsg = e.response?.data?['msg'] ?? 'Failed to delete area.';
+      throw Exception(errorMsg);
+    } catch (e) {
+      print('Error deleting area: $e');
+      rethrow;
+    }
+  }
+
+  static Future<MasterSubject> addSubject(Map<String, dynamic> data) async {
+    try {
+      print('MasterDataService: Sending POST /admins/subjects with data: $data');
+      final response = await ApiService.post('/admins/subjects', data);
+      return MasterSubject.fromJson(response.data);
+    } catch (e) {
+      print('Error adding subject: $e');
+      rethrow;
+    }
+  }
+
+  static Future<MasterSubject> updateSubject(int id, Map<String, dynamic> data) async {
+    try {
+      print('MasterDataService: Sending PUT /admins/subjects/$id with data: $data');
+      final response = await ApiService.put('/admins/subjects/$id', data);
+      return MasterSubject.fromJson(response.data);
+    } catch (e) {
+      print('Error updating subject: $e');
+      rethrow;
+    }
+  }
+
+  static Future<void> deleteSubject(int subjectId) async {
+    try {
+      print('MasterDataService: Sending DELETE /admins/subjects/$subjectId');
+      await ApiService.delete('/admins/subjects/$subjectId');
+    } on DioException catch (e) {
+      print('Error deleting subject: ${e.response?.data}');
+      // Extract user-friendly message from backend
+      final errorMsg = e.response?.data?['msg'] ?? 'Failed to delete subject.';
+      throw Exception(errorMsg);
+    } catch (e) {
+      print('Error deleting subject: $e');
       rethrow;
     }
   }
@@ -15093,31 +15901,231 @@ class CombinedGrievanceCard extends StatelessWidget {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\comment_tile.dart ---
 // lib/widgets/comment_tile.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../models/comment_model.dart';
+import '../utils/constants.dart';
+import '../../providers/user_provider.dart';
 
-class CommentTile extends StatelessWidget {
+
+class CommentTile extends ConsumerWidget {
   final Comment comment;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onTap;
 
-  const CommentTile({super.key, required this.comment});
+  const CommentTile({
+    super.key,
+    required this.comment,
+    this.onLongPress,
+    this.onTap,
+  });
 
   @override
-  Widget build(BuildContext context) {
-    final created =
-        comment.createdAt.toLocal().toString().split('.').first; // simple format
-    return ListTile(
-      leading: const Icon(Icons.comment, color: Colors.blue),
-      title: Text(
-        comment.commentText ?? "" , // <- from your model
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      subtitle: Text(
-        'User ${comment.userId} • $created',
-        style: Theme.of(context).textTheme.bodySmall,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentUser = ref.watch(userNotifierProvider);
+    final isCurrentUser = currentUser != null && currentUser.id == comment.userId;
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isCurrentUser) ...[
+            _buildAvatar(context, isCurrentUser),
+            const SizedBox(width: 12.0),
+          ],
+          Flexible(
+            child: GestureDetector(
+              onTap: onTap,
+              onLongPress: onLongPress,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.7,
+                ),
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: isCurrentUser 
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+                      : Theme.of(context).colorScheme.surfaceVariant,
+                  borderRadius: _getBorderRadius(isCurrentUser),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 6.0,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(context, isCurrentUser),
+                    const SizedBox(height: 8.0),
+                    _buildCommentText(context),
+                    const SizedBox(height: 8.0),
+                    _buildTimestamp(context),
+                    if (comment.attachments != null && comment.attachments!.isNotEmpty) ...[
+                      const SizedBox(height: 8.0),
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 4.0,
+                        alignment: isCurrentUser ? WrapAlignment.end : WrapAlignment.start,
+                        children: comment.attachments!.map((attachment) {
+                          final fileName = attachment.filePath.split('/').last;
+                          return GestureDetector(
+                            onTap: () => _launchURL(context, attachment.filePath),
+                            child: Chip(
+                              label: Text(fileName, style: const TextStyle(fontSize: 12)),
+                              avatar: const Icon(Icons.attach_file, size: 16),
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                              backgroundColor: isCurrentUser
+                                  ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                                  : Theme.of(context).colorScheme.surface,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          if (isCurrentUser) ...[
+            const SizedBox(width: 12.0),
+            _buildAvatar(context, isCurrentUser),
+          ],
+        ],
       ),
     );
   }
+
+  Widget _buildAvatar(BuildContext context, bool isCurrentUser) {
+    return CircleAvatar(
+      radius: 16.0,
+      backgroundColor: isCurrentUser
+          ? Theme.of(context).colorScheme.primary
+          : Theme.of(context).colorScheme.secondary,
+      child: Text(
+        comment.userName?.isNotEmpty == true 
+            ? comment.userName![0].toUpperCase()
+            : 'U',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 12.0,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, bool isCurrentUser) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!isCurrentUser) ...[
+          Icon(
+            Icons.comment_outlined,
+            size: 14.0,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 6.0),
+        ],
+        Flexible(
+          child: Text(
+            comment.userName ?? 'User ${comment.userId}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: isCurrentUser 
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        if (isCurrentUser) ...[
+          const SizedBox(width: 6.0),
+          Icon(
+            Icons.comment_outlined,
+            size: 14.0,
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCommentText(BuildContext context) {
+    return Text(
+      comment.commentText ?? "",
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+        height: 1.4,
+      ),
+      textAlign: TextAlign.start,
+    );
+  }
+
+  Widget _buildTimestamp(BuildContext context) {
+    return Text(
+      _formatDateTime(comment.createdAt),
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+        fontSize: 11.0,
+      ),
+    );
+  }
+
+  BorderRadius _getBorderRadius(bool isCurrentUser) {
+    return BorderRadius.only(
+      topLeft: const Radius.circular(16.0),
+      topRight: const Radius.circular(16.0),
+      bottomLeft: isCurrentUser ? const Radius.circular(16.0) : const Radius.circular(4.0),
+      bottomRight: isCurrentUser ? const Radius.circular(4.0) : const Radius.circular(16.0),
+    );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+  final now = DateTime.now();
+  final difference = now.difference(dateTime.toLocal());
+
+  print('DEBUG: now=$now, dateTime=$dateTime');
+  print('DEBUG: difference=$difference '
+      '(minutes=${difference.inMinutes}, hours=${difference.inHours}, days=${difference.inDays})');
+
+  if (difference.inMinutes < 1) {
+    print('DEBUG: Returning → Just now');
+    return 'Just now';
+  } else if (difference.inMinutes < 60) {
+    print('DEBUG: Returning → ${difference.inMinutes}m ago');
+    return '${difference.inMinutes}m ago';
+  } else if (difference.inHours < 24) {
+    print('DEBUG: Returning → ${difference.inHours}h ago');
+    return '${difference.inHours}h ago';
+  } else if (difference.inDays < 7) {
+    print('DEBUG: Returning → ${difference.inDays}d ago');
+    return '${difference.inDays}d ago';
+  } else {
+    final formatted = '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    print('DEBUG: Returning → $formatted');
+    return formatted;
+  }
 }
 
+  Future<void> _launchURL(BuildContext context, String path) async {
+    final String url = '${Constants.baseUrl}/uploads/$path';
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not launch $url')),
+        );
+      }
+    }
+  }
+
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\custom_button.dart ---
 // lib/widgets/custom_button.dart
 import 'package:flutter/material.dart';

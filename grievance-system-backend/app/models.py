@@ -89,6 +89,10 @@ class Grievance(db.Model):
         """
         Convert Grievance object to a dictionary for JSON serialization.
         """
+        # Convert dynamic relationships to lists
+        attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
+        comments_list = [comment.to_dict() for comment in self.comments.all()]
+        
         return {
             'id': self.id,
             'complaint_id': self.complaint_id,
@@ -145,10 +149,9 @@ class Grievance(db.Model):
                 'name': self.category.name,
                 'description': self.category.description
             } if self.category else None,
-            'attachments': [attachment.to_dict() for attachment in self.attachments] if self.attachments else [],
-            'comments': [comment.to_dict() for comment in self.comments] if self.comments else []
+            'attachments': attachments_list,  # Use the converted list
+            'comments': comments_list  # Use the converted list
         }
-
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
@@ -174,17 +177,46 @@ class GrievanceComment(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     # New field for comment visibility
     is_public = db.Column(db.Boolean, default=True)  # Public or internal (e.g., for staff only)
-
+    attachments = db.relationship('CommentAttachment', backref='comment', lazy='dynamic', cascade="all, delete-orphan")
     # Relationship to User
     user = db.relationship('User', backref='comments')
     def to_dict(self):
+        # Convert dynamic relationship to list
+        attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
+        
         return {
             'id': self.id,
             'grievance_id': self.grievance_id,
             'user_id': self.user_id,
             'comment_text': self.comment_text,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'is_public': self.is_public,
+            'attachments': attachments_list,  # Include comment attachments
+            'user': {
+                'id': self.user.id,
+                'name': self.user.name
+            } if self.user else None
         }
+
+
+class CommentAttachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('grievance_comment.id'), nullable=False)
+    file_path = db.Column(db.String(256), nullable=False)
+    file_type = db.Column(db.String(10), nullable=True)  # e.g., 'jpg', 'pdf'
+    file_size = db.Column(db.Integer, nullable=True)  # In bytes
+    uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'comment_id': self.comment_id,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None
+        }
+
 
 class Workproof(db.Model):
     id = db.Column(db.Integer, primary_key=True)

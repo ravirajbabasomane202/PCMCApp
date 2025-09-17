@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:main_ui/services/master_data_service.dart';
+import 'package:dio/dio.dart';
 import 'package:main_ui/models/master_data_model.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
 
@@ -25,11 +26,46 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
     });
   }
 
-  void _showAddAreaDialog() {
+  void _showAreaDialog({MasterArea? area}) {
     showDialog(
       context: context,
-      builder: (context) => AreaFormDialog(onAreaAdded: _refreshAreas),
+      builder: (context) => AreaFormDialog(onSuccess: _refreshAreas, area: area),
     );
+  }
+
+  Future<void> _confirmDeleteArea(MasterArea area) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Area'),
+        content: Text(
+            'Are you sure you want to delete "${area.name}"? This might fail if it is being used by any grievances.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await MasterDataService.deleteArea(area.id);
+        _refreshAreas();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Area deleted successfully'), backgroundColor: Colors.green),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   @override
@@ -46,7 +82,7 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade600,
-        onPressed: _showAddAreaDialog,
+        onPressed: () => _showAreaDialog(),
         child: const Icon(Icons.add),
       ),
       body: FutureBuilder<List<MasterArea>>(
@@ -96,6 +132,22 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
                     area.description ?? 'No description',
                     style: const TextStyle(color: Colors.black54),
                   ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue.shade800),
+                        onPressed: () => _showAreaDialog(area: area),
+                        tooltip: 'Edit Area',
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red.shade700),
+                        onPressed: () => _confirmDeleteArea(area),
+                        tooltip: 'Delete Area',
+                      ),
+                    ],
+                  ),
+                  onTap: () => _showAreaDialog(area: area),
                 ),
               );
             },
@@ -107,9 +159,10 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
 }
 
 class AreaFormDialog extends StatefulWidget {
-  final VoidCallback onAreaAdded;
+  final VoidCallback onSuccess;
+  final MasterArea? area;
 
-  const AreaFormDialog({super.key, required this.onAreaAdded});
+  const AreaFormDialog({super.key, required this.onSuccess, this.area});
 
   @override
   _AreaFormDialogState createState() => _AreaFormDialogState();
@@ -117,9 +170,16 @@ class AreaFormDialog extends StatefulWidget {
 
 class _AreaFormDialogState extends State<AreaFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
   bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.area?.name ?? '');
+    _descriptionController = TextEditingController(text: widget.area?.description ?? '');
+  }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -133,17 +193,24 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
         'name': _nameController.text,
         'description': _descriptionController.text,
       };
-      await MasterDataService.addArea(data);
-      widget.onAreaAdded();
+      if (widget.area == null) {
+        await MasterDataService.addArea(data);
+      } else {
+        await MasterDataService.updateArea(widget.area!.id, data);
+      }
+      widget.onSuccess();
       Navigator.of(context).pop();
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add area: $e')),
+        SnackBar(content: Text('Failed to save area: $e')),
       );
     } finally {
-      setState(() {
-        _isSubmitting = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -156,11 +223,12 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.area != null;
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text(
-        'Add Area',
-        style: TextStyle(fontWeight: FontWeight.bold),
+      title: Text(
+        isEditing ? 'Edit Area' : 'Add Area',
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       content: Form(
         key: _formKey,
@@ -211,7 +279,7 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
                   child: CircularProgressIndicator(
                       strokeWidth: 2, color: Colors.white),
                 )
-              : const Text('Add'),
+              : Text(isEditing ? 'Update' : 'Add'),
         ),
       ],
     );

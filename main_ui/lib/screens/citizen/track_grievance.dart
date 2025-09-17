@@ -321,11 +321,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   const SizedBox(height: 4),
                   Text(
                     banner['subtitle'],
-                    style: TextStyle(
-                      color: theme.colorScheme.onPrimaryContainer.withValues ( alpha: 
-                        0.8,
-                      ),
-                    ),
+                    style:
+                        TextStyle(color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)),
                   ),
                 ],
               ),

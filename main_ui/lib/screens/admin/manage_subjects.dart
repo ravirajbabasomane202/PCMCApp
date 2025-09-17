@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/master_data_model.dart';
-import '../../services/api_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/empty_state.dart';
 import '../../services/master_data_service.dart';
@@ -97,10 +96,11 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                 };
 
                                 try {
-                                  final response = subject == null
-                                      ? await ApiService.post('/admins/subjects', data)
-                                      : await ApiService.put('/admins/subjects/${subject.id}', data);
-                                   
+                                  if (subject == null) {
+                                    await MasterDataService.addSubject(data);
+                                  } else {
+                                    await MasterDataService.updateSubject(subject.id, data);
+                                  }
                                   ref.invalidate(subjectsProvider); // refresh list
                                   Navigator.pop(context);
                                 } catch (e) {
@@ -126,6 +126,44 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
         );
       },
     );
+  }
+
+  Future<void> _confirmDeleteSubject(MasterSubject subject) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Subject'),
+        content: Text(
+            'Are you sure you want to delete "${subject.name}"? This might fail if it is being used by any grievances.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await MasterDataService.deleteSubject(subject.id);
+        ref.invalidate(subjectsProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Subject deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 
   @override
@@ -237,13 +275,26 @@ class _ManageSubjectsState extends ConsumerState<ManageSubjects> {
                                   overflow: TextOverflow.ellipsis,
                                 )
                               : null,
-                          trailing: IconButton(
-                            icon: Icon(
-                              Icons.edit,
-                              color: theme.colorScheme.primary,
-                            ),
-                            onPressed: () => _showSubjectDialog(subject: subject),
-                            tooltip: 'Edit Subject',
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: Icon(
+                                  Icons.edit,
+                                  color: theme.colorScheme.primary,
+                                ),
+                                onPressed: () => _showSubjectDialog(subject: subject),
+                                tooltip: 'Edit Subject',
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: theme.colorScheme.error,
+                                ),
+                                onPressed: () => _confirmDeleteSubject(subject),
+                                tooltip: 'Delete Subject',
+                              ),
+                            ],
                           ),
                           onTap: () => _showSubjectDialog(subject: subject),
                         ),

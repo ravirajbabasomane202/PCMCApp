@@ -197,5 +197,11 @@
 "searchByName": "नावाने शोधा",
     "noResultsFound": "कोणतेही निकाल सापडले नाहीत",
     "noMatchingGrievances": "कोणत्याही जुळणाऱ्या तक्रारी सापडल्या नाहीत",
-"allUsersHistory":"सर्व वापरकर्त्यांचा इतिहास"
+"allUsersHistory":"सर्व वापरकर्त्यांचा इतिहास",
+"edit":"संपादित करा",
+"areYouSureDeleteGrievance":"आपण नक्कीच तक्रार हटवू इच्छिता?",
+"confirmDelete":"हटवण्याची पुष्टी करा",
+"failedToDeleteGrievance":"तक्रार हटवण्यात अयशस्वी",
+"grievanceDeletedSuccessfully": "तक्रार यशस्वीपणे हटवली गेली",
+"editGrievance":"तक्रार संपादित करा"
 }

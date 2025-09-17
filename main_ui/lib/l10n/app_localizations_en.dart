@@ -560,4 +560,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'All Users History';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get areYouSureDeleteGrievance =>
+      'Are you sure you want to delete the grievance?';
+
+  @override
+  String get confirmDelete => 'Confirm Delete';
+
+  @override
+  String get failedToDeleteGrievance => 'Failed to delete grievance';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'Grievance deleted successfully';
+
+  @override
+  String get editGrievance => 'Edit Grievance';
 }

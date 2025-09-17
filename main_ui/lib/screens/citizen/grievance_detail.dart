@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
 import '../../models/comment_model.dart';
@@ -11,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/custom_button.dart';
 import '../../services/api_service.dart'; // Import ApiService for baseUrl
+import '../../providers/user_provider.dart';
 import 'package:main_ui/utils/constants.dart';
 // Provider for grievance details
 final grievanceProvider = FutureProvider.family<Grievance, int>((ref, id) async {
@@ -30,6 +32,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
   final TextEditingController _feedbackController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
   int? _rating;
+  List<PlatformFile> _selectedFiles = [];
 
   @override
   void dispose() {
@@ -61,8 +64,11 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     }
     
     try {
-      await GrievanceService().addComment(widget.id, _commentController.text);
+      await GrievanceService().addComment(widget.id, _commentController.text, attachments: _selectedFiles);
       _commentController.clear();
+      setState(() {
+        _selectedFiles = [];
+      });
       ref.refresh(grievanceProvider(widget.id));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -71,8 +77,62 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${AppLocalizations.of(context)!.failedToAddComment}: $e'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _deleteGrievance() async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await GrievanceService().deleteGrievance(widget.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.failedToAddComment),
+          content: Text(l10n.grievanceDeletedSuccessfully ?? 'Grievance deleted successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pop(true); // Pop with a result to indicate success
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${l10n.failedToDeleteGrievance}: $e')),
+      );
+    }
+  }
+
+  void _onMenuSelected(String value) {
+    final l10n = AppLocalizations.of(context)!;
+    if (value == 'edit') {
+      // The route '/citizen/edit' is not defined in your routes.dart.
+      // Assuming you have an EditGrievance screen.
+      // Navigator.push(context, MaterialPageRoute(builder: (context) => EditGrievance(id: widget.id))).then((_) {
+      Navigator.pushNamed(context, '/citizen/edit', arguments: widget.id).then((result) {
+        // Refresh data after returning from edit screen
+        ref.refresh(grievanceProvider(widget.id));
+      });
+    } else if (value == 'delete') {
+      showDialog(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: Text(l10n.confirmDelete),
+          content: Text(l10n.areYouSureDeleteGrievance),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(l10n.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _deleteGrievance();
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: Text(l10n.delete),
+            ),
+          ],
         ),
       );
     }
@@ -83,10 +143,24 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     final grievanceAsync = ref.watch(grievanceProvider(widget.id));
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final currentUser = ref.watch(userNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.grievanceDetails),
+        actions: [
+          // Show menu only if user is the owner (citizen) or admin
+          if (currentUser != null &&
+              (grievanceAsync.value?.citizenId == currentUser.id ||
+                  currentUser.role?.toLowerCase() == 'admin'))
+            PopupMenuButton<String>(
+              onSelected: _onMenuSelected,
+              itemBuilder: (context) => [
+                PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
+                PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
+              ],
+            )
+        ],
       ),
       body: grievanceAsync.when(
         data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance),
@@ -412,21 +486,53 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
             color: Theme.of(context).cardColor,
             border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
           ),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                child: TextField(
-                  controller: _commentController,
-                  decoration: InputDecoration(
-                    hintText: l10n.addComment,
-                    border: const OutlineInputBorder(),
+              if (_selectedFiles.isNotEmpty)
+                SizedBox(
+                  height: 50,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: _selectedFiles.map((file) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Chip(
+                        label: Text(file.name, overflow: TextOverflow.ellipsis),
+                        onDeleted: () {
+                          setState(() {
+                            _selectedFiles.remove(file);
+                          });
+                        },
+                      ),
+                    )).toList(),
                   ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                icon: const Icon(Icons.send),
-                onPressed: _addComment,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _commentController,
+                      decoration: InputDecoration(
+                        hintText: l10n.addComment,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: const Icon(Icons.attach_file),
+                    onPressed: () async {
+                      final result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                      if (result != null) {
+                        setState(() => _selectedFiles.addAll(result.files));
+                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _addComment,
+                  ),
+                ],
               ),
             ],
           ),

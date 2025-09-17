@@ -67,6 +67,17 @@ class GrievanceAttachmentSchema(Schema):
     file_size = fields.Int(dump_only=True)  # Already included
     uploaded_at = fields.DateTime(dump_only=True)
 
+
+class CommentAttachmentSchema(Schema):
+    id = fields.Int(dump_only=True)
+    comment_id = fields.Int(required=True)
+    file_path = fields.Str(dump_only=True)
+    file_type = fields.Str(dump_only=True)
+    file_size = fields.Int(dump_only=True)
+    uploaded_at = fields.DateTime(dump_only=True)
+
+
+
 class GrievanceCommentSchema(Schema):
     id = fields.Int(dump_only=True)
     grievance_id = fields.Int(required=True)
@@ -74,6 +85,7 @@ class GrievanceCommentSchema(Schema):
     comment_text = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
     is_public = fields.Boolean(dump_only=True)  # New field
+    attachments = fields.Nested(CommentAttachmentSchema, many=True, dump_only=True)
     user = fields.Nested(UserSchema(only=("name",)), dump_only=True)
 
 class WorkproofSchema(Schema):

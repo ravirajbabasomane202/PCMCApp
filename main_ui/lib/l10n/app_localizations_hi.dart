@@ -560,4 +560,23 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get allUsersHistory => 'सभी उपयोगकर्ताओं का इतिहास';
+
+  @override
+  String get edit => 'संपादित करें';
+
+  @override
+  String get areYouSureDeleteGrievance =>
+      'क्या आप वाकई शिकायत हटाना चाहते हैं?';
+
+  @override
+  String get confirmDelete => 'हटाने की पुष्टि करें';
+
+  @override
+  String get failedToDeleteGrievance => 'शिकायत हटाने में विफल';
+
+  @override
+  String get grievanceDeletedSuccessfully => 'शिकायत सफलतापूर्वक हटाई गई';
+
+  @override
+  String get editGrievance => 'शिकायत संपादित करें';
 }

@@ -1197,6 +1197,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Users History'**
   String get allUsersHistory;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @areYouSureDeleteGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the grievance?'**
+  String get areYouSureDeleteGrievance;
+
+  /// No description provided for @confirmDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get confirmDelete;
+
+  /// No description provided for @failedToDeleteGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete grievance'**
+  String get failedToDeleteGrievance;
+
+  /// No description provided for @grievanceDeletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance deleted successfully'**
+  String get grievanceDeletedSuccessfully;
+
+  /// No description provided for @editGrievance.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Grievance'**
+  String get editGrievance;
 }
 
 class _AppLocalizationsDelegate

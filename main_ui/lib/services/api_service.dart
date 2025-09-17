@@ -193,6 +193,13 @@ static Future<Response> postMultipart(
       throw Exception('Failed to upload profile picture: ${e.message}');
     }
   }
+
+
+
+
+
+
+
   
 
 static Future<User> updateProfile({
@@ -267,11 +274,6 @@ static Future<User> updateProfile({
       throw Exception('Failed to delete user: ${e.message}');
     }
   }
-
-
-
-
-
 
   // Fetch a specific grievance by ID
   static Future<Response> getGrievance(int id) async {

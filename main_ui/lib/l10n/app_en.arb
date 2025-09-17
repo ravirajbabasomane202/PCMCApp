@@ -220,5 +220,13 @@
 "searchByName":"Search by name",
 "noResultsFound":"No results found",
 "noMatchingGrievances":"No matching grievances found",
-"allUsersHistory":"All Users History"
+"allUsersHistory":"All Users History",
+
+
+"edit":"Edit",
+"areYouSureDeleteGrievance":"Are you sure you want to delete the grievance?",
+"confirmDelete":"Confirm Delete",
+"failedToDeleteGrievance":"Failed to delete grievance",
+"grievanceDeletedSuccessfully": "Grievance deleted successfully",
+"editGrievance":"Edit Grievance"
 }

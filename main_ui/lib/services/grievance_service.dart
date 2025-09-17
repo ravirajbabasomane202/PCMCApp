@@ -63,7 +63,7 @@ class GrievanceService {
         (g) => g.id == id,
         orElse: () => throw Exception('Grievance with id $id not found'),
       );
-      
+      print(grievance.toJson() );
       return grievance;
     } else {
       // If response.data is already a single object
@@ -80,37 +80,13 @@ class GrievanceService {
 
 
 
-
-
-
-
-Future<Grievance> GGDBID(int id) async {
+Future<Grievance> getGrievanceById(int id) async {
   try {
-    
     final response = await _dio.get('/grievances/$id');
-    
-    // Check if response.data is a List
-    if (response.data is List) {
-      final grievances = (response.data as List)
-          .map((json) => Grievance.fromJson(json as Map<String, dynamic>))
-          .toList();
-      
-      // Find the grievance with the matching id
-      final grievance = grievances.firstWhere(
-        (g) => g.id == id,
-        orElse: () => throw Exception('Grievance with id $id not found'),
-      );
-      
-      return grievance;
-    } else {
-      // If response.data is already a single object
-      return Grievance.fromJson(response.data as Map<String, dynamic>);
-    }
+    return Grievance.fromJson(response.data as Map<String, dynamic>);
   } on DioException catch (e) {
-   
     throw _handleDioException(e, 'fetch grievance details');
   } catch (e) {
-   
     rethrow;
   }
 }
@@ -133,6 +109,12 @@ Future<Grievance> GGDBID(int id) async {
   }
 }
 
+
+
+
+
+
+
   Future<List<Grievance>> getGrievancesByUserId(int userId) async {
     try {
       
@@ -148,21 +130,37 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
-  Future<void> addComment(int id, String commentText) async {
+  Future<void> addComment(int id, String commentText, {List<PlatformFile>? attachments}) async {
     try {
-      
+      final formData = FormData.fromMap({
+        'comment_text': commentText,
+      });
+
+      if (attachments != null && attachments.isNotEmpty) {
+        for (var file in attachments) {
+          if (kIsWeb) {
+            formData.files.add(MapEntry(
+              'attachments',
+              MultipartFile.fromBytes(file.bytes!, filename: file.name),
+            ));
+          } else {
+            formData.files.add(MapEntry(
+              'attachments',
+              await MultipartFile.fromFile(file.path!, filename: file.name),
+            ));
+          }
+        }
+      }
       final response = await _dio.post(
         '/grievances/$id/comments',
-        data: {'comment_text': commentText},
+        data: formData,
       );
       if (response.statusCode != 201) {
         throw Exception('Failed to add comment: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      
       throw _handleDioException(e, 'add comment');
     } catch (e) {
-      
       rethrow;
     }
   }
@@ -255,6 +253,31 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
+  Future<Map<String, dynamic>> updateGrievance(
+    int id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _dio.put(
+        '/grievances/$id',
+        data: data,
+      );
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception(
+          'Failed to update grievance: ${response.data?['msg'] ?? response.statusMessage}',
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e, 'update grievance');
+    }
+  }
+
+
+
+
+
   Future<void> submitFeedback(int grievanceId, int rating, String feedbackText) async {
     try {
      
@@ -315,6 +338,24 @@ Future<Grievance> GGDBID(int id) async {
     }
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   Future<void> escalateGrievance(int grievanceId, {int? assigneeId}) async {
     try {
      
@@ -331,6 +372,19 @@ Future<Grievance> GGDBID(int id) async {
       throw _handleDioException(e, 'escalate grievance');
     } catch (e) {
       
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGrievance(int grievanceId) async {
+    try {
+      final response = await _dio.delete('/grievances/$grievanceId');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete grievance: ${response.data?['message'] ?? response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e, 'delete grievance');
+    } catch (e) {
       rethrow;
     }
   }

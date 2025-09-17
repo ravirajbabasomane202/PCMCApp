@@ -215,7 +215,14 @@
 "searchByName": "नाम से खोजें",
 "noResultsFound": "कोई परिणाम नहीं मिला",
 "noMatchingGrievances": "कोई मिलान करने वाली शिकायतें नहीं मिलीं",
-"allUsersHistory":"सभी उपयोगकर्ताओं का इतिहास"
+"allUsersHistory":"सभी उपयोगकर्ताओं का इतिहास",
+"edit":"संपादित करें",
+"areYouSureDeleteGrievance":"क्या आप वाकई शिकायत हटाना चाहते हैं?",
+"confirmDelete":"हटाने की पुष्टि करें",
+"failedToDeleteGrievance":"शिकायत हटाने में विफल",
+"grievanceDeletedSuccessfully": "शिकायत सफलतापूर्वक हटाई गई",
+"editGrievance":"शिकायत संपादित करें"
+
 }
 
 

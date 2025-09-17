@@ -165,10 +165,12 @@ with app.app_context():
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\run.py ---
 # run.py
 
-from app import create_app
+from app import create_app,db
 
 app = create_app()
 
+# with app.app_context():
+#     db.create_all()
 if __name__ == '__main__':
     app.run(debug=True)
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\seedData.py ---
@@ -545,8 +547,8 @@ if __name__ == "__main__":
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import BaseView, expose
 from flask_security import current_user
-from ..models import User, Grievance, MasterSubjects, MasterAreas, MasterCategories, AuditLog, Announcement
-from .. import db
+from .models import User, Grievance, MasterSubjects, MasterAreas, MasterCategories, AuditLog, Announcement
+from . import db
 
 class SecureModelView(ModelView):
     """Base view with access checks."""
@@ -858,7 +860,7 @@ class GrievanceComment(db.Model):
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     # New field for comment visibility
     is_public = db.Column(db.Boolean, default=True)  # Public or internal (e.g., for staff only)
-
+    attachments = db.relationship('CommentAttachment', backref='comment', lazy='dynamic', cascade="all, delete-orphan")
     # Relationship to User
     user = db.relationship('User', backref='comments')
     def to_dict(self):
@@ -869,6 +871,26 @@ class GrievanceComment(db.Model):
             'comment_text': self.comment_text,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+
+
+class CommentAttachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    comment_id = db.Column(db.Integer, db.ForeignKey('grievance_comment.id'), nullable=False)
+    file_path = db.Column(db.String(256), nullable=False)
+    file_type = db.Column(db.String(10), nullable=True)  # e.g., 'jpg', 'pdf'
+    file_size = db.Column(db.Integer, nullable=True)  # In bytes
+    uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'comment_id': self.comment_id,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None
+        }
+
 
 class Workproof(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -1035,6 +1057,17 @@ class GrievanceAttachmentSchema(Schema):
     file_size = fields.Int(dump_only=True)  # Already included
     uploaded_at = fields.DateTime(dump_only=True)
 
+
+class CommentAttachmentSchema(Schema):
+    id = fields.Int(dump_only=True)
+    comment_id = fields.Int(required=True)
+    file_path = fields.Str(dump_only=True)
+    file_type = fields.Str(dump_only=True)
+    file_size = fields.Int(dump_only=True)
+    uploaded_at = fields.DateTime(dump_only=True)
+
+
+
 class GrievanceCommentSchema(Schema):
     id = fields.Int(dump_only=True)
     grievance_id = fields.Int(required=True)
@@ -1042,6 +1075,7 @@ class GrievanceCommentSchema(Schema):
     comment_text = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
     is_public = fields.Boolean(dump_only=True)  # New field
+    attachments = fields.Nested(CommentAttachmentSchema, many=True, dump_only=True)
     user = fields.Nested(UserSchema(only=("name",)), dump_only=True)
 
 class WorkproofSchema(Schema):
@@ -1146,8 +1180,6 @@ from flask_mail import Mail
 from .config import Config
 from flask_cors import CORS
 from .extensions import oauth
-from flask_admin import Admin
-from flask_security import Security, SQLAlchemyUserDatastore
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -1155,8 +1187,6 @@ jwt = JWTManager()
 mail = Mail()
 import logging
 # oauth is defined in extensions.py
-from .models import User, Role
-from .models import Grievance, MasterSubjects, MasterAreas, MasterCategories, AuditLog, Announcement, UserPreference, MasterConfig
 
 def create_app():
     logging.basicConfig(level=logging.DEBUG)
@@ -1164,36 +1194,14 @@ def create_app():
     app = Flask(__name__)
     
     app.config.from_object(Config)
-    admin = Admin(app, name='Grievance Admin', template_mode='bootstrap4')
-
-
-    from .admin_views import (
-    DashboardView, UserAdmin, GrievanceAdmin, SubjectAdmin, 
-    AreaAdmin, CategoryAdmin, AuditLogAdmin, AnnouncementAdmin
-    )
-
-    # Add views to admin
-    admin.add_view(DashboardView(name='Dashboard', endpoint='dashboard'))
-    admin.add_view(UserAdmin(User, db.session))
-    admin.add_view(GrievanceAdmin(Grievance, db.session))
-    admin.add_view(SubjectAdmin(MasterSubjects, db.session))
-    admin.add_view(AreaAdmin(MasterAreas, db.session))
-    admin.add_view(CategoryAdmin(MasterCategories, db.session))
-    admin.add_view(AuditLogAdmin(AuditLog, db.session))
-    admin.add_view(AnnouncementAdmin(Announcement, db.session))
 
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
     mail.init_app(app)
     oauth.init_app(app)
-
-
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    security = Security(app, user_datastore)
-
     cors_origins = ["http://localhost:*", "http://127.0.0.1:*", "http://localhost:5500", "http://127.0.0.1:5500", "https://pcmcapp.onrender.com"]
-    CORS(app, resources={r"/*": { # This line is already correct, no change needed here.
+    CORS(app, resources={r"/*": {
         "origins": cors_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Authorization", "Content-Type"],
@@ -1349,6 +1357,27 @@ def update_subject(user, id):
         print(f"Database error: {e}")
         return jsonify({"error": "Failed to update subject"}), 500
 
+@admin_bp.route('/subjects/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_subject(user, id):
+    """Delete a specific subject by ID."""
+    try:
+        subject_to_delete = MasterSubjects.query.get(id)
+        if not subject_to_delete:
+            return jsonify({"msg": "Subject not found"}), 404
+        
+        db.session.delete(subject_to_delete)
+        db.session.commit()
+        return jsonify({"msg": "Subject deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        # Check for foreign key constraint error
+        error_info = str(e).lower()
+        if 'foreign key constraint' in error_info or 'violates foreign key' in error_info:
+            return jsonify({"msg": "Cannot delete subject. It is in use by existing grievances."}), 409
+        
+        return jsonify({"msg": "Failed to delete subject", "error": str(e)}), 500
+
 
 @admin_bp.route('/areas', methods=['POST'])
 @admin_required
@@ -1362,6 +1391,36 @@ def manage_areas(user):
     db.session.add(area)
     db.session.commit()
     return schema.dump(area), 201
+
+@admin_bp.route('/areas/<int:id>', methods=['PUT'])
+@admin_required
+def update_area(user, id):
+    data = request.json
+    schema = MasterAreasSchema(partial=True)
+    errors = schema.validate(data)
+    if errors:
+        return jsonify(errors), 400
+    
+    area = db.session.get(MasterAreas, id)
+    if not area:
+        return jsonify({"error": "Area not found"}), 404
+    
+    area.name = data.get('name', area.name)
+    area.description = data.get('description', area.description)
+    db.session.commit()
+    
+    return MasterAreasSchema().dump(area), 200
+
+@admin_bp.route('/areas/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_area(user, id):
+    area_to_delete = MasterAreas.query.get(id)
+    if not area_to_delete:
+        return jsonify({"msg": "Area not found"}), 404
+    
+    db.session.delete(area_to_delete)
+    db.session.commit()
+    return jsonify({"msg": "Area deleted successfully"}), 200
 
 @admin_bp.route('/reassign/<int:grievance_id>', methods=['POST'])
 @admin_required
@@ -1386,7 +1445,7 @@ def reassign_grievance(user, grievance_id):
         
         grievance.assigned_to = new_assignee_id
         grievance.assigned_by = user.id
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         db.session.commit()
         
@@ -1580,7 +1639,7 @@ def update_config( key):
     if not config:
         return jsonify({"error": "Config not found"}), 404
     config.value = data.get('value')
-    config.updated_at = datetime.utcnow()
+    config.updated_at = datetime.now(timezone.utc)
     db.session.commit()
     return jsonify({'key': config.key, 'value': config.value}), 200
 
@@ -1740,7 +1799,7 @@ from ..utils.file_utils import allowed_file
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy.exc import IntegrityError
-from flask_security import login_user
+
 auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/register', methods=['POST'])
@@ -1968,16 +2027,6 @@ def guest_login():
         "msg": "Logged in as Guest"
     }), 200
 
-
-@auth_bp.route('/admin/login', methods=['POST'])
-def admin_login():
-    data = request.json
-    user = User.query.filter_by(email=data['email']).first()
-    if user and user.check_password(data['password']) and user.role == Role.ADMIN:
-        login_user(user)  # Use Flask-Security login
-        access_token = create_access_token(identity=user.id)
-        return jsonify(access_token=access_token)
-    return jsonify({"msg": "Invalid credentials or not admin"}), 401
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\field_routes.py ---
 # app/routes/user_routes.py
 from flask import Blueprint, request, jsonify
@@ -2026,7 +2075,7 @@ from ..services.grievance_service import (
 from ..services.notification_service import send_notification
 from .. import db
 from ..services.grievance_service import log_audit
-from datetime import datetime
+from datetime import datetime, timezone
 
 grievance_bp = Blueprint('grievances', __name__)
 
@@ -2093,14 +2142,23 @@ def get_grievance(user, id):
     return jsonify(schema.dump(grievance)), 200
 
 @grievance_bp.route('/<int:id>/comments', methods=['POST'])
-@citizen_required
+@jwt_required_with_role([Role.CITIZEN, Role.MEMBER_HEAD, Role.FIELD_STAFF, Role.ADMIN])
 def add_grievance_comment(user, id):
     try:
-        data = request.get_json()
+        # Handle multipart/form-data
+        if request.content_type.startswith('multipart/form-data'):
+            data = request.form.to_dict()
+            files = request.files.getlist('attachments')  # Support multiple files, like grievances
+        else:
+            data = request.get_json()
+            files = []  # No files if JSON
+
         comment_text = data.get('comment_text')
         if not comment_text:
             return jsonify({"msg": "Comment text is required"}), 400
-        result = add_comment(id, user.id, comment_text)
+        
+        # Call updated service with files
+        result = add_comment(id, user.id, comment_text, files)
         log_audit(f"Comment added to grievance {id}", user.id, id)
         return jsonify(result), 201
     except Exception as e:
@@ -2230,7 +2288,7 @@ def update_grievance_status(user, id):
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status_str.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
-            grievance.resolved_at = datetime.utcnow()
+            grievance.resolved_at = datetime.now(timezone.utc)
         db.session.commit()
         print(f"Status updated from {old_status} to {grievance.status}")
         log_audit(f'Status updated from {old_status} to {grievance.status}', user.id, id)
@@ -2388,6 +2446,59 @@ def track_grievances(user):
     except Exception as e:
         current_app.logger.error(f"Error tracking grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
+    
+
+@grievance_bp.route("/<int:grievance_id>", methods=["PUT"])
+@jwt_required_with_role([Role.CITIZEN])
+def update_grievance(user, grievance_id):
+    """Update grievance details (title, description, area, subject, etc.)"""
+    grievance = Grievance.query.get_or_404(grievance_id)
+    data = request.get_json()
+
+    # Verify the user owns this grievance (important security check!)
+    if grievance.citizen_id != user.id:
+        return jsonify({"error": "Unauthorized to update this grievance"}), 403
+
+    if "title" in data:
+        grievance.title = data["title"]
+    if "description" in data:
+        grievance.description = data["description"]
+    if "area_id" in data:
+        grievance.area_id = data["area_id"]
+    if "subject_id" in data:
+        grievance.subject_id = data["subject_id"]
+    if "address" in data:
+        grievance.address = data["address"]
+
+    try:
+        db.session.commit()
+        return jsonify({
+            "message": "✅ Grievance updated successfully",
+            "grievance": {
+                "id": grievance.id,
+                "title": grievance.title,
+                "description": grievance.description,
+                "address": grievance.address,
+                "status": grievance.status.value if grievance.status else None
+            }
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+@grievance_bp.route("/<int:grievance_id>", methods=["DELETE"])
+@jwt_required_with_role([Role.CITIZEN, Role.ADMIN])
+def delete_grievance(user, grievance_id):
+    grievance = Grievance.query.get_or_404(grievance_id)
+
+    # Authorization check: only owner or admin can delete
+    if user.role != Role.ADMIN and grievance.citizen_id != user.id:
+        return jsonify({"msg": "Permission denied to delete this grievance"}), 403
+
+    db.session.delete(grievance)
+    db.session.commit()
+    log_audit(f"Grievance {grievance_id} deleted by user {user.id}", user.id, grievance_id)
+    return jsonify({"message": "Grievance deleted successfully"})
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\notification_routes.py ---
 from flask import Blueprint, request, jsonify
 from ..services.notification_service import register_fcm_token
@@ -2655,10 +2766,10 @@ def get_area(area_id):
 === Folder: app\services ===
 
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\services\grievance_service.py ---
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 from marshmallow import ValidationError
-from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, NotificationToken, Role
+from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, NotificationToken, Role, CommentAttachment
 from ..schemas import GrievanceSchema, GrievanceAttachmentSchema, GrievanceCommentSchema, WorkproofSchema
 from ..utils.file_utils import upload_files, upload_workproof
 from .. import db
@@ -2780,16 +2891,32 @@ def get_grievance_details(id, user_id):
         current_app.logger.error(f"Error fetching grievance details for ID {id}: {str(e)}")
         raise
 
-def add_comment(id, user_id, text):
-    try:
-        comment = GrievanceComment(grievance_id=id, user_id=user_id, comment_text=text)
-        db.session.add(comment)
-        db.session.commit()
-        schema = GrievanceCommentSchema()
-        return schema.dump(comment)
-    except Exception as e:
-        current_app.logger.error(f"Error adding comment to grievance {id}: {str(e)}")
-        raise
+def add_comment(grievance_id, user_id, comment_text, files=None):
+    grievance = Grievance.query.get_or_404(grievance_id)
+    comment = GrievanceComment(
+        grievance_id=grievance_id,
+        user_id=user_id,
+        comment_text=comment_text,
+        is_public=True  # Default, or from data
+    )
+    db.session.add(comment)
+    db.session.flush()  # Get comment.id before commit
+
+    uploaded_paths = []
+    if files:
+        uploaded_paths = upload_files(files, grievance_id)  # Reuse, or create a new folder like 'comment_{comment.id}'
+
+        for path, file_type, file_size in uploaded_paths:
+            attachment = CommentAttachment(
+                comment_id=comment.id,
+                file_path=path,
+                file_type=file_type,
+                file_size=file_size
+            )
+            db.session.add(attachment)
+
+    db.session.commit()
+    return GrievanceCommentSchema().dump(comment)
 
 def confirm_closure(id, citizen_id):
     try:
@@ -2798,7 +2925,7 @@ def confirm_closure(id, citizen_id):
             current_app.logger.error(f"Invalid closure attempt for grievance {id} by citizen {citizen_id}")
             raise ValueError("Invalid operation")
         grievance.status = GrievanceStatus.CLOSED
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit('Grievance closed', citizen_id, id)
         send_notification(grievance.citizen.email, 'Grievance Closed', 'Your grievance has been closed.')
@@ -2884,7 +3011,7 @@ def update_status(id, employer_id, new_status):
         old_status = grievance.status
         grievance.status = GrievanceStatus[new_status.upper()]
         if grievance.status == GrievanceStatus.RESOLVED:
-            grievance.resolved_at = datetime.utcnow()
+            grievance.resolved_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit(f'Status updated from {old_status} to {grievance.status}', employer_id, id)
         send_notification(grievance.citizen.email, 'Status Updated', f'Your grievance status is now {new_status}.')
@@ -2984,7 +3111,7 @@ def _check_auto_close(grievance):
     try:
         if grievance.status == GrievanceStatus.RESOLVED and grievance.resolved_at:
             sla_days = int(Config.SLA_CLOSURE_DAYS) if hasattr(Config, 'SLA_CLOSURE_DAYS') else 7
-            if datetime.utcnow() - grievance.resolved_at > timedelta(days=sla_days):
+            if datetime.now(timezone.utc) - grievance.resolved_at > timedelta(days=sla_days):
                 grievance.status = GrievanceStatus.CLOSED
                 db.session.commit()
                 log_audit('Auto-closed due to SLA', grievance.assigned_to, grievance.id)
@@ -3021,7 +3148,7 @@ def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
             grievance.assigned_to = new_assignee_id
             grievance.assigned_by = escalated_by
 
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         db.session.commit()
 
         log_audit(
@@ -3083,7 +3210,7 @@ from twilio.rest import Client
 import random
 from .. import db
 from ..models import OtpToken
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 
 def send_otp(phone_number):
@@ -3094,14 +3221,14 @@ def send_otp(phone_number):
         from_=os.environ.get('TWILIO_PHONE_NUMBER'),
         to=phone_number
     )
-    otp_token = OtpToken(phone_number=phone_number, otp=otp, expires_at=datetime.utcnow() + timedelta(minutes=5))
+    otp_token = OtpToken(phone_number=phone_number, otp=otp, expires_at=datetime.now(timezone.utc) + timedelta(minutes=5))
     db.session.add(otp_token)
     db.session.commit()
     return {"msg": "OTP sent"}
 
 def verify_otp(phone_number, otp):
     token = OtpToken.query.filter_by(phone_number=phone_number, otp=otp).first()
-    if token and token.expires_at > datetime.utcnow():
+    if token and token.expires_at > datetime.now(timezone.utc):
         db.session.delete(token)
         db.session.commit()
         return True
@@ -3116,7 +3243,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from io import BytesIO
 from sqlalchemy import func, and_
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import current_app
 from sqlalchemy import func, case
 from ..models import Grievance, GrievanceStatus, User, MasterAreas, AuditLog, Role
@@ -3150,7 +3277,7 @@ def generate_report(filter_type='all', format='pdf', user_id=None, area_id=None)
     query = Grievance.query
     
     # Apply time filters
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     if filter_type == 'day':
         query = query.filter(Grievance.created_at >= now - timedelta(days=1))
     elif filter_type == 'week':
@@ -3240,7 +3367,7 @@ def generate_pdf_report(data, filter_type, user_id, area_id):
     
     query = Grievance.query
     if filter_type != 'all':
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if filter_type == 'day':
             query = query.filter(Grievance.created_at >= now - timedelta(days=1))
         elif filter_type == 'week':
@@ -3351,7 +3478,7 @@ def get_advanced_kpis(time_period='all'):
 
     try:
         # Calculate time filter
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         if time_period == 'day':
             time_filter = Grievance.created_at >= now - timedelta(days=1)
         elif time_period == 'week':
@@ -3500,7 +3627,7 @@ def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
             grievance.assigned_by = escalated_by
         
         # Update timestamps
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         # Log the escalation
         log_audit(f'Grievance escalated to level {grievance.escalation_level}', escalated_by, grievance_id)
@@ -3639,11 +3766,11 @@ def update_grievance_status(grievance_id, new_status, updated_by):
         
         # Update status
         grievance.status = GrievanceStatus(new_status)
-        grievance.updated_at = datetime.utcnow()
+        grievance.updated_at = datetime.now(timezone.utc)
         
         # If status is resolved or closed, set resolved_at
         if new_status in [GrievanceStatus.RESOLVED.value, GrievanceStatus.CLOSED.value]:
-            grievance.resolved_at = datetime.utcnow()
+            grievance.resolved_at = datetime.now(timezone.utc)
         
         # Log the status update
         log_audit(f'Grievance status updated to {new_status}', updated_by, grievance_id)
@@ -3868,6 +3995,9 @@ def calculate_dept_wise_resolution():
 
 
 === Folder: uploads\3 ===
+
+
+=== Folder: uploads\grievance_10 ===
 
 
 === Folder: uploads\grievance_11 ===
