@@ -32,6 +32,7 @@ class User(db.Model):
     name = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=True)
     phone_number = db.Column(db.String(15), unique=True, nullable=True)
+    voter_id = db.Column(db.String(50), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=True)
     role = db.Column(db.Enum(Role), nullable=False)
     department_id = db.Column(db.Integer, db.ForeignKey('master_areas.id'), nullable=True)

@@ -21,26 +21,34 @@ auth_bp = Blueprint('auth', __name__)
 @auth_bp.route('/register', methods=['POST'])
 def register():
     data = request.json
-    schema = UserSchema()
-    try:
-        user_data = schema.load(data)
-    except Exception as e:
-        return jsonify({"msg": "Invalid input", "errors": str(e)}), 400
+    email = data.get('email')
+    name = data.get('name')
+    password = data.get('password')
+    voter_id = data.get('voter_id')
 
-    if User.query.filter_by(email=user_data['email']).first():
+    if not email or not name or not password:
+        return jsonify({"msg": "Missing required fields: name, email, password"}), 400
+
+    if User.query.filter_by(email=email).first():
         return jsonify({"msg": "Email already exists"}), 400
 
+    if voter_id and User.query.filter_by(voter_id=voter_id).first():
+        return jsonify({"msg": "Voter ID already exists"}), 400
+    
     user = User(
-        name=user_data['name'],
-        email=user_data['email'],
+        name=name,
+        email=email,
+        phone_number=data.get('phone_number'),
+        address=data.get('address'),
+        voter_id=voter_id,
         role=Role.CITIZEN,  # Default to CITIZEN for registration
     )
-    user.set_password(data['password'])
+    user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
     access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token}), 201
+    return jsonify({"access_token": access_token}), 200
 
 @auth_bp.route('/login', methods=['POST'])
 def password_login():

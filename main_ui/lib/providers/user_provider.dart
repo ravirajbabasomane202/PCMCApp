@@ -73,39 +73,38 @@ class UsersNotifier extends StateNotifier<List<User>> {
 
   // Add or update a user
   Future<void> addUser(Map<String, dynamic> userData) async {
-    try {
-      // Convert dynamic values to strings for ApiService.addUpdateUser
-      final stringUserData = userData.map((key, value) => MapEntry(key, value.toString()));
-      await ApiService.addUpdateUser(stringUserData);
-      await fetchUsers(); // Refresh the user list
-    } catch (e) {
-      
-      rethrow; // Let UI handle errors
+  try {
+    final userDataToSend = <String, dynamic>{};
+    for (final entry in userData.entries) {
+      var value = entry.value;  // Can be null
+      if (entry.key == 'role' && value != null) {
+        value = value.toString().toLowerCase();
+      }
+      userDataToSend[entry.key] = value;
     }
+    await ApiService.addUpdateUser(userDataToSend);
+    await fetchUsers(); // Refresh the user list
+  } catch (e) {
+    rethrow; // Let UI handle errors
   }
+}
 
   // Update an existing user
   Future<void> updateUser(int userId, Map<String, dynamic> userData) async {
-  try {
-    final cleanData = {
-      'id': userId.toString(),
-      ...userData.map((key, value) => MapEntry(
-            key,
-            key == 'department_id' && value != null
-                ? value.toString() // always send as string
-                : key == 'role'
-                    ? value.toString().toLowerCase() // lowercase role
-                    : value.toString(),
-          )),
-    };
+    try {
+      // The userData map already contains the id. We just need to ensure the role is lowercase.
+      final dataToSend = Map<String, dynamic>.from(userData);
+      if (dataToSend['role'] != null) {
+        dataToSend['role'] = dataToSend['role'].toString().toLowerCase();
+      }
 
-    await ApiService.addUpdateUser(cleanData); // expects Map<String, String>
-    await fetchUsers();
-  } catch (e) {
-    
-    rethrow;
+      // The 'id' from the URL is the source of truth, but we send the body as is.
+      await ApiService.addUpdateUser(dataToSend);
+      await fetchUsers();
+    } catch (e) {
+      rethrow;
+    }
   }
-}
 
 
   // Delete a user

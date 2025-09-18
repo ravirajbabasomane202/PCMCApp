@@ -15,9 +15,17 @@ class AuthNotifier extends StateNotifier<User?> {
     }
   }
 
-  Future<void> register(String name, String email, String password) async {
+  Future<void> register(
+    String name,
+    String email,
+    String password, {
+    String? address,
+    String? phoneNumber,
+    String? voterId,
+  }) async {
     try {
-      await AuthService.register(name, email, password);
+      await AuthService.register(name, email, password,
+          address: address, phoneNumber: phoneNumber, voterId: voterId);
       await _fetchUserAndUpdateState();
     } catch (e) {
       

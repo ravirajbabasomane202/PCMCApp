@@ -343,25 +343,25 @@ from datetime import datetime, timezone
 def create_test_users():
     users = [
         {
-            "name": "Test Field Staff2",
-            "email": "fieldstaff@test.com2",
-            "phone_number": "+1234567898",
+            "name": "Gest Staff2",
+            "email": "Gest@test.com2",
+            "phone_number": "+2234567898",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
         },
         {
-            "name": "Test Field Staff3",
-            "email": "fieldstaff@test.com3",
-            "phone_number": "+1234567894",
+            "name": "Gest Staff3",
+            "email": "Gest@test.com3",
+            "phone_number": "+3234567894",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
         },
         {
-            "name": "Test Field Staff4",
-            "email": "fieldstaff@test.com4",
-            "phone_number": "+1234567895",
+            "name": "Gest Staff4",
+            "email": "Gest@test.com4",
+            "phone_number": "+4234567895",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
@@ -775,6 +775,10 @@ class Grievance(db.Model):
         """
         Convert Grievance object to a dictionary for JSON serialization.
         """
+        # Convert dynamic relationships to lists
+        attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
+        comments_list = [comment.to_dict() for comment in self.comments.all()]
+        
         return {
             'id': self.id,
             'complaint_id': self.complaint_id,
@@ -831,10 +835,9 @@ class Grievance(db.Model):
                 'name': self.category.name,
                 'description': self.category.description
             } if self.category else None,
-            'attachments': [attachment.to_dict() for attachment in self.attachments] if self.attachments else [],
-            'comments': [comment.to_dict() for comment in self.comments] if self.comments else []
+            'attachments': attachments_list,  # Use the converted list
+            'comments': comments_list  # Use the converted list
         }
-
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
@@ -864,12 +867,21 @@ class GrievanceComment(db.Model):
     # Relationship to User
     user = db.relationship('User', backref='comments')
     def to_dict(self):
+        # Convert dynamic relationship to list
+        attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
+        
         return {
             'id': self.id,
             'grievance_id': self.grievance_id,
             'user_id': self.user_id,
             'comment_text': self.comment_text,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'is_public': self.is_public,
+            'attachments': attachments_list,  # Include comment attachments
+            'user': {
+                'id': self.user.id,
+                'name': self.user.name
+            } if self.user else None
         }
 
 
@@ -996,6 +1008,7 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Email(required=True)
+    phone_number = fields.Str(allow_none=True)
     password = fields.Str(load_only=True, validate=validate.Length(min=6), allow_none=True)
     role = EnumField(Role, by_value=True, required=True)
     department_id = fields.Int(allow_none=True)
@@ -1272,6 +1285,8 @@ from ..services.user_service import add_update_user
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required
 import logging
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -1688,18 +1703,59 @@ def list_users(user):
 def update_user(user, id):
     try:
         data = request.json
+        print(f"Received data: {data}")
         if not data:
             return jsonify({"msg": "No data provided"}), 400
         
-        result = add_update_user({**data, "id": id})
-        return jsonify(result), 200
+        result = add_update_user(data, user_id=id)
 
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({"msg": str(e)}), 400
+    except IntegrityError as e:
+        return jsonify({"msg": "Database integrity error, possible duplicate data.", "error": str(e)}), 409
+    except SQLAlchemyError as e:
+        print(f"Database error: {str(e)}")
+        
+        return jsonify({"msg": "Database error occurred", "error": str(e)}), 500
+    except AttributeError as e:
+        print(f"Attribute error: {str(e)}")
+       
+        return jsonify({"msg": "Invalid user attribute", "error": str(e)}), 400
     except Exception as e:
-        # fallback if str(e) is empty/null
+        print(f"Unexpected error: {str(e)}")
+        
         return jsonify({
             "msg": "Failed to update user",
             "error": str(e) or "Unknown error"
         }), 500
+
+
+
+@admin_bp.route('/users', methods=['POST'])
+@admin_required
+def create_user(user):
+    try:
+        data = request.json
+        print(f"Received data for new user: {data}")
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+
+        result = add_update_user(data)  # no user_id → create
+
+        return jsonify(result), 201
+    except ValueError as e:
+        return jsonify({"msg": str(e)}), 400
+    except IntegrityError as e:
+        return jsonify({"msg": "Database integrity error, possible duplicate data.", "error": str(e)}), 409
+    except SQLAlchemyError as e:
+        print(f"Database error: {str(e)}")
+        return jsonify({"msg": "Database error occurred", "error": str(e)}), 500
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return jsonify({"msg": "Failed to create user", "error": str(e)}), 500
+
+
 
 
 
@@ -2123,7 +2179,7 @@ def my_grievances(user):
             grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()  # Admins see all grievances
         else:
             grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()  # Citizens see only their own
-            
+            print(f"Fetched {[g.to_dict() for g in grievances]} grievances for user {user.id}")
         return jsonify([grievance.to_dict() for grievance in grievances]), 200
     except Exception as e:
         current_app.logger.error(f"Error fetching grievances for user {user.id}: {str(e)}")
@@ -3797,13 +3853,21 @@ from ..models import User, Role
 from ..schemas import UserSchema
 from .. import db
 
-def add_update_user(data):
+def add_update_user(data, user_id=None): 
     schema = UserSchema()
+    data.pop("id", None)
+
+    # Extract password separately before schema load
+    raw_password = data.pop("password", None)
+
     user_data = schema.load(data, partial=True)
-    if 'id' in data and data['id']:
-        user = db.session.get(User, data['id'])
+    print(f"Received user data: {user_data}")
+
+    if user_id:  
+        user = db.session.get(User, user_id)
         if not user:
             raise ValueError("User not found")
+        print(f"Updating user {user_id} with data: {user_data}")
         for key, value in user_data.items():
             setattr(user, key, value)
     else:
@@ -3813,10 +3877,15 @@ def add_update_user(data):
             raise ValueError("Phone number already exists")
         user = User(**user_data)
         db.session.add(user)
-    if 'password' in data:
-        user.set_password(data['password'])
+
+    # ✅ Handle password securely
+    if raw_password:
+        user.set_password(raw_password)
+
     db.session.commit()
     return schema.dump(user)
+
+
 
 def delete_user(user_id):
     user = db.session.get(User, user_id)

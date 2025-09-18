@@ -160,7 +160,7 @@ static Future<Response> postMultipart(
   // Fetch all users
   static Future<List<User>> getUsers() async {
     try {
-      final response = await _dio.get('/users/');
+      final response = await _dio.get('/admins/users');
       final List<dynamic> data = response.data;
       return data.map((json) => User.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -170,15 +170,26 @@ static Future<Response> postMultipart(
   }
 
   // Add or update a user
-  static Future<Map<String, dynamic>> addUpdateUser(Map<String, String> userData) async {
+  static Future<User> addUpdateUser(Map<String, dynamic> data) async {
     try {
-      final response = await _dio.put('admins/users', data: userData);
-      return response.data as Map<String, dynamic>;
+      Response response;
+      final id = data['id']?.toString();
+      print('Sending data to API: $data');
+
+      if (id != null && id.isNotEmpty) {
+        response = await _dio.put('/admins/users/$id', data: data);
+      } else {
+        response = await _dio.post('/admins/users', data: data);
+      }
+      _logger.info('API response: ${response.data}');
+      return User.fromJson(response.data);
     } on DioException catch (e) {
-      _logger.severe('Failed to add/update user: ${e.message}');
-      throw Exception('Failed to add/update user: ${e.message}');
+      _logger.severe('DioException in addUpdateUser: ${e.response?.data} - ${e.message}');
+      throw Exception('Failed to add/update user: ${e.response?.data?['msg'] ?? e.message}');
     }
   }
+
+
 
   // Upload profile picture
   static Future<Map<String, dynamic>> uploadProfilePicture(PlatformFile file) async {
@@ -268,6 +279,8 @@ static Future<User> updateProfile({
   // Delete a user
   static Future<void> deleteUser(int userId) async {
     try {
+      final url = '${_dio.options.baseUrl}/admins/users/$userId';
+      _logger.info('🔗 DELETE URL: $url');
       await _dio.delete('/admins/users/$userId');
     } on DioException catch (e) {
       _logger.severe('Failed to delete user $userId: ${e.message}');

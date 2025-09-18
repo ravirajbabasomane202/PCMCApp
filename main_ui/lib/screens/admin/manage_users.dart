@@ -240,172 +240,178 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
 
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.editUser ?? 'Edit User',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue[800],
-                  ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                const SizedBox(height: 20),
-                SingleChildScrollView(
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextFormField(
-                          initialValue: name,
-                          decoration: InputDecoration(
-                            labelText: l10n.name,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          validator: validateRequired,
-                          onChanged: (value) => name = value,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.editUser ?? 'Edit User',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
                         ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          initialValue: email,
-                          decoration: InputDecoration(
-                            labelText: l10n.email,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          validator: validateEmail,
-                          onChanged: (value) => email = value,
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          initialValue: phoneNumber,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Phone number is required';
-                            }
-                            if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                              return 'Invalid phone number';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) => phoneNumber = value,
-                        ),
-                        const SizedBox(height: 12),
-                        DropdownButtonFormField<String>(
-                          initialValue: role,
-                          decoration: InputDecoration(
-                            labelText: l10n.role,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                              .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                              .toList(),
-                          onChanged: (value) => setState(() {
-                            role = value ?? 'CITIZEN';
-                          }),
-                          validator: validateRequired,
-                        ),
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          initialValue: departmentId,
-                          decoration: InputDecoration(
-                            labelText: 'Department ID (Optional)',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey[50],
-                          ),
-                          keyboardType: TextInputType.number,
-                          onChanged: (value) => departmentId = value.isEmpty ? null : value,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[700])),
-                    ),
-                    const SizedBox(width: 10),
-                    SizedBox(
-                      width: 100, // Fixed width to avoid layout issues
-                      child: CustomButton(
-                        text: l10n.update,
-                        onPressed: () async {
-                          if (formKey.currentState?.validate() ?? false) {
-                            try {
-                              await ref.read(usersProvider.notifier).updateUser(user.id, {
-                                'id': user.id,
-                                'name': name,
-                                'email': email,
-                                'phone_number': phoneNumber,
-                                'role': role,
-                                'department_id':
-                                    departmentId != null ? int.tryParse(departmentId!) : null,
-                              });
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.userUpdatedSuccess ??
-                                      'User updated successfully'),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
-                        },
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      SingleChildScrollView(
+                        child: Form(
+                          key: formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFormField(
+                                initialValue: name,
+                                decoration: InputDecoration(
+                                  labelText: l10n.name,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                ),
+                                validator: validateRequired,
+                                onChanged: (value) => name = value,
+                              ),
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                initialValue: email,
+                                decoration: InputDecoration(
+                                  labelText: l10n.email,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                ),
+                                validator: validateEmail,
+                                onChanged: (value) => email = value,
+                              ),
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                initialValue: phoneNumber,
+                                decoration: InputDecoration(
+                                  labelText: 'Phone Number',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Phone number is required';
+                                  }
+                                  if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
+                                    return 'Invalid phone number';
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) => phoneNumber = value,
+                              ),
+                              const SizedBox(height: 12),
+                              DropdownButtonFormField<String>(
+                                value: role,
+                                decoration: InputDecoration(
+                                  labelText: l10n.role,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                ),
+                                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
+                                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                                    .toList(),
+                                onChanged: (value) => setDialogState(() {
+                                  role = value ?? 'CITIZEN';
+                                }),
+                                validator: validateRequired,
+                              ),
+                              const SizedBox(height: 12),
+                              TextFormField(
+                                initialValue: departmentId,
+                                decoration: InputDecoration(
+                                  labelText: 'Department ID (Optional)',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  filled: true,
+                                  fillColor: Colors.grey[50],
+                                ),
+                                keyboardType: TextInputType.number,
+                                onChanged: (value) => departmentId = value.isEmpty ? null : value,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[700])),
+                          ),
+                          const SizedBox(width: 10),
+                          SizedBox(
+                            width: 100, // Fixed width to avoid layout issues
+                            child: CustomButton(
+                              text: l10n.update,
+                              onPressed: () async {
+                                if (formKey.currentState?.validate() ?? false) {
+                                  try {
+                                    await ref.read(usersProvider.notifier).updateUser(user.id, {
+                                      'id': user.id,
+                                      'name': name,
+                                      'email': email,
+                                      'phone_number': phoneNumber,
+                                      'role': role,
+                                      'department_id':
+                                          departmentId != null ? int.tryParse(departmentId!) : null,
+                                    });
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(l10n.userUpdatedSuccess ??
+                                            'User updated successfully'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

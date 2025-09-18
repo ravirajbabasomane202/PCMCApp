@@ -6,11 +6,13 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
     email = fields.Email(required=True)
+    phone_number = fields.Str(allow_none=True)
     password = fields.Str(load_only=True, validate=validate.Length(min=6), allow_none=True)
     role = EnumField(Role, by_value=True, required=True)
     department_id = fields.Int(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
+    voter_id = fields.String()
     # New fields from updated User model
     address = fields.Str(allow_none=True)
     profile_picture = fields.Str(allow_none=True)

@@ -4,13 +4,21 @@ from ..models import User, Role
 from ..schemas import UserSchema
 from .. import db
 
-def add_update_user(data):
+def add_update_user(data, user_id=None): 
     schema = UserSchema()
+    data.pop("id", None)
+
+    # Extract password separately before schema load
+    raw_password = data.pop("password", None)
+
     user_data = schema.load(data, partial=True)
-    if 'id' in data and data['id']:
-        user = db.session.get(User, data['id'])
+    print(f"Received user data: {user_data}")
+
+    if user_id:  
+        user = db.session.get(User, user_id)
         if not user:
             raise ValueError("User not found")
+        print(f"Updating user {user_id} with data: {user_data}")
         for key, value in user_data.items():
             setattr(user, key, value)
     else:
@@ -20,10 +28,15 @@ def add_update_user(data):
             raise ValueError("Phone number already exists")
         user = User(**user_data)
         db.session.add(user)
-    if 'password' in data:
-        user.set_password(data['password'])
+
+    # ✅ Handle password securely
+    if raw_password:
+        user.set_password(raw_password)
+
     db.session.commit()
     return schema.dump(user)
+
+
 
 def delete_user(user_id):
     user = db.session.get(User, user_id)

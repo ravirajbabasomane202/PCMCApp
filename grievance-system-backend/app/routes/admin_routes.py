@@ -19,6 +19,8 @@ from ..services.user_service import add_update_user
 from flask_cors import cross_origin
 from flask_jwt_extended import jwt_required
 import logging
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -435,18 +437,59 @@ def list_users(user):
 def update_user(user, id):
     try:
         data = request.json
+        print(f"Received data: {data}")
         if not data:
             return jsonify({"msg": "No data provided"}), 400
         
-        result = add_update_user({**data, "id": id})
-        return jsonify(result), 200
+        result = add_update_user(data, user_id=id)
 
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({"msg": str(e)}), 400
+    except IntegrityError as e:
+        return jsonify({"msg": "Database integrity error, possible duplicate data.", "error": str(e)}), 409
+    except SQLAlchemyError as e:
+        print(f"Database error: {str(e)}")
+        
+        return jsonify({"msg": "Database error occurred", "error": str(e)}), 500
+    except AttributeError as e:
+        print(f"Attribute error: {str(e)}")
+       
+        return jsonify({"msg": "Invalid user attribute", "error": str(e)}), 400
     except Exception as e:
-        # fallback if str(e) is empty/null
+        print(f"Unexpected error: {str(e)}")
+        
         return jsonify({
             "msg": "Failed to update user",
             "error": str(e) or "Unknown error"
         }), 500
+
+
+
+@admin_bp.route('/users', methods=['POST'])
+@admin_required
+def create_user(user):
+    try:
+        data = request.json
+        print(f"Received data for new user: {data}")
+        if not data:
+            return jsonify({"msg": "No data provided"}), 400
+
+        result = add_update_user(data)  # no user_id → create
+
+        return jsonify(result), 201
+    except ValueError as e:
+        return jsonify({"msg": str(e)}), 400
+    except IntegrityError as e:
+        return jsonify({"msg": "Database integrity error, possible duplicate data.", "error": str(e)}), 409
+    except SQLAlchemyError as e:
+        print(f"Database error: {str(e)}")
+        return jsonify({"msg": "Database error occurred", "error": str(e)}), 500
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        return jsonify({"msg": "Failed to create user", "error": str(e)}), 500
+
+
 
 
 

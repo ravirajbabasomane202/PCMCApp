@@ -21,6 +21,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   String _name = '';
   String _email = '';
   String _password = '';
+  String _address = '';  // New: for address
+  String _phone = '';    // New: for mobile number
+  String _voterId = '';  // New: for voter ID
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
@@ -31,7 +34,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         if (_isLogin) {
           await ref.read(authProvider.notifier).loginWithEmail(_email, _password);
         } else {
-          await ref.read(authProvider.notifier).register(_name, _email, _password);
+          await ref.read(authProvider.notifier).register(
+            _name, 
+            _email, 
+            _password,
+            address: _address,    // Pass new fields
+            phoneNumber: _phone,
+            voterId: _voterId,
+          );
         }
         
         final user = ref.read(authProvider);
@@ -52,6 +62,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Mobile number is required';
+    }
+    if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value)) {
+      return 'Enter a valid mobile number';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -67,23 +87,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             children: [
               const SizedBox(height: 40),
               Center(
-  child: Text(
-    _isLogin ? l10n.login : l10n.register,
-    textAlign: TextAlign.center,
-    style: theme.textTheme.headlineLarge?.copyWith(
-      fontSize: 32, // adjust as needed
-      fontWeight: FontWeight.bold,
-      color: const Color(0xFF0076FD),
-    ),
-  ),
-),
+                child: Text(
+                  _isLogin ? l10n.login : l10n.register,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.headlineLarge?.copyWith(
+                    fontSize: 32, // adjust as needed
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF0076FD),
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 8),
               Text(
                 _isLogin 
                   ? 'Welcome back! Please sign in to continue'
                   : 'Create an account to get started',
-                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha:0.6)),
+                style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
               ),
               const SizedBox(height: 40),
               
@@ -101,6 +121,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             ),
                             validator: validateRequired,
                             onSaved: (value) => _name = value!,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(  // New: Address field
+                            decoration: const InputDecoration(
+                              labelText: 'Address',
+                              prefixIcon: Icon(Icons.home_outlined),
+                            ),
+                            validator: validateRequired,
+                            onSaved: (value) => _address = value!,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(  // New: Mobile Number field
+                            decoration: const InputDecoration(
+                              labelText: 'Mobile Number',
+                              prefixIcon: Icon(Icons.phone_outlined),
+                            ),
+                            keyboardType: TextInputType.phone,
+                            validator: validatePhone,
+                            onSaved: (value) => _phone = value!,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(  // New: Voter ID field
+                            decoration: const InputDecoration(
+                              labelText: 'Voter ID',
+                              prefixIcon: Icon(Icons.badge_outlined),
+                            ),
+                            validator: validateRequired,
+                            onSaved: (value) => _voterId = value!,
                           ),
                           const SizedBox(height: 16),
                         ],
@@ -164,6 +212,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ],
                     ),
                     
+                    // Commented out the OR divider line
+                    /*
                     const SizedBox(height: 32),
                     Row(
                       children: [
@@ -172,45 +222,43 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Text(
                             'OR',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                            ),
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.5)),
                           ),
                         ),
                         Expanded(child: Divider(color: theme.dividerTheme.color)),
                       ],
                     ),
                     const SizedBox(height: 24),
+                    */
                     
+                    // Commented out the Google login button
+                    /*
                     SizedBox(
-  width: double.infinity,
-  child: OutlinedButton.icon(
-    icon: Image.asset('assets/images/google_logo.png', height: 24, width: 24),
-    label: Text(l10n.googleLogin),
-    onPressed: _isLoading ? null : () async {
-      setState(() => _isLoading = true);
-      try {
-        await ref.read(authProvider.notifier).loginWithGoogle();
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.googleLoginFailed}: $e')),
-        );
-      } finally {
-        setState(() => _isLoading = false);
-      }
-    },
-    style: OutlinedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      side: BorderSide(color: theme.dividerTheme.color!),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    ),
-  ),
-)
-
-
-
-
-
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        icon: Image.asset('assets/images/google_logo.png', height: 24, width: 24),
+                        label: Text(l10n.googleLogin),
+                        onPressed: _isLoading ? null : () async {
+                          setState(() => _isLoading = true);
+                          try {
+                            await ref.read(authProvider.notifier).loginWithGoogle();
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('${l10n.googleLoginFailed}: $e')),
+                            );
+                          } finally {
+                            setState(() => _isLoading = false);
+                          }
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          side: BorderSide(color: theme.dividerTheme.color!),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                      ),
+                    )
+                    */
                   ],
                 ),
               ),

@@ -81,25 +81,25 @@ from datetime import datetime, timezone
 def create_test_users():
     users = [
         {
-            "name": "Test Field Staff2",
-            "email": "fieldstaff@test.com2",
-            "phone_number": "+1234567898",
+            "name": "Gest Staff2",
+            "email": "Gest@test.com2",
+            "phone_number": "+2234567898",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
         },
         {
-            "name": "Test Field Staff3",
-            "email": "fieldstaff@test.com3",
-            "phone_number": "+1234567894",
+            "name": "Gest Staff3",
+            "email": "Gest@test.com3",
+            "phone_number": "+3234567894",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1
         },
         {
-            "name": "Test Field Staff4",
-            "email": "fieldstaff@test.com4",
-            "phone_number": "+1234567895",
+            "name": "Gest Staff4",
+            "email": "Gest@test.com4",
+            "phone_number": "+4234567895",
             "password": "password123",
             "role": Role.FIELD_STAFF,
             "department_id": 1

@@ -120,7 +120,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       initialValue: _targetRole,
                       items: [
                         {'label': 'CITIZEN', 'value': 'citizen'},
-                        {'label': 'MEMBER_HEAD', 'value': 'member_head'},
+                        {'label': 'SUPERVISOR', 'value': 'member_head'},
                         {'label': 'FIELD_STAFF', 'value': 'field_staff'},
                         {'label': 'ADMIN', 'value': 'admin'},
                       ].map((role) => DropdownMenuItem(

@@ -81,17 +81,28 @@ class AuthService {
   }
 
   /// Registers a new user with email and password
-  static Future<void> register(String name, String email, String password) async {
+  static Future<void> register(
+    String name,
+    String email,
+    String password, {
+    String? address,
+    String? phoneNumber,
+    String? voterId,
+  }) async {
     try {
+      final Map<String, dynamic> body = {
+        'name': name,
+        'email': email,
+        'password': password,
+        'role': 'citizen',
+        if (address != null) 'address': address,
+        if (phoneNumber != null) 'phone_number': phoneNumber,
+        if (voterId != null) 'voter_id': voterId,
+      };
       final response = await http.post(
         Uri.parse('$_baseUrl/auth/register'),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'name': name,
-          'email': email,
-          'password': password,
-          'role': 'CITIZEN',
-        }),
+        body: json.encode(body),
       );
       if (response.statusCode == 200) {
         await passwordLogin(email, password); // Auto-login after registration

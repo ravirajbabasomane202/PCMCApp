@@ -45,7 +45,7 @@ class UserService {
     try {
       
       final response = await ApiService.post(
-        '/admin/users',
+        '/admins/users',
         data,
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ class UserService {
     try {
       
       final response = await ApiService.put(
-        '/admin/users/$id',
+        '/admins/users/$id',
         data,
         headers: {
           'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ class UserService {
     try {
       
       final response = await ApiService.delete(
-        '/admin/users/$id',
+        '/admins/users/$id',
         headers: {
           'Accept': 'application/json',
         },
