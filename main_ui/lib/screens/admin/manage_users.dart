@@ -148,9 +148,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                             filled: true,
                             fillColor: Colors.grey[50],
                           ),
-                          items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                              .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                              .toList(),
+                          items: const [
+                            DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
+                            DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('SUPERVISOR')),
+                            DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
+                            DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                          ],
                           onChanged: (value) => role = value ?? 'CITIZEN',
                           validator: validateRequired,
                         ),
@@ -330,9 +333,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                   filled: true,
                                   fillColor: Colors.grey[50],
                                 ),
-                                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                                    .toList(),
+                                items: const [
+                                  DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
+                                  DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('Supervisor')),
+                                  DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
+                                  DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                                ],
                                 onChanged: (value) => setDialogState(() {
                                   role = value ?? 'CITIZEN';
                                 }),
@@ -623,7 +629,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  user.role ?? '',
+                  _getDisplayRole(user.role),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -662,8 +668,19 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       case 'FIELD_STAFF':
         return Colors.green;
       case 'CITIZEN':
+      
       default:
         return Colors.blue;
+    }
+  }
+
+  String _getDisplayRole(String? role) {
+    if (role == null) return '';
+    switch (role.toLowerCase()) {
+      case 'member_head':
+        return 'SUPERVISOR';
+      default:
+        return role.toUpperCase();
     }
   }
 }

@@ -80,11 +80,11 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
         elevation: 0,
         backgroundColor: Colors.blue.shade600,
       ),
-      floatingActionButton: FloatingActionButton(
+      /* floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade600,
         onPressed: () => _showAreaDialog(),
         child: const Icon(Icons.add),
-      ),
+      ), */
       body: FutureBuilder<List<MasterArea>>(
         future: _areasFuture,
         builder: (context, snapshot) {
@@ -135,16 +135,16 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
+                      /* IconButton(
                         icon: Icon(Icons.edit, color: Colors.blue.shade800),
                         onPressed: () => _showAreaDialog(area: area),
                         tooltip: 'Edit Area',
-                      ),
-                      IconButton(
+                      ), */
+                      /* IconButton(
                         icon: Icon(Icons.delete, color: Colors.red.shade700),
                         onPressed: () => _confirmDeleteArea(area),
                         tooltip: 'Delete Area',
-                      ),
+                      ), */
                     ],
                   ),
                   onTap: () => _showAreaDialog(area: area),

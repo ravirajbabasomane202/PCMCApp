@@ -109,7 +109,7 @@ class CombinedGrievanceCard extends StatelessWidget {
             children: List.generate(4, (index) {
               final stage = {
                 0: {'status': 'new', 'label': 'Submitted', 'icon': Icons.send},
-                1: {'status': 'in_progress', 'label': 'Reviewed by Member Head', 'icon': Icons.visibility},
+                1: {'status': 'in_progress', 'label': 'Reviewed by Supervisor ', 'icon': Icons.visibility},
                 2: {'status': 'in_progress', 'label': 'Assigned to Field Staff', 'icon': Icons.assignment_ind},
                 3: {'status': 'resolved', 'label': 'Resolved', 'icon': Icons.check_circle},
               }[index]!;
@@ -201,7 +201,7 @@ class CombinedGrievanceCard extends StatelessWidget {
       case 0:
         return 'Submitted on ${_formatDate(grievance.createdAt)}';
       case 1:
-        return 'Reviewed by Member Head${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
+        return 'Reviewed by Supervisor ${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
       case 2:
         return 'Assigned to${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " Field Staff"}';
       case 3:
