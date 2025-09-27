@@ -1,62 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class FaqsScreen extends StatelessWidget {
   const FaqsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final faqs = [
       {
-        "q": "How to submit a grievance?",
-        "a": "Go to 'Submit Grievance' from the home screen and fill in details.",
+        "q": l10n.faq1_q,
+        "a": l10n.faq1_a,
         "icon": Icons.report_problem_outlined
       },
       {
-        "q": "How can I track my complaint?",
-        "a": "Navigate to 'Track Grievance' and enter your grievance ID.",
+        "q": l10n.faq2_q,
+        "a": l10n.faq2_a,
         "icon": Icons.track_changes_outlined
       },
       {
-        "q": "Can I upload documents?",
-        "a": "Yes, you can upload photos or PDFs as proof while submitting grievances.",
+        "q": l10n.faq3_q,
+        "a": l10n.faq3_a,
         "icon": Icons.attach_file_outlined
       },
       {
-        "q": "How long does it take to resolve?",
-        "a": "It usually takes 7 working days, depending on priority.",
+        "q": l10n.faq4_q,
+        "a": l10n.faq4_a,
         "icon": Icons.schedule_outlined
       },
       {
-        "q": "What types of grievances can I report?",
-        "a": "You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.",
+        "q": l10n.faq5_q,
+        "a": l10n.faq5_a,
         "icon": Icons.list_alt_outlined
       },
       {
-        "q": "Is there a way to edit my submitted grievance?",
-        "a": "You can edit your grievance within 24 hours of submission from the 'My Grievances' section.",
+        "q": l10n.faq6_q,
+        "a": l10n.faq6_a,
         "icon": Icons.edit_outlined
       },
       {
-        "q": "How will I be notified about updates?",
-        "a": "You'll receive push notifications and email updates when there's progress on your grievance.",
+        "q": l10n.faq7_q,
+        "a": l10n.faq7_a,
         "icon": Icons.notifications_outlined
       },
     ];
 
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "Frequently Asked Questions",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.faqs),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -89,8 +85,8 @@ class FaqsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Need Help?",
+                        Text(
+                          l10n.needHelp,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -98,7 +94,7 @@ class FaqsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Find answers to common questions about using our app",
+                          l10n.faqsHeaderSubtitle,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,
@@ -111,8 +107,8 @@ class FaqsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Common Questions",
+            Text(
+              l10n.faqsCommonQuestions,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -202,8 +198,8 @@ class FaqsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Still need help?",
+                      Text(
+                        l10n.faqsStillNeedHelp,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -211,7 +207,7 @@ class FaqsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Can't find the answer you're looking for? Contact our support team for assistance.",
+                        l10n.faqsContactSupportMessage,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,
@@ -221,9 +217,7 @@ class FaqsScreen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Navigate to contact support
-                          },
+                          onPressed: () => Navigator.pushNamed(context, '/contact-support'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -233,7 +227,7 @@ class FaqsScreen extends StatelessWidget {
                             ),
                           ),
                           icon: const Icon(Icons.support_agent, size: 20),
-                          label: const Text("Contact Support"),
+                          label: Text(l10n.contactSupport),
                         ),
                       ),
                     ],

@@ -37,16 +37,15 @@ class NotificationsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
         title: const Text(
-          "Notifications",
+          "Notifications", // This should be localized, e.g., localizations.notifications
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        backgroundColor: const Color(0xFFF8FBFF),
+        elevation: 0,
+        foregroundColor: Colors.blue,
       ),
       body: notifications.isEmpty
           ? Center(

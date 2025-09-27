@@ -47,7 +47,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.addAnnouncement ,
+                      AppLocalizations.of(context)!.addAnnouncement,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
@@ -59,18 +59,18 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.message ,
+                        labelText: AppLocalizations.of(context)!.message,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error : null,
                       maxLines: 3,
                     ),
                     const SizedBox(height: 16),
@@ -82,7 +82,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       )).toList(),
                       onChanged: (value) => setState(() => _type = value!),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.type ,
+                        labelText: AppLocalizations.of(context)!.type,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -99,7 +99,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       child: ListTile(
                         title: Text(
                           _expiresAt == null
-                              ? AppLocalizations.of(context)!.selectExpiration 
+                              ? AppLocalizations.of(context)!.selectExpiration
                               : DateFormat('yyyy-MM-dd').format(_expiresAt!),
                           style: const TextStyle(fontSize: 14),
                         ),
@@ -129,7 +129,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       )).toList(),
                       onChanged: (value) => setState(() => _targetRole = value),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.targetRole ,
+                        labelText: AppLocalizations.of(context)!.targetRole,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -142,7 +142,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text(AppLocalizations.of(context)!.cancel ),
+                          child: Text(AppLocalizations.of(context)!.cancel),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -167,7 +167,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                 _targetRole = null;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!.announcementAdded ),
+                                    content: Text(AppLocalizations.of(context)!.announcementAdded),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -186,7 +186,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          child: Text(AppLocalizations.of(context)!.submit ),
+                          child: Text(AppLocalizations.of(context)!.submit),
                         ),
                       ],
                     ),
@@ -210,10 +210,10 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(localizations.announcements ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue,
-        elevation: 1,
+        title: Text(localizations.announcements),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        elevation: Theme.of(context).appBarTheme.elevation,
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
@@ -233,7 +233,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                     Icon(Icons.announcement, size: 64, color: Colors.grey.shade400),
                     const SizedBox(height: 16),
                     Text(
-                      localizations.noAnnouncements ,
+                      localizations.noAnnouncements,
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
                     ),
                   ],

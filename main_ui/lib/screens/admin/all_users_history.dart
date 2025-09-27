@@ -105,23 +105,10 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(
-          l10n.allUsersHistory ?? 'All Users History',
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        shadowColor: Colors.black12,
-        foregroundColor: theme.primaryColor,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16),
-          ),
-        ),
+        title: Text(l10n.allUsersHistory),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: Container(
         color: const Color(0xFFf8fbff),

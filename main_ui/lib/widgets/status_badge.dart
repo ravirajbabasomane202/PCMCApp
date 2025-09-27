@@ -1,5 +1,6 @@
 // main_ui/lib/widgets/status_badge.dart
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class StatusBadge extends StatelessWidget {
   final String status;
@@ -16,7 +17,8 @@ class StatusBadge extends StatelessWidget {
       case 'rejected':
         return Colors.red;
       case 'on_hold':
-        return Colors.yellow;
+        // return Colors.yellow;
+        return const Color(0xFF6B21A8);
       case 'closed':
         return Colors.grey;
       default:
@@ -24,22 +26,23 @@ class StatusBadge extends StatelessWidget {
     }
   }
 
-  String get displayText {
+  String displayText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case 'new':
-        return 'New';
+        return l10n.statusNew;
       case 'in_progress':
-        return 'In Progress';
+        return l10n.statusInProgress;
       case 'resolved':
-        return 'Resolved';
+        return l10n.statusResolved;
       case 'rejected':
-        return 'Rejected';
+        return l10n.statusRejected;
       case 'on_hold':
-        return 'On Hold';
+        return l10n.statusOnHold;
       case 'closed':
-        return 'Closed';
+        return l10n.statusClosed;
       default:
-        return 'Unknown';
+        return l10n.statusUnknown;
     }
   }
 
@@ -81,7 +84,7 @@ class StatusBadge extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            displayText,
+            displayText(context),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,

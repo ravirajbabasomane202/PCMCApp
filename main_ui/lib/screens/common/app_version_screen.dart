@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class AppVersionScreen extends StatefulWidget {
   const AppVersionScreen({super.key});
@@ -9,7 +10,7 @@ class AppVersionScreen extends StatefulWidget {
 }
 
 class _AppVersionScreenState extends State<AppVersionScreen> {
-  String version = "Loading...";
+  String version = "";
   String appName = "";
   String packageName = "";
 
@@ -21,6 +22,10 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
 
   Future<void> _loadVersion() async {
     final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    if (version.isEmpty) {
+      version = AppLocalizations.of(context)?.loadingData ?? "Loading...";
+    }
     setState(() {
       version = "${info.version} (Build ${info.buildNumber})";
       appName = info.appName;
@@ -30,20 +35,15 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "App Version",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.appVersion),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -74,7 +74,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
             const SizedBox(height: 24),
             // App Name
             Text(
-              appName.isNotEmpty ? appName : "PCMC App",
+              appName.isNotEmpty ? appName : l10n.appNameFallback,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
             const SizedBox(height: 8),
             // Package Name
             Text(
-              packageName.isNotEmpty ? packageName : "com.example.pcmcapp",
+              packageName.isNotEmpty ? packageName : l10n.packageNameFallback,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -119,8 +119,8 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                         color: Colors.blue,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        "Current Version",
+                      Text(
+                        l10n.currentVersion,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -129,7 +129,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        version,
+                        version.isEmpty ? l10n.loadingData : version,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -145,13 +145,15 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildInfoItem(
+                            l10n,
                             Icons.update,
-                            "Last Updated",
+                            l10n.lastUpdated,
                             "October 2023",
                           ),
                           _buildInfoItem(
+                            l10n,
                             Icons.system_security_update,
-                            "Minimum OS",
+                            l10n.minimumOS,
                             "Android 8.0+",
                           ),
                         ],
@@ -178,8 +180,8 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Check for Updates",
+                child: Text(
+                  l10n.checkForUpdates,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -198,25 +200,25 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Version Information",
+                  Text(
+                    l10n.versionInformation,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildVersionInfoItem("Status", "Up to date", Colors.green),
+                  _buildVersionInfoItem(l10n.status, l10n.upToDate, Colors.green),
                   const SizedBox(height: 8),
-                  _buildVersionInfoItem("Release Type", "Stable", Colors.blue),
+                  _buildVersionInfoItem(l10n.releaseType, "Stable", Colors.blue),
                   const SizedBox(height: 8),
-                  _buildVersionInfoItem("Size", "28.5 MB", Colors.grey),
+                  _buildVersionInfoItem(l10n.size, "28.5 MB", Colors.grey),
                 ],
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              "Thank you for using our app!",
+              l10n.thankYouMessage,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -229,7 +231,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String title, String value) {
+  Widget _buildInfoItem(AppLocalizations l10n, IconData icon, String title, String value) {
     return Column(
       children: [
         Icon(icon, size: 20, color: Colors.blue),

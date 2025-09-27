@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: const Text("Privacy Policy",
-    style: TextStyle(color: Colors.black), ),
-        backgroundColor: const Color(0xFFECF2FE), // Matching card theme
-        elevation: 0,
-  iconTheme: const IconThemeData(color: Colors.black), 
+        title: Text(l10n.privacyPolicy),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -26,62 +28,61 @@ class PrivacyPolicyScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  "Our Commitment",
-                  style: TextStyle(
+                  l10n.privacyPolicyCommitmentTitle,
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "We value your privacy and are committed to protecting your personal data. "
-                  "This policy explains how we handle your information securely.",
-                  style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
+                  l10n.privacyPolicyCommitmentBody,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "1. Data Collection",
-                  style: TextStyle(
+                  l10n.privacyPolicyDataCollectionTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "We collect your name, email, and grievance details only to process complaints.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicyDataCollectionBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "2. Data Usage",
-                  style: TextStyle(
+                  l10n.privacyPolicyDataUsageTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "Your data is used solely for grievance redressal and system improvement.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicyDataUsageBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "3. Security",
-                  style: TextStyle(
+                  l10n.privacyPolicySecurityTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "We implement encryption and strict access policies to safeguard your information.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicySecurityBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
               ],
             ),

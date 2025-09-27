@@ -579,4 +579,354 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editGrievance => 'Edit Grievance';
+
+  @override
+  String get statusNew => 'New';
+
+  @override
+  String get statusInProgress => 'In Progress';
+
+  @override
+  String get statusResolved => 'Resolved';
+
+  @override
+  String get statusRejected => 'Rejected';
+
+  @override
+  String get statusOnHold => 'On Hold';
+
+  @override
+  String get statusClosed => 'Closed';
+
+  @override
+  String get statusUnknown => 'Unknown';
+
+  @override
+  String get submitGrievanceSubtitle => 'Report issues in just a few taps';
+
+  @override
+  String get trackGrievancesSubtitle => 'Real-time updates on your complaints';
+
+  @override
+  String get quickResolutionsTitle => 'Quick Resolutions';
+
+  @override
+  String get quickResolutionsSubtitle => 'Get your issues resolved faster';
+
+  @override
+  String get track => 'Track';
+
+  @override
+  String get stageReviewedBySupervisor => 'Reviewed by Supervisor';
+
+  @override
+  String get stageAssignedToFieldStaff => 'Assigned to Field Staff';
+
+  @override
+  String get stageResolved => 'Resolved';
+
+  @override
+  String get submittedOn => 'Submitted on';
+
+  @override
+  String get userLabel => 'User';
+
+  @override
+  String get grievanceProgressTitle => 'Grievance Progress';
+
+  @override
+  String get stageSubmitted => 'Submitted';
+
+  @override
+  String get assignedToLabel => 'Assigned to';
+
+  @override
+  String get fieldStaffLabel => 'Field Staff';
+
+  @override
+  String get resolvedOn => 'Resolved on';
+
+  @override
+  String timeAgoDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoHours(num hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoMinutes(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeAgoJustNow => 'just now';
+
+  @override
+  String get notApplicable => 'N/A';
+
+  @override
+  String couldNotLaunchUrl(Object url) {
+    return 'Could not launch $url';
+  }
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get lastUpdated => 'Last Updated';
+
+  @override
+  String get attachments => 'Attachments';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get unknownRole => 'Unknown Role';
+
+  @override
+  String get profilePictureUpdateMessage =>
+      'Profile picture selected. Save to upload.';
+
+  @override
+  String get lastLogin => 'Last Login';
+
+  @override
+  String get accountStatus => 'Account Status';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusInactive => 'Inactive';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get loadingData => 'Loading...';
+
+  @override
+  String get appNameFallback => 'PCMC App';
+
+  @override
+  String get packageNameFallback => 'com.example.pcmcapp';
+
+  @override
+  String get currentVersion => 'Current Version';
+
+  @override
+  String get minimumOS => 'Minimum OS';
+
+  @override
+  String get checkForUpdates => 'Check for Updates';
+
+  @override
+  String get versionInformation => 'Version Information';
+
+  @override
+  String get upToDate => 'Up to date';
+
+  @override
+  String get releaseType => 'Release Type';
+
+  @override
+  String get size => 'Size';
+
+  @override
+  String get thankYouMessage => 'Thank you for using our app!';
+
+  @override
+  String get needHelp => 'Need Help?';
+
+  @override
+  String get supportTeamMessage =>
+      'Our support team is here to help you with any questions or issues you might have';
+
+  @override
+  String get contactOptions => 'Contact Options';
+
+  @override
+  String get emailSupport => 'Email Support';
+
+  @override
+  String get emailSupportResponseTime => 'Get responses within 24 hours';
+
+  @override
+  String get callSupport => 'Call Support';
+
+  @override
+  String get callSupportAvailability => 'Available 9AM - 6PM (Mon-Sat)';
+
+  @override
+  String get faqsHelpCenter => 'FAQs & Help Center';
+
+  @override
+  String get faqsHelpCenterSubtitle => 'Find answers to common questions';
+
+  @override
+  String get weAreHereToHelp => 'We\'re here to help you!';
+
+  @override
+  String get couldNotLaunchPhone => 'Could not launch phone';
+
+  @override
+  String get privacyPolicyCommitmentTitle => 'Our Commitment';
+
+  @override
+  String get privacyPolicyCommitmentBody =>
+      'We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information securely.';
+
+  @override
+  String get privacyPolicyDataCollectionTitle => '1. Data Collection';
+
+  @override
+  String get privacyPolicyDataCollectionBody =>
+      'We collect your name, email, and grievance details only to process complaints.';
+
+  @override
+  String get privacyPolicyDataUsageTitle => '2. Data Usage';
+
+  @override
+  String get privacyPolicyDataUsageBody =>
+      'Your data is used solely for grievance redressal and system improvement.';
+
+  @override
+  String get privacyPolicySecurityTitle => '3. Security';
+
+  @override
+  String get privacyPolicySecurityBody =>
+      'We implement encryption and strict access policies to safeguard your information.';
+
+  @override
+  String get faqsHeaderSubtitle =>
+      'Find answers to common questions about using our app';
+
+  @override
+  String get faqsCommonQuestions => 'Common Questions';
+
+  @override
+  String get faqsStillNeedHelp => 'Still need help?';
+
+  @override
+  String get faqsContactSupportMessage =>
+      'Can\'t find the answer you\'re looking for? Contact our support team for assistance.';
+
+  @override
+  String get faq1_q => 'How to submit a grievance?';
+
+  @override
+  String get faq1_a =>
+      'Go to \'Submit Grievance\' from the home screen and fill in details.';
+
+  @override
+  String get faq2_q => 'How can I track my complaint?';
+
+  @override
+  String get faq2_a =>
+      'Navigate to \'Track Grievance\' and enter your grievance ID.';
+
+  @override
+  String get faq3_q => 'Can I upload documents?';
+
+  @override
+  String get faq3_a =>
+      'Yes, you can upload photos or PDFs as proof while submitting grievances.';
+
+  @override
+  String get faq4_q => 'How long does it take to resolve?';
+
+  @override
+  String get faq4_a =>
+      'It usually takes 7 working days, depending on priority.';
+
+  @override
+  String get faq5_q => 'What types of grievances can I report?';
+
+  @override
+  String get faq5_a =>
+      'You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.';
+
+  @override
+  String get faq6_q => 'Is there a way to edit my submitted grievance?';
+
+  @override
+  String get faq6_a =>
+      'You can edit your grievance within 24 hours of submission from the \'My Grievances\' section.';
+
+  @override
+  String get faq7_q => 'How will I be notified about updates?';
+
+  @override
+  String get faq7_a =>
+      'You\'ll receive push notifications and email updates when there\'s progress on your grievance.';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get phoneNumberRequired => 'Phone number is required';
+
+  @override
+  String get invalidPhoneNumber => 'Invalid phone number';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get departmentIdOptional => 'Department ID (Optional)';
+
+  @override
+  String get roleCitizen => 'CITIZEN';
+
+  @override
+  String get roleSupervisor => 'SUPERVISOR';
+
+  @override
+  String get roleFieldStaff => 'FIELD_STAFF';
+
+  @override
+  String get roleAdmin => 'ADMIN';
+
+  @override
+  String get noMatchingUsers => 'No users found matching your search';
+
+  @override
+  String get searchByNameOrEmail => 'Search by name or email...';
+
+  @override
+  String get welcomeBack => 'Welcome back! Please sign in to continue';
+
+  @override
+  String get createAccountPrompt => 'Create an account to get started';
+
+  @override
+  String get voterId => 'Voter ID';
+
+  @override
+  String get invalidMobileNumber => 'Enter a valid mobile number';
 }

@@ -2,16 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/status_badge.dart';
+import 'package:main_ui/l10n/app_localizations.dart'; // Import AppLocalizations
 
 class CombinedGrievanceCard extends StatelessWidget {
   final Grievance grievance;
 
+  // Define stage keys for localization
+  static const _stageKeys = [
+    {'status': 'new', 'key': 'stageSubmitted', 'icon': Icons.send},
+    {'status': 'in_progress', 'key': 'stageReviewedBySupervisor', 'icon': Icons.visibility},
+    {'status': 'in_progress', 'key': 'stageAssignedToFieldStaff', 'icon': Icons.assignment_ind},
+    {'status': 'resolved', 'key': 'stageResolved', 'icon': Icons.check_circle},
+  ];
+
   const CombinedGrievanceCard({super.key, required this.grievance});
+
+  // Helper to get localized stage labels
+  String _getLocalizedStageLabel(String key, AppLocalizations l10n) {
+    switch (key) {
+      case 'stageSubmitted':
+        return l10n.stageSubmitted;
+      case 'stageReviewedBySupervisor':
+        return l10n.stageReviewedBySupervisor;
+      case 'stageAssignedToFieldStaff':
+        return l10n.stageAssignedToFieldStaff;
+      case 'stageResolved':
+        return l10n.stageResolved;
+      default:
+        return key; // Fallback
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final status = grievance.status?.toLowerCase() ?? 'new';
+    final l10n = AppLocalizations.of(context)!; // Get l10n instance
 
     return Card(
   elevation: 2,
@@ -65,7 +91,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _formatDate(grievance.createdAt!),
+                          _formatDate(grievance.createdAt!, l10n), // Pass l10n
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(128),
                           ),
@@ -79,8 +105,8 @@ class CombinedGrievanceCard extends StatelessWidget {
                 children: [
                   StatusBadge(status: status),
                   const SizedBox(width: 8),
-                  Text(
-                    grievance.priority ?? 'N/A',
+                  Text( // Priority is data, but 'N/A' is a static string
+                    grievance.priority ?? l10n.notApplicable,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withAlpha(179),
                     ),
@@ -97,8 +123,8 @@ class CombinedGrievanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Grievance Progress Section
-          Text(
-            'Grievance Progress',
+          Text( // Localize "Grievance Progress"
+            l10n.grievanceProgressTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.primary,
@@ -106,15 +132,10 @@ class CombinedGrievanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Column(
-            children: List.generate(4, (index) {
-              final stage = {
-                0: {'status': 'new', 'label': 'Submitted', 'icon': Icons.send},
-                1: {'status': 'in_progress', 'label': 'Reviewed by Supervisor ', 'icon': Icons.visibility},
-                2: {'status': 'in_progress', 'label': 'Assigned to Field Staff', 'icon': Icons.assignment_ind},
-                3: {'status': 'resolved', 'label': 'Resolved', 'icon': Icons.check_circle},
-              }[index]!;
+            children: List.generate(_stageKeys.length, (index) {
+              final stageData = _stageKeys[index];
+              final String stageLabel = _getLocalizedStageLabel(stageData['key'] as String, l10n);
               final isActive = index <= _getCurrentStageIndex(status, grievance);
-              final isCompleted = index < _getCurrentStageIndex(status, grievance);
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +152,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                               : theme.colorScheme.onSurface.withAlpha(51),
                         ),
                         child: Icon(
-                          stage['icon'] as IconData,
+                              stageData['icon'] as IconData,
                           size: 20,
                           color: isActive
                               ? theme.colorScheme.onPrimary
@@ -139,7 +160,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                       ),
                       if (index < 3)
-                        Container(
+                          Container( // Corrected to use _stageKeys.length - 1 for maintainability
                           width: 2,
                           height: 40,
                           color: isActive
@@ -153,8 +174,8 @@ class CombinedGrievanceCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          stage['label'] as String,
+                          Text( // Use localized label
+                            stageLabel,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                             color: isActive
@@ -164,7 +185,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         if (isActive)
                           Text(
-                            _getStageDetails(index, status, grievance),
+                              _getStageDetails(index, status, grievance, l10n), // Pass l10n
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withAlpha(179),
                             ),
@@ -196,35 +217,35 @@ class CombinedGrievanceCard extends StatelessWidget {
     return 0; // Submitted
   }
 
-  String _getStageDetails(int index, String status, Grievance grievance) {
+  String _getStageDetails(int index, String status, Grievance grievance, AppLocalizations l10n) {
     switch (index) {
       case 0:
-        return 'Submitted on ${_formatDate(grievance.createdAt)}';
+        return '${l10n.submittedOn} ${_formatDate(grievance.createdAt, l10n)}';
       case 1:
-        return 'Reviewed by Supervisor ${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
+        return '${l10n.stageReviewedBySupervisor}${grievance.assignedBy != null ? " (${l10n.userLabel} ${grievance.assignedBy})" : ""}';
       case 2:
-        return 'Assigned to${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " Field Staff"}';
+        return '${l10n.assignedToLabel}${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " ${l10n.fieldStaffLabel}"}';
       case 3:
-        return 'Resolved on ${_formatDate(grievance.resolvedAt)}';
+        return '${l10n.resolvedOn} ${_formatDate(grievance.resolvedAt, l10n)}';
       default:
         return '';
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
+  String _formatDate(DateTime? date, AppLocalizations l10n) {
+    if (date == null) return l10n.notApplicable;
     final now = DateTime.now();
     final difference = now.difference(date);
     if (difference.inDays > 1) {
-      return 'Submitted ${difference.inDays} days ago';
+      return l10n.timeAgoDays(difference.inDays);
     } else if (difference.inDays == 1) {
-      return 'Submitted 1 day ago';
+      return l10n.timeAgoDays(1); // Use plural for singular case
     } else if (difference.inHours > 1) {
-      return 'Submitted ${difference.inHours} hours ago';
+      return l10n.timeAgoHours(difference.inHours);
     } else if (difference.inMinutes > 1) {
-      return 'Submitted ${difference.inMinutes} minutes ago';
+      return l10n.timeAgoMinutes(difference.inMinutes);
     } else {
-      return 'Submitted just now';
+      return l10n.timeAgoJustNow;
     }
   }
 }

@@ -37,6 +37,7 @@ flutter_export_environment.sh
 .gradle/
 local.properties
 .idea/
+key.properties
 captures/
 outputs/
 android/app/google-services.json

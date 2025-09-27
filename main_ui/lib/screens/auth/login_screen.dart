@@ -62,12 +62,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  String? validatePhone(String? value) {
+  String? validatePhone(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Mobile number is required';
+      return l10n.phoneNumberRequired;
     }
     if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value)) {
-      return 'Enter a valid mobile number';
+      return l10n.invalidMobileNumber;
     }
     return null;
   }
@@ -101,8 +101,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 8),
               Text(
                 _isLogin 
-                  ? 'Welcome back! Please sign in to continue'
-                  : 'Create an account to get started',
+                  ? l10n.welcomeBack
+                  : l10n.createAccountPrompt,
                 style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
               ),
               const SizedBox(height: 40),
@@ -124,8 +124,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Address field
-                            decoration: const InputDecoration(
-                              labelText: 'Address',
+                            decoration: InputDecoration(
+                              labelText: l10n.address,
                               prefixIcon: Icon(Icons.home_outlined),
                             ),
                             validator: validateRequired,
@@ -133,18 +133,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Mobile Number field
-                            decoration: const InputDecoration(
-                              labelText: 'Mobile Number',
+                            decoration: InputDecoration(
+                              labelText: l10n.phoneNumber,
                               prefixIcon: Icon(Icons.phone_outlined),
                             ),
                             keyboardType: TextInputType.phone,
-                            validator: validatePhone,
+                            validator: (value) => validatePhone(value, l10n),
                             onSaved: (value) => _phone = value!,
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Voter ID field
-                            decoration: const InputDecoration(
-                              labelText: 'Voter ID',
+                            decoration: InputDecoration(
+                              labelText: l10n.voterId,
                               prefixIcon: Icon(Icons.badge_outlined),
                             ),
                             validator: validateRequired,

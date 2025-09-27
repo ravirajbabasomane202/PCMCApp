@@ -346,15 +346,15 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xfff8fbff),
       appBar: AppBar(
-        title: Text(l.viewgrievanceetails,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        elevation: 2,
-        iconTheme: const IconThemeData(color: Colors.blue),
+        title: Text(l.viewgrievanceetails),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: isLoading

@@ -597,18 +597,14 @@ class _AssignedListState extends ConsumerState<AssignedList> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
-        titleTextStyle: const TextStyle(
-          color: Color(0xFF1A237E),
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        title: Text(l10n.assignedGrievances),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: FutureBuilder<List<Grievance>>(

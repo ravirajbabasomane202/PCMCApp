@@ -167,20 +167,20 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                             final List<Map<String, dynamic>> banners = [
                               {
                                 'title': localizations.submitGrievance,
-                                'subtitle': 'Report issues in just a few taps',
+                                'subtitle': localizations.submitGrievanceSubtitle,
                                 'color': theme.colorScheme.primaryContainer,
                                 'icon': Icons.add_task_rounded,
                               },
                               {
                                 'title': localizations.track_grievances,
                                 'subtitle':
-                                    'Real-time updates on your complaints',
+                                    localizations.trackGrievancesSubtitle,
                                 'color': theme.colorScheme.secondaryContainer,
                                 'icon': Icons.track_changes_rounded,
                               },
                               {
-                                'title': 'Quick Resolutions',
-                                'subtitle': 'Get your issues resolved faster',
+                                'title': localizations.quickResolutionsTitle,
+                                'subtitle': localizations.quickResolutionsSubtitle,
                                 'color': theme.colorScheme.tertiaryContainer,
                                 'icon': Icons.verified_user_rounded,
                               },

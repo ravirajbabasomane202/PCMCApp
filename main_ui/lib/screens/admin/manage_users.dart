@@ -97,7 +97,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         const SizedBox(height: 12),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Phone Number',
+                            labelText: l10n.phoneNumber,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -106,10 +106,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Phone number is required';
+                              return l10n.phoneNumberRequired;
                             }
                             if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                              return 'Invalid phone number';
+                              return l10n.invalidPhoneNumber;
                             }
                             return null;
                           },
@@ -128,10 +128,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Password is required';
+                              return l10n.passwordRequired;
                             }
                             if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                              return l10n.passwordTooShort;
                             }
                             return null;
                           },
@@ -304,7 +304,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                               TextFormField(
                                 initialValue: phoneNumber,
                                 decoration: InputDecoration(
-                                  labelText: 'Phone Number',
+                                  labelText: l10n.phoneNumber,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -313,10 +313,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Phone number is required';
+                                    return l10n.phoneNumberRequired;
                                   }
                                   if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                                    return 'Invalid phone number';
+                                    return l10n.invalidPhoneNumber;
                                   }
                                   return null;
                                 },
@@ -390,16 +390,14 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(l10n.userUpdatedSuccess ??
-                                            'User updated successfully'),
+                                        content: Text(l10n.userUpdatedSuccess),
                                         backgroundColor: Colors.green,
                                       ),
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e'),
+                                        content: Text('${l10n.failedToUpdateUser}: $e'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -439,13 +437,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
               Icon(Icons.warning_amber_rounded, size: 48, color: Colors.orange[700]),
               const SizedBox(height: 16),
               Text(
-                l10n.deleteUser ?? 'Delete User',
+                l10n.deleteUser,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               Text(
-                l10n.deleteUserConfirmation ??
-                    'Are you sure you want to delete this user?',
+                l10n.deleteUserConfirmation,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey[700]),
               ),
@@ -461,7 +458,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                   SizedBox(
                     width: 100, // Fixed width to avoid layout issues
                     child: CustomButton(
-                      text: l10n.delete ?? 'Delete',
+                      text: l10n.delete,
                       backgroundColor: Colors.red,
                       onPressed: () => Navigator.pop(context, true),
                     ),
@@ -479,14 +476,14 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
         await ref.read(usersProvider.notifier).deleteUser(userId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.userDeletedSuccess ?? 'User deleted successfully'),
+            content: Text(l10n.userDeletedSuccess),
             backgroundColor: Colors.green,
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${l10n.failedToDeleteUser ?? 'Failed to delete user'}: $e'),
+            content: Text('${l10n.failedToDeleteUser}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -505,9 +502,9 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       backgroundColor: const Color(0xFFf8fbff), // Set background color
       appBar: AppBar(
         title: Text(l10n.manageUsers),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue[800],
-        elevation: 1,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -529,7 +526,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search by name...',
+                hintText: l10n.searchByNameOrEmail,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 filled: true,
@@ -567,8 +564,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
     if (filteredUsers.isEmpty) {
       return EmptyState(
         icon: Icons.search_off,
-        title: 'No Results',
-        message: 'No users found matching your search',
+        title: l10n.noResultsFound,
+        message: l10n.noMatchingUsers,
         actionButton: CustomButton(
           text: l10n.retry,
           onPressed: () => _searchController.clear(),
@@ -678,7 +675,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
     if (role == null) return '';
     switch (role.toLowerCase()) {
       case 'member_head':
-        return 'SUPERVISOR';
+        return AppLocalizations.of(context)!.roleSupervisor;
       default:
         return role.toUpperCase();
     }

@@ -46,8 +46,9 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     final Uri uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not launch $url')),
+          SnackBar(content: Text(l10n.couldNotLaunchUrl(url))),
         );
       }
     }
@@ -110,7 +111,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
       // Assuming you have an EditGrievance screen.
       // Navigator.push(context, MaterialPageRoute(builder: (context) => EditGrievance(id: widget.id))).then((_) {
       Navigator.pushNamed(context, '/citizen/edit', arguments: widget.id).then((result) {
-        // Refresh data after returning from edit screen
+        // Refresh data after returning from the edit screen
         ref.refresh(grievanceProvider(widget.id));
       });
     } else if (value == 'delete') {
@@ -153,7 +154,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
           if (currentUser != null &&
               (grievanceAsync.value?.citizenId == currentUser.id ||
                   currentUser.role?.toLowerCase() == 'admin'))
-            PopupMenuButton<String>(
+            PopupMenuButton<String>( // Already localized
               onSelected: _onMenuSelected,
               itemBuilder: (context) => [
                 PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
@@ -210,7 +211,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                               onPressed: () {
                                 ref.refresh(grievanceProvider(widget.id));
                               },
-                              tooltip: 'Refresh',
+                              tooltip: l10n.refresh,
                             ),
                           ],
                         ),
@@ -232,39 +233,39 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Details',
+                          l10n.details,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 12),
                         
-                        _buildDetailRow(theme, 'Description', grievance.description),
+                        _buildDetailRow(theme, l10n.description, grievance.description),
                         
                         if (grievance.subject != null)
-                          _buildDetailRow(theme, 'Subject', grievance.subject!.name),
+                          _buildDetailRow(theme, l10n.filterBySubject, grievance.subject!.name),
                         
                         if (grievance.area != null)
-                          _buildDetailRow(theme, 'Area', grievance.area!.name),
+                          _buildDetailRow(theme, l10n.filterByArea, grievance.area!.name),
                         
                         if (grievance.priority != null)
-                          _buildDetailRow(theme, 'Priority', grievance.priority?.toString() ?? 'medium'),
+                          _buildDetailRow(theme, l10n.filterByPriority, grievance.priority?.toString() ?? 'medium'),
                         
                         _buildDetailRow(
                           theme, 
-                          'Created', 
+                          l10n.created,
                           DateFormat('MMM dd, yyyy - HH:mm').format(grievance.createdAt)
                         ),
                         
                         if (grievance.updatedAt != grievance.createdAt)
                           _buildDetailRow(
                             theme, 
-                            'Last Updated', 
+                            l10n.lastUpdated,
                             DateFormat('MMM dd, yyyy - HH:mm').format(grievance.updatedAt)
                           ),
                         
                         if (grievance.assignee != null)
-                          _buildDetailRow(theme, 'Assigned To', grievance.assignee!.name ?? ""),
+                          _buildDetailRow(theme, l10n.assignedToLabel, grievance.assignee!.name ?? ""),
                       ],
                     ),
                   ),
@@ -283,7 +284,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Attachments',
+                            l10n.attachments,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -349,7 +350,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Comments',
+                          l10n.comments,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),

@@ -194,7 +194,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       setState(() => _profilePic = files.first);
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Profile picture selected. Save to upload.')),
+                                        SnackBar(content: Text(localizations.profilePictureUpdateMessage)),
                                       );
                                     }
                                   },
@@ -214,7 +214,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      user.role?.toUpperCase() ?? 'UNKNOWN',
+                      user.role?.toUpperCase() ?? localizations.unknownRole,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -235,6 +235,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.email,
                         label: localizations.email,
                         value: user.email,
@@ -245,6 +246,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.person,
                         label: localizations.name,
                         value: user.name,
@@ -255,8 +257,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.location_on,
-                        label: 'Address',
+                        label: localizations.address,
                         value: user.address,
                         controller: _addressController,
                         enabled: _isEditing,
@@ -264,24 +267,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
-                        title: Text('Last Login'),
+                        title: Text(localizations.lastLogin),
                         subtitle: Text(
                           user.lastLogin != null
                               ? DateFormat('dd/MM/yyyy HH:mm').format(user.lastLogin!)
-                              : 'N/A',
+                              : localizations.notApplicable,
                         ),
                       ),
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.verified_user, color: theme.colorScheme.primary),
-                        title: Text('Account Status'),
-                        subtitle: Text(user.isActive ? 'Active' : 'Inactive'),
+                        title: Text(localizations.accountStatus),
+                        subtitle: Text(user.isActive ? localizations.statusActive : localizations.statusInactive),
                       ),
                       if (user.departmentId != null) ...[
                         const Divider(),
                         ListTile(
                           leading: Icon(Icons.location_city, color: theme.colorScheme.primary),
-                          title: Text('Department'),
+                          title: Text(localizations.department),
                           subtitle: FutureBuilder(
                             future: ApiService.getMasterArea(user.departmentId!),
                             builder: (context, snapshot) {
@@ -289,9 +292,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 return const Text('Loading...');
                               }
                               if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                                return const Text('Unknown');
+                                return Text(localizations.statusUnknown);
                               }
-                              return Text(snapshot.data!['name'] ?? 'Unknown');
+                              return Text(snapshot.data!['name'] ?? localizations.statusUnknown);
                             },
                           ),
                         ),
@@ -337,8 +340,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               else
                 SizedBox(
                   width: double.infinity,
-                  child: CustomButton(
-                    text: 'Edit Profile',
+                  child: CustomButton( // Localize 'Edit Profile'
+                    text: localizations.editProfile,
                     icon: Icons.edit,
                     onPressed: () => setState(() => _isEditing = true),
                   ),
@@ -352,6 +355,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildProfileField({
+    required AppLocalizations localizations,
     required IconData icon,
     required String label,
     required String? value,
@@ -371,7 +375,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               validator: validator,
             )
-          : Text(value ?? 'N/A'),
+          : Text(value ?? localizations.notApplicable),
     );
   }
 }

@@ -96,19 +96,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final locale = ref.watch(localeNotifierProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF),
       appBar: AppBar(
-        title: Text(
-          localizations.settings,
-          style: const TextStyle(fontWeight: FontWeight.w600,
-          color: Colors.black, 
-          ),
-        ),
-        backgroundColor: const Color(0xFFF8FBFF),
-        elevation: 0,
-        foregroundColor: Colors.blue,
+        title: Text(localizations.settings),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: _isLoading
           ? const LoadingIndicator()

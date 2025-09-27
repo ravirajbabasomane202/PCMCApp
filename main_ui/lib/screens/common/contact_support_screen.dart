@@ -1,47 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactSupportScreen extends StatelessWidget {
   const ContactSupportScreen({super.key});
 
-  void _launchEmail() async {
+  void _launchEmail(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final Uri emailUri = Uri(
       scheme: 'mailto', 
       path: 'support@pcmcapp.com', 
       query: 'subject=App Support'
     );
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    } else {
-      throw 'Could not launch email';
+    if (!await launchUrl(emailUri)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotLaunchUrl('email'))),
+      );
     }
   }
 
-  void _launchPhone() async {
+  void _launchPhone(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final Uri phoneUri = Uri(scheme: 'tel', path: '+91-9876543210');
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      throw 'Could not launch phone';
+    if (!await launchUrl(phoneUri)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotLaunchPhone)),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "Contact Support",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.contactSupport),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -71,8 +69,8 @@ class ContactSupportScreen extends StatelessWidget {
                       color: Colors.blue.shade700,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      "Need Help?",
+                    Text(
+                      l10n.needHelp,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -80,7 +78,7 @@ class ContactSupportScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Our support team is here to help you with any questions or issues you might have",
+                      l10n.supportTeamMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -92,8 +90,8 @@ class ContactSupportScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
-              "Contact Options",
+            Text(
+              l10n.contactOptions,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -120,7 +118,7 @@ class ContactSupportScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
-                  onTap: _launchEmail,
+                  onTap: () => _launchEmail(context),
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -144,8 +142,8 @@ class ContactSupportScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Email Support",
+                              Text(
+                                l10n.emailSupport,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -161,7 +159,7 @@ class ContactSupportScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "Get responses within 24 hours",
+                                l10n.emailSupportResponseTime,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -201,7 +199,7 @@ class ContactSupportScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
-                  onTap: _launchPhone,
+                  onTap: () => _launchPhone(context),
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -225,8 +223,8 @@ class ContactSupportScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Call Support",
+                              Text(
+                                l10n.callSupport,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -242,7 +240,7 @@ class ContactSupportScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "Available 9AM - 6PM (Mon-Sat)",
+                                l10n.callSupportAvailability,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -281,52 +279,56 @@ class ContactSupportScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.help_outline,
-                        color: Colors.orange,
-                        size: 26,
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "FAQs & Help Center",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Find answers to common questions",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, '/faqs'),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.help_outline,
+                          color: Colors.orange,
+                          size: 26,
                         ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.faqsHelpCenter,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.faqsHelpCenterSubtitle,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const Center(
+            Center(
               child: Text(
-                "We're here to help you!",
+                l10n.weAreHereToHelp,
                 style: TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,

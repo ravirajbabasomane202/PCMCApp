@@ -58,15 +58,10 @@ class _DashboardState extends ConsumerState<Dashboard> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(loc.appTitle,
-    style: TextStyle(color: Colors.black),),
-        centerTitle: true,
-        elevation: 2,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue.shade800,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        title: Text(loc.appTitle),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(

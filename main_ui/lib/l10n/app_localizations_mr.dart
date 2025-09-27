@@ -580,4 +580,355 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get editGrievance => 'तक्रार संपादित करा';
+
+  @override
+  String get statusNew => 'नवीन';
+
+  @override
+  String get statusInProgress => 'प्रगतीपथावर';
+
+  @override
+  String get statusResolved => 'निकाली';
+
+  @override
+  String get statusRejected => 'नाकारले';
+
+  @override
+  String get statusOnHold => 'होल्डवर';
+
+  @override
+  String get statusClosed => 'बंद';
+
+  @override
+  String get statusUnknown => 'अज्ञात';
+
+  @override
+  String get submitGrievanceSubtitle => 'काही टॅपमध्ये समस्या नोंदवा';
+
+  @override
+  String get trackGrievancesSubtitle => 'तुमच्या तक्रारींवर रिअल-टाइम अपडेट्स';
+
+  @override
+  String get quickResolutionsTitle => 'जलद निराकरण';
+
+  @override
+  String get quickResolutionsSubtitle => 'तुमच्या समस्यांचे जलद निराकरण करा';
+
+  @override
+  String get track => 'ट्रॅक';
+
+  @override
+  String get stageReviewedBySupervisor => 'पर्यवेक्षकाद्वारे पुनरावलोकन केले';
+
+  @override
+  String get stageAssignedToFieldStaff => 'क्षेत्र कर्मचाऱ्याला नियुक्त केले';
+
+  @override
+  String get stageResolved => 'निकाली';
+
+  @override
+  String get submittedOn => 'सादर केले';
+
+  @override
+  String get userLabel => 'वापरकर्ता';
+
+  @override
+  String get grievanceProgressTitle => 'तक्रार प्रगती';
+
+  @override
+  String get stageSubmitted => 'सादर केले';
+
+  @override
+  String get assignedToLabel => 'यांना नियुक्त केले';
+
+  @override
+  String get fieldStaffLabel => 'क्षेत्र कर्मचारी';
+
+  @override
+  String get resolvedOn => 'निकाली केले';
+
+  @override
+  String timeAgoDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिवसांपूर्वी',
+      one: '1 दिवसापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoHours(num hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours तासांपूर्वी',
+      one: '1 तासापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoMinutes(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes मिनिटांपूर्वी',
+      one: '1 मिनिटापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeAgoJustNow => 'आत्ताच';
+
+  @override
+  String get notApplicable => 'लागू नाही';
+
+  @override
+  String couldNotLaunchUrl(Object url) {
+    return '$url उघडू शकलो नाही';
+  }
+
+  @override
+  String get details => 'तपशील';
+
+  @override
+  String get created => 'तयार केले';
+
+  @override
+  String get lastUpdated => 'शेवटचे अद्यतनित';
+
+  @override
+  String get attachments => 'जोडण्या';
+
+  @override
+  String get address => 'पत्ता';
+
+  @override
+  String get unknownRole => 'अज्ञात भूमिका';
+
+  @override
+  String get profilePictureUpdateMessage =>
+      'प्रोफाइल चित्र निवडले. अपलोड करण्यासाठी जतन करा.';
+
+  @override
+  String get lastLogin => 'शेवटचे लॉगिन';
+
+  @override
+  String get accountStatus => 'खात्याची स्थिती';
+
+  @override
+  String get statusActive => 'सक्रिय';
+
+  @override
+  String get statusInactive => 'निष्क्रिय';
+
+  @override
+  String get editProfile => 'प्रोफाइल संपादित करा';
+
+  @override
+  String get loadingData => 'लोड होत आहे...';
+
+  @override
+  String get appNameFallback => 'पीसीएमसी ॲप';
+
+  @override
+  String get packageNameFallback => 'com.example.pcmcapp';
+
+  @override
+  String get currentVersion => 'सध्याची आवृत्ती';
+
+  @override
+  String get minimumOS => 'किमान ओएस';
+
+  @override
+  String get checkForUpdates => 'अपडेटसाठी तपासा';
+
+  @override
+  String get versionInformation => 'आवृत्ती माहिती';
+
+  @override
+  String get upToDate => 'अद्ययावत';
+
+  @override
+  String get releaseType => 'रिलीज प्रकार';
+
+  @override
+  String get size => 'आकार';
+
+  @override
+  String get thankYouMessage => 'आमचे ॲप वापरल्याबद्दल धन्यवाद!';
+
+  @override
+  String get needHelp => 'मदत हवी आहे?';
+
+  @override
+  String get supportTeamMessage =>
+      'आमची समर्थन टीम आपल्याला कोणत्याही प्रश्नांसाठी किंवा समस्यांसाठी मदत करण्यास येथे आहे';
+
+  @override
+  String get contactOptions => 'संपर्क पर्याय';
+
+  @override
+  String get emailSupport => 'ईमेल समर्थन';
+
+  @override
+  String get emailSupportResponseTime => '२४ तासांच्या आत प्रतिसाद मिळवा';
+
+  @override
+  String get callSupport => 'कॉल समर्थन';
+
+  @override
+  String get callSupportAvailability =>
+      'सकाळी ९ ते संध्याकाळी ६ (सोम-शनि) उपलब्ध';
+
+  @override
+  String get faqsHelpCenter => 'वारंवार विचारले जाणारे प्रश्न आणि मदत केंद्र';
+
+  @override
+  String get faqsHelpCenterSubtitle => 'सामान्य प्रश्नांची उत्तरे शोधा';
+
+  @override
+  String get weAreHereToHelp => 'आम्ही आपल्याला मदत करण्यासाठी येथे आहोत!';
+
+  @override
+  String get couldNotLaunchPhone => 'फोन लावू शकलो नाही';
+
+  @override
+  String get privacyPolicyCommitmentTitle => 'आमची वचनबद्धता';
+
+  @override
+  String get privacyPolicyCommitmentBody =>
+      'आम्ही तुमच्या गोपनीयतेचा आदर करतो आणि तुमच्या वैयक्तिक डेटाचे संरक्षण करण्यास वचनबद्ध आहोत. हे धोरण आम्ही तुमची माहिती सुरक्षितपणे कशी हाताळतो हे स्पष्ट करते.';
+
+  @override
+  String get privacyPolicyDataCollectionTitle => '१. डेटा संकलन';
+
+  @override
+  String get privacyPolicyDataCollectionBody =>
+      'आम्ही तक्रारींवर प्रक्रिया करण्यासाठी फक्त तुमचे नाव, ईमेल आणि तक्रारीचे तपशील गोळा करतो.';
+
+  @override
+  String get privacyPolicyDataUsageTitle => '२. डेटा वापर';
+
+  @override
+  String get privacyPolicyDataUsageBody =>
+      'तुमचा डेटा केवळ तक्रार निवारण आणि प्रणाली सुधारण्यासाठी वापरला जातो.';
+
+  @override
+  String get privacyPolicySecurityTitle => '३. सुरक्षा';
+
+  @override
+  String get privacyPolicySecurityBody =>
+      'तुमची माहिती सुरक्षित ठेवण्यासाठी आम्ही एन्क्रिप्शन आणि कठोर प्रवेश धोरणे लागू करतो.';
+
+  @override
+  String get faqsHeaderSubtitle =>
+      'आमचे ॲप वापरण्याबद्दल सामान्य प्रश्नांची उत्तरे शोधा';
+
+  @override
+  String get faqsCommonQuestions => 'सामान्य प्रश्न';
+
+  @override
+  String get faqsStillNeedHelp => 'अजूनही मदतीची गरज आहे?';
+
+  @override
+  String get faqsContactSupportMessage =>
+      'तुम्ही शोधत असलेले उत्तर सापडत नाहीये? मदतीसाठी आमच्या समर्थन टीमशी संपर्क साधा.';
+
+  @override
+  String get faq1_q => 'तक्रार कशी नोंदवायची?';
+
+  @override
+  String get faq1_a => 'होम स्क्रीनवरून \'तक्रार नोंदवा\' वर जा आणि तपशील भरा.';
+
+  @override
+  String get faq2_q => 'मी माझ्या तक्रारीचा मागोवा कसा घेऊ शकेन?';
+
+  @override
+  String get faq2_a =>
+      '\'तक्रार मागोवा\' वर नेव्हिगेट करा आणि तुमचा तक्रार आयडी प्रविष्ट करा.';
+
+  @override
+  String get faq3_q => 'मी कागदपत्रे अपलोड करू शकेन का?';
+
+  @override
+  String get faq3_a =>
+      'होय, तक्रार नोंदवताना तुम्ही पुरावा म्हणून फोटो किंवा पीडीएफ अपलोड करू शकता.';
+
+  @override
+  String get faq4_q => 'निराकरण होण्यासाठी किती वेळ लागतो?';
+
+  @override
+  String get faq4_a => 'प्राधान्यानुसार, साधारणपणे ७ कामकाजाचे दिवस लागतात.';
+
+  @override
+  String get faq5_q => 'मी कोणत्या प्रकारच्या तक्रारी नोंदवू शकेन?';
+
+  @override
+  String get faq5_a =>
+      'तुम्ही स्वच्छता, रस्ते, पाणीपुरवठा, वीज आणि इतर नागरी समस्यांशी संबंधित तक्रारी नोंदवू शकता.';
+
+  @override
+  String get faq6_q =>
+      'मी नोंदवलेली तक्रार संपादित करण्याचा काही मार्ग आहे का?';
+
+  @override
+  String get faq6_a =>
+      'तुम्ही \'माझ्या तक्रारी\' विभागातून तक्रार नोंदवल्याच्या २४ तासांच्या आत तुमची तक्रार संपादित करू शकता.';
+
+  @override
+  String get faq7_q => 'मला अपडेट्सबद्दल कसे सूचित केले जाईल?';
+
+  @override
+  String get faq7_a =>
+      'तुमच्या तक्रारीवर प्रगती झाल्यावर तुम्हाला पुश सूचना आणि ईमेल अपडेट्स मिळतील.';
+
+  @override
+  String get phoneNumber => 'फोन नंबर';
+
+  @override
+  String get phoneNumberRequired => 'फोन नंबर आवश्यक आहे';
+
+  @override
+  String get invalidPhoneNumber => 'अवैध फोन नंबर';
+
+  @override
+  String get passwordTooShort => 'पासवर्ड किमान ६ अक्षरांचा असावा';
+
+  @override
+  String get departmentIdOptional => 'विभाग आयडी (पर्यायी)';
+
+  @override
+  String get roleCitizen => 'नागरिक';
+
+  @override
+  String get roleSupervisor => 'पर्यवेक्षक';
+
+  @override
+  String get roleFieldStaff => 'क्षेत्र कर्मचारी';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String get noMatchingUsers =>
+      'तुमच्या शोधाशी जुळणारे कोणतेही वापरकर्ते आढळले नाहीत';
+
+  @override
+  String get searchByNameOrEmail => 'नाव किंवा ईमेलद्वारे शोधा...';
+
+  @override
+  String get welcomeBack => 'परत स्वागत आहे! कृपया पुढे जाण्यासाठी साइन इन करा';
+
+  @override
+  String get createAccountPrompt => 'सुरुवात करण्यासाठी एक खाते तयार करा';
+
+  @override
+  String get voterId => 'मतदार ओळखपत्र';
+
+  @override
+  String get invalidMobileNumber => 'एक वैध मोबाइल नंबर प्रविष्ट करा';
 }

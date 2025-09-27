@@ -1233,6 +1233,624 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Grievance'**
   String get editGrievance;
+
+  /// No description provided for @statusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get statusNew;
+
+  /// No description provided for @statusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get statusInProgress;
+
+  /// No description provided for @statusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get statusResolved;
+
+  /// No description provided for @statusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get statusRejected;
+
+  /// No description provided for @statusOnHold.
+  ///
+  /// In en, this message translates to:
+  /// **'On Hold'**
+  String get statusOnHold;
+
+  /// No description provided for @statusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get statusClosed;
+
+  /// No description provided for @statusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get statusUnknown;
+
+  /// No description provided for @submitGrievanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report issues in just a few taps'**
+  String get submitGrievanceSubtitle;
+
+  /// No description provided for @trackGrievancesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time updates on your complaints'**
+  String get trackGrievancesSubtitle;
+
+  /// No description provided for @quickResolutionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Resolutions'**
+  String get quickResolutionsTitle;
+
+  /// No description provided for @quickResolutionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get your issues resolved faster'**
+  String get quickResolutionsSubtitle;
+
+  /// No description provided for @track.
+  ///
+  /// In en, this message translates to:
+  /// **'Track'**
+  String get track;
+
+  /// No description provided for @stageReviewedBySupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed by Supervisor'**
+  String get stageReviewedBySupervisor;
+
+  /// No description provided for @stageAssignedToFieldStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to Field Staff'**
+  String get stageAssignedToFieldStaff;
+
+  /// No description provided for @stageResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get stageResolved;
+
+  /// No description provided for @submittedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted on'**
+  String get submittedOn;
+
+  /// No description provided for @userLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get userLabel;
+
+  /// No description provided for @grievanceProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance Progress'**
+  String get grievanceProgressTitle;
+
+  /// No description provided for @stageSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get stageSubmitted;
+
+  /// No description provided for @assignedToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to'**
+  String get assignedToLabel;
+
+  /// No description provided for @fieldStaffLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Field Staff'**
+  String get fieldStaffLabel;
+
+  /// No description provided for @resolvedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved on'**
+  String get resolvedOn;
+
+  /// Time difference in days
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day ago} other{{days} days ago}}'**
+  String timeAgoDays(num days);
+
+  /// Time difference in hours
+  ///
+  /// In en, this message translates to:
+  /// **'{hours, plural, one{1 hour ago} other{{hours} hours ago}}'**
+  String timeAgoHours(num hours);
+
+  /// Time difference in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, one{1 minute ago} other{{minutes} minutes ago}}'**
+  String timeAgoMinutes(num minutes);
+
+  /// No description provided for @timeAgoJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeAgoJustNow;
+
+  /// No description provided for @notApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notApplicable;
+
+  /// Error message when a URL cannot be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch {url}'**
+  String couldNotLaunchUrl(Object url);
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get lastUpdated;
+
+  /// No description provided for @attachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachments;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @unknownRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Role'**
+  String get unknownRole;
+
+  /// No description provided for @profilePictureUpdateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile picture selected. Save to upload.'**
+  String get profilePictureUpdateMessage;
+
+  /// No description provided for @lastLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Login'**
+  String get lastLogin;
+
+  /// No description provided for @accountStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Status'**
+  String get accountStatus;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @statusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get statusInactive;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @loadingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loadingData;
+
+  /// No description provided for @appNameFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'PCMC App'**
+  String get appNameFallback;
+
+  /// No description provided for @packageNameFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'com.example.pcmcapp'**
+  String get packageNameFallback;
+
+  /// No description provided for @currentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version'**
+  String get currentVersion;
+
+  /// No description provided for @minimumOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum OS'**
+  String get minimumOS;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get checkForUpdates;
+
+  /// No description provided for @versionInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Version Information'**
+  String get versionInformation;
+
+  /// No description provided for @upToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get upToDate;
+
+  /// No description provided for @releaseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Type'**
+  String get releaseType;
+
+  /// No description provided for @size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get size;
+
+  /// No description provided for @thankYouMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for using our app!'**
+  String get thankYouMessage;
+
+  /// No description provided for @needHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Need Help?'**
+  String get needHelp;
+
+  /// No description provided for @supportTeamMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Our support team is here to help you with any questions or issues you might have'**
+  String get supportTeamMessage;
+
+  /// No description provided for @contactOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Options'**
+  String get contactOptions;
+
+  /// No description provided for @emailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Support'**
+  String get emailSupport;
+
+  /// No description provided for @emailSupportResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Get responses within 24 hours'**
+  String get emailSupportResponseTime;
+
+  /// No description provided for @callSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Support'**
+  String get callSupport;
+
+  /// No description provided for @callSupportAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Available 9AM - 6PM (Mon-Sat)'**
+  String get callSupportAvailability;
+
+  /// No description provided for @faqsHelpCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQs & Help Center'**
+  String get faqsHelpCenter;
+
+  /// No description provided for @faqsHelpCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find answers to common questions'**
+  String get faqsHelpCenterSubtitle;
+
+  /// No description provided for @weAreHereToHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help you!'**
+  String get weAreHereToHelp;
+
+  /// No description provided for @couldNotLaunchPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch phone'**
+  String get couldNotLaunchPhone;
+
+  /// No description provided for @privacyPolicyCommitmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Commitment'**
+  String get privacyPolicyCommitmentTitle;
+
+  /// No description provided for @privacyPolicyCommitmentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information securely.'**
+  String get privacyPolicyCommitmentBody;
+
+  /// No description provided for @privacyPolicyDataCollectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Data Collection'**
+  String get privacyPolicyDataCollectionTitle;
+
+  /// No description provided for @privacyPolicyDataCollectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect your name, email, and grievance details only to process complaints.'**
+  String get privacyPolicyDataCollectionBody;
+
+  /// No description provided for @privacyPolicyDataUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Data Usage'**
+  String get privacyPolicyDataUsageTitle;
+
+  /// No description provided for @privacyPolicyDataUsageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used solely for grievance redressal and system improvement.'**
+  String get privacyPolicyDataUsageBody;
+
+  /// No description provided for @privacyPolicySecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Security'**
+  String get privacyPolicySecurityTitle;
+
+  /// No description provided for @privacyPolicySecurityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We implement encryption and strict access policies to safeguard your information.'**
+  String get privacyPolicySecurityBody;
+
+  /// No description provided for @faqsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find answers to common questions about using our app'**
+  String get faqsHeaderSubtitle;
+
+  /// No description provided for @faqsCommonQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Common Questions'**
+  String get faqsCommonQuestions;
+
+  /// No description provided for @faqsStillNeedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Still need help?'**
+  String get faqsStillNeedHelp;
+
+  /// No description provided for @faqsContactSupportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t find the answer you\'re looking for? Contact our support team for assistance.'**
+  String get faqsContactSupportMessage;
+
+  /// No description provided for @faq1_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How to submit a grievance?'**
+  String get faq1_q;
+
+  /// No description provided for @faq1_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to \'Submit Grievance\' from the home screen and fill in details.'**
+  String get faq1_a;
+
+  /// No description provided for @faq2_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How can I track my complaint?'**
+  String get faq2_q;
+
+  /// No description provided for @faq2_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to \'Track Grievance\' and enter your grievance ID.'**
+  String get faq2_a;
+
+  /// No description provided for @faq3_q.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I upload documents?'**
+  String get faq3_q;
+
+  /// No description provided for @faq3_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, you can upload photos or PDFs as proof while submitting grievances.'**
+  String get faq3_a;
+
+  /// No description provided for @faq4_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How long does it take to resolve?'**
+  String get faq4_q;
+
+  /// No description provided for @faq4_a.
+  ///
+  /// In en, this message translates to:
+  /// **'It usually takes 7 working days, depending on priority.'**
+  String get faq4_a;
+
+  /// No description provided for @faq5_q.
+  ///
+  /// In en, this message translates to:
+  /// **'What types of grievances can I report?'**
+  String get faq5_q;
+
+  /// No description provided for @faq5_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.'**
+  String get faq5_a;
+
+  /// No description provided for @faq6_q.
+  ///
+  /// In en, this message translates to:
+  /// **'Is there a way to edit my submitted grievance?'**
+  String get faq6_q;
+
+  /// No description provided for @faq6_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You can edit your grievance within 24 hours of submission from the \'My Grievances\' section.'**
+  String get faq6_a;
+
+  /// No description provided for @faq7_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How will I be notified about updates?'**
+  String get faq7_q;
+
+  /// No description provided for @faq7_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll receive push notifications and email updates when there\'s progress on your grievance.'**
+  String get faq7_a;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @phoneNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get phoneNumberRequired;
+
+  /// No description provided for @invalidPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid phone number'**
+  String get invalidPhoneNumber;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @departmentIdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Department ID (Optional)'**
+  String get departmentIdOptional;
+
+  /// No description provided for @roleCitizen.
+  ///
+  /// In en, this message translates to:
+  /// **'CITIZEN'**
+  String get roleCitizen;
+
+  /// No description provided for @roleSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'SUPERVISOR'**
+  String get roleSupervisor;
+
+  /// No description provided for @roleFieldStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'FIELD_STAFF'**
+  String get roleFieldStaff;
+
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get roleAdmin;
+
+  /// No description provided for @noMatchingUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found matching your search'**
+  String get noMatchingUsers;
+
+  /// No description provided for @searchByNameOrEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or email...'**
+  String get searchByNameOrEmail;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back! Please sign in to continue'**
+  String get welcomeBack;
+
+  /// No description provided for @createAccountPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to get started'**
+  String get createAccountPrompt;
+
+  /// No description provided for @voterId.
+  ///
+  /// In en, this message translates to:
+  /// **'Voter ID'**
+  String get voterId;
+
+  /// No description provided for @invalidMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid mobile number'**
+  String get invalidMobileNumber;
 }
 
 class _AppLocalizationsDelegate
