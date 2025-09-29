@@ -1,4 +1,6 @@
 // lib/models/workproof_model.dart
+import 'package:main_ui/models/user_model.dart';
+
 class Workproof {
   final int id;
   final int grievanceId;
@@ -6,6 +8,7 @@ class Workproof {
   final String filePath;
   final String? notes;
   final DateTime uploadedAt;
+  final User? uploader;
 
   Workproof({
     required this.id,
@@ -14,6 +17,7 @@ class Workproof {
     required this.filePath,
     this.notes,
     required this.uploadedAt,
+    this.uploader,
   });
 
   factory Workproof.fromJson(Map<String, dynamic> json) {
@@ -24,6 +28,15 @@ class Workproof {
       filePath: json['file_path'],
       notes: json['notes'],
       uploadedAt: DateTime.parse(json['uploaded_at']),
+      uploader: json['uploader'] != null ? User.fromJson(json['uploader']) : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'notes': notes,
+      // Add other fields if needed for sending data to the server
+    };
   }
 }

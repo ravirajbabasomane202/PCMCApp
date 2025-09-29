@@ -395,7 +395,7 @@ def update_config( key):
 @admin_bp.route('/users/history', methods=['GET'])
 @admin_required
 def all_users_history(user):
-    users = User.query.all()
+    users = User.query.filter(User.role == Role.CITIZEN).all()
     result = []
     grievance_schema = GrievanceSchema(many=True)
     for u in users:

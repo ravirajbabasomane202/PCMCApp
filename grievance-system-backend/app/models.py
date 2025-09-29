@@ -86,6 +86,7 @@ class Grievance(db.Model):
     category = db.relationship('MasterCategories')
     attachments = db.relationship('GrievanceAttachment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
     comments = db.relationship('GrievanceComment', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
+    workproofs = db.relationship('Workproof', backref='grievance', lazy='dynamic', cascade="all, delete-orphan")
     def to_dict(self):
         """
         Convert Grievance object to a dictionary for JSON serialization.
@@ -93,6 +94,7 @@ class Grievance(db.Model):
         # Convert dynamic relationships to lists
         attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
         comments_list = [comment.to_dict() for comment in self.comments.all()]
+        workproofs_list = [workproof.to_dict() for workproof in self.workproofs.all()]
         
         return {
             'id': self.id,
@@ -151,7 +153,8 @@ class Grievance(db.Model):
                 'description': self.category.description
             } if self.category else None,
             'attachments': attachments_list,  # Use the converted list
-            'comments': comments_list  # Use the converted list
+            'comments': comments_list,  # Use the converted list
+            'workproofs': workproofs_list
         }
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -224,13 +227,26 @@ class Workproof(db.Model):
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
-    file_type = db.Column(db.String(10), nullable=True)  # New: Store file type
-    file_size = db.Column(db.Integer, nullable=True)  # New: Store file size
-    notes = db.Column(db.Text, nullable=True)
+    file_type = db.Column(db.String(10), nullable=False)  # New: Store file type
+    file_size = db.Column(db.Integer, nullable=False)  # New: Store file size
+    notes = db.Column(db.Text, nullable=False)
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationship
     uploader = db.relationship('User', backref='workproofs')
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'grievance_id': self.grievance_id,
+            'uploaded_by': self.uploaded_by,
+            'uploader': {'id': self.uploader.id, 'name': self.uploader.name} if self.uploader else None,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'file_size': self.file_size,
+            'notes': self.notes,
+            'uploaded_at': self.uploaded_at.isoformat() if self.uploaded_at else None
+        }
+
 
 class MasterSubjects(db.Model):
     id = db.Column(db.Integer, primary_key=True)

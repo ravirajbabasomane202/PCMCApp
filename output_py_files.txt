@@ -910,9 +910,9 @@ class Workproof(db.Model):
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
-    file_type = db.Column(db.String(10), nullable=True)  # New: Store file type
-    file_size = db.Column(db.Integer, nullable=True)  # New: Store file size
-    notes = db.Column(db.Text, nullable=True)
+    file_type = db.Column(db.String(10), nullable=False)  # New: Store file type
+    file_size = db.Column(db.Integer, nullable=False)  # New: Store file size
+    notes = db.Column(db.Text, nullable=False)
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     # Relationship
@@ -1100,7 +1100,7 @@ class WorkproofSchema(Schema):
     file_path = fields.Str(dump_only=True)
     file_type = fields.Str(dump_only=True)  # New field
     file_size = fields.Int(dump_only=True)  # New field
-    notes = fields.Str(allow_none=True)
+    notes = fields.Str(required=True)
     uploaded_at = fields.DateTime(dump_only=True)
     uploader = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New nested field
 
@@ -1663,7 +1663,7 @@ def update_config( key):
 @admin_bp.route('/users/history', methods=['GET'])
 @admin_required
 def all_users_history(user):
-    users = User.query.all()
+    users = User.query.filter(User.role == Role.CITIZEN).all()
     result = []
     grievance_schema = GrievanceSchema(many=True)
     for u in users:
@@ -2205,6 +2205,14 @@ def get_grievance(user, id):
         return jsonify({"msg": "Grievance not found"}), 404
     schema = GrievanceSchema()
     current_app.logger.info(f"Grievance found: {schema.dump(grievance)}")
+
+    # Authorization check: Ensure the user is the owner or an admin
+    if user.role != Role.ADMIN and grievance.citizen_id != user.id:
+        # Allow other roles like FIELD_STAFF if they are assigned
+        if user.role not in [Role.MEMBER_HEAD, Role.FIELD_STAFF] or grievance.assigned_to != user.id:
+             current_app.logger.warning(f"Unauthorized access attempt for grievance {id} by user {user.id}")
+             return jsonify({"msg": "Access forbidden"}), 403
+
     return jsonify(schema.dump(grievance)), 200
 
 @grievance_bp.route('/<int:id>/comments', methods=['POST'])
@@ -2358,11 +2366,16 @@ def update_grievance_status(user, id):
         db.session.commit()
         print(f"Status updated from {old_status} to {grievance.status}")
         log_audit(f'Status updated from {old_status} to {grievance.status}', user.id, id)
-        send_notification(
-            grievance.citizen.email,
-            'Status Updated',
-            f'Your grievance #{id} status is now {new_status_str}.'
-        )
+        # try:
+        #     send_notification(
+        #         grievance.citizen.email,
+        #         'Status Updated',
+        #         f'Your grievance #{id} status is now {new_status_str}.'
+        #     )
+        # except Exception as e:
+        #     current_app.logger.error(f"Failed to send notification for grievance {id}: {str(e)}")
+        #     # Do not re-raise; the main operation succeeded.
+
         schema = GrievanceSchema()
         return jsonify(schema.dump(grievance)), 200
     except ValueError as e:
@@ -4071,6 +4084,9 @@ def calculate_dept_wise_resolution():
 
 
 === Folder: uploads ===
+
+
+=== Folder: uploads\1 ===
 
 
 === Folder: uploads\3 ===

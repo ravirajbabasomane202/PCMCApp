@@ -1,7 +1,7 @@
 import 'package:main_ui/models/comment_model.dart';
 import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/models/master_data_model.dart';
-
+import 'package:main_ui/models/workproof_model.dart';
 class Assignee {
   final String? name;
 
@@ -43,6 +43,7 @@ class Grievance {
   final MasterArea? area;
   final List<GrievanceAttachment>? attachments; // From old version
   final List<Comment>? comments; // From old version
+  final List<Workproof>? workproofs;
 
   Grievance({
     required this.id,
@@ -73,6 +74,7 @@ class Grievance {
     this.area,
     this.attachments,
     this.comments,
+    this.workproofs,
   });
 
   factory Grievance.fromJson(Map<String, dynamic> json) {
@@ -120,6 +122,9 @@ class Grievance {
     comments: json['comments'] != null
         ? (json['comments'] as List).map((c) => Comment.fromJson(c)).toList()
         : null,
+      workproofs: json['workproofs'] != null
+        ? (json['workproofs'] as List).map((wp) => Workproof.fromJson(wp)).toList()
+        : null,
   );
 }
 
@@ -153,6 +158,7 @@ class Grievance {
       'area': area?.toJson(),
       'attachments': attachments?.map((a) => a.toJson()).toList(),
       'comments': comments?.map((c) => c.toJson()).toList(),
+      'workproofs': workproofs?.map((wp) => wp.toJson()).toList(),
     };
   }
 }

@@ -433,7 +433,7 @@ abstract class AppLocalizations {
   /// No description provided for @reassignComplaint.
   ///
   /// In en, this message translates to:
-  /// **'Reassign'**
+  /// **'Assign'**
   String get reassignComplaint;
 
   /// No description provided for @escalateComplaint.
@@ -1851,6 +1851,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter a valid mobile number'**
   String get invalidMobileNumber;
+
+  /// No description provided for @citizenName.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen Name'**
+  String get citizenName;
+
+  /// No description provided for @citizenId.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen ID'**
+  String get citizenId;
+
+  /// No description provided for @submittedFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted Feedback'**
+  String get submittedFeedback;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @feedbackComments.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Comments'**
+  String get feedbackComments;
 }
 
 class _AppLocalizationsDelegate

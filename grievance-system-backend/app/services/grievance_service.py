@@ -268,7 +268,7 @@ def save_file(file, grievance_id):
     # Return relative path for DB storage (you can also return absolute if you prefer)
     return filepath
 
-def save_workproof_record(grievance_id, employer_id, file, notes):
+def save_workproof_record(grievance_id, employer_id, file, notes): 
     try:
         grievance = db.session.get(Grievance, grievance_id)
         if not grievance or grievance.assigned_to != employer_id:
@@ -277,8 +277,13 @@ def save_workproof_record(grievance_id, employer_id, file, notes):
             )
             raise ValueError("Invalid operation")
 
-        # ✅ Replace this with your actual file saving utility
+        # Save the file
         path = save_file(file, grievance_id)
+
+        # Keep only the path after 'uploads/' folder
+        if "uploads" in path:
+            path = path.split("uploads", 1)[1].lstrip("/\\")  # removes any leading slashes
+        # else keep path as is (fallback)
 
         workproof = Workproof(
             grievance_id=grievance_id,
@@ -294,6 +299,7 @@ def save_workproof_record(grievance_id, employer_id, file, notes):
     except Exception as e:
         current_app.logger.error(f"Error saving workproof for grievance {grievance_id}: {str(e)}")
         raise
+
 
 
 

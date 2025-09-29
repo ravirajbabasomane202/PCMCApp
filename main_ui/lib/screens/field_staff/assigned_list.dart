@@ -40,61 +40,38 @@ class _AssignedListState extends ConsumerState<AssignedList> {
     }
   }
 
-  Future<void> _acceptGrievance(int grievanceId) async {
+  Future<void> _updateStatus(int grievanceId, String newStatus) async {
     try {
-      await ApiService.post('/grievances/$grievanceId/accept', {});
-      setState(() => _grievancesFuture = _fetchAssignedGrievances());
+      // Perform the API call
+      await ApiService.put('/grievances/$grievanceId/status', {
+        'status': newStatus,
+      });
+
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Grievance accepted')));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Status updated successfully')),
+      );
+      // Refresh the list to show the updated status
+      setState(() {
+        _grievancesFuture = _fetchAssignedGrievances();
+      });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to accept: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update status: $e')),
+      );
     }
   }
 
-  Future<void> _updateStatus(int grievanceId, String newStatus) async {
-  try {
-    
 
-    // Perform the API call
-    await ApiService.put('/grievances/$grievanceId/status', {
-      'status': newStatus,
-    });
-
-    // Fetch updated grievances first (async work outside setState)
-    final updatedGrievances = _fetchAssignedGrievances();
-
-    if (!mounted) return;
-
-    // Update the state synchronously
-    setState(() {
-      _grievancesFuture = updatedGrievances;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Status updated')),
-    );
-  } catch (e) {
-   
-    
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to update status: $e')),
-    );
-  }
-}
-
-
-  Future<void> _uploadWorkproof(int grievanceId, PlatformFile file) async {
+  Future<void> _uploadWorkproof(int grievanceId, PlatformFile file, String notes) async {
     try {
       await ApiService.postMultipart(
         '/grievances/$grievanceId/workproof',
         files: [file],
         fieldName: 'file',
+        data: {'notes': notes},
       );
       setState(() => _grievancesFuture = _fetchAssignedGrievances());
       if (!mounted) return;
@@ -198,13 +175,57 @@ class _AssignedListState extends ConsumerState<AssignedList> {
   }
 
   void _showUploadWorkproofPopup(Grievance grievance) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'mp4', 'mov'],
-    );
-    if (result != null && result.files.isNotEmpty) {
-      final file = result.files.first;
-      _uploadWorkproof(grievance.id, file);
+    final notesController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final file = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    ).then((result) => result?.files.first);
+
+    if (file == null) return;
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Add Workproof Notes'),
+            content: Form(
+              key: formKey,
+              child: TextFormField(
+                controller: notesController,
+                decoration: const InputDecoration(
+                  labelText: 'Notes',
+                  hintText: 'Describe the work done...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Notes are required';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    _uploadWorkproof(grievance.id, file, notesController.text);
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Upload'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -508,28 +529,10 @@ class _AssignedListState extends ConsumerState<AssignedList> {
               runSpacing: 8.0,
               alignment: WrapAlignment.end,
               children: [
-                if (grievance.status == 'new')
-                  ElevatedButton(
-                    onPressed: () => _acceptGrievance(grievance.id),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.check, size: 18),
-                        SizedBox(width: 4),
-                        Text('Accept'),
-                      ],
-                    ),
-                  ),
                 ElevatedButton(
-                  onPressed: () => _showUpdateStatusPopup(grievance),
+                  onPressed: grievance.status == 'resolved'
+                      ? null
+                      : () => _showUpdateStatusPopup(grievance),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     foregroundColor: Colors.white,
@@ -548,7 +551,9 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => _showUploadWorkproofPopup(grievance),
+                  onPressed: grievance.status == 'resolved'
+                      ? null
+                      : () => _showUploadWorkproofPopup(grievance),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF9800),
                     foregroundColor: Colors.white,
@@ -566,26 +571,26 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                     ],
                   ),
                 ),
-                if (grievance.status == 'resolved')
-                  ElevatedButton(
-                    onPressed: () => _closeGrievance(grievance.id),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF44336),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.close, size: 18),
-                        SizedBox(width: 4),
-                        Text('Close'),
-                      ],
-                    ),
-                  ),
+                // if (grievance.status == 'resolved')
+                //   ElevatedButton(
+                //     onPressed: () => _closeGrievance(grievance.id),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color(0xFFF44336),
+                //       foregroundColor: Colors.white,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(12.0),
+                //       ),
+                //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                //     ),
+                //     child: const Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: [
+                //         Icon(Icons.close, size: 18),
+                //         SizedBox(width: 4),
+                //         Text('Close'),
+                //       ],
+                //     ),
+                //   ),
               ],
             ),
           ],

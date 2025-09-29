@@ -174,7 +174,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Retry';
 
   @override
-  String get reassignComplaint => 'Reassign';
+  String get reassignComplaint => 'Assign';
 
   @override
   String get escalateComplaint => 'Escalate';
@@ -929,4 +929,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidMobileNumber => 'Enter a valid mobile number';
+
+  @override
+  String get citizenName => 'Citizen Name';
+
+  @override
+  String get citizenId => 'Citizen ID';
+
+  @override
+  String get submittedFeedback => 'Submitted Feedback';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get feedbackComments => 'Feedback Comments';
 }

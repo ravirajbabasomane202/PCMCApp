@@ -75,7 +75,7 @@
   "noComplaints": "No Complaints",
   "noComplaintsMessage": "There are no complaints to display.",
   "tryAgain": "Retry",
-  "reassignComplaint": "Reassign",
+  "reassignComplaint": "Assign",
   "escalateComplaint": "Escalate",
 
   "userIdRequired": "User ID is required",
@@ -361,5 +361,10 @@
   "welcomeBack": "Welcome back! Please sign in to continue",
   "createAccountPrompt": "Create an account to get started",
   "voterId": "Voter ID",
-  "invalidMobileNumber": "Enter a valid mobile number"
+  "invalidMobileNumber": "Enter a valid mobile number",
+  "citizenName": "Citizen Name",
+  "citizenId": "Citizen ID",
+  "submittedFeedback": "Submitted Feedback",
+  "rating": "Rating",
+  "feedbackComments": "Feedback Comments"
 }

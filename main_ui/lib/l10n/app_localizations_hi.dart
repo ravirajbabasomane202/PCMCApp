@@ -174,7 +174,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get tryAgain => 'पुनः प्रयास करें';
 
   @override
-  String get reassignComplaint => 'शिकायत पुनः सौंपें';
+  String get reassignComplaint => 'शिकायत सौंपें';
 
   @override
   String get escalateComplaint => 'शिकायत बढ़ाएँ';
@@ -934,4 +934,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get invalidMobileNumber => 'एक वैध मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get citizenName => 'नागरिक का नाम';
+
+  @override
+  String get citizenId => 'नागरिक आईडी';
+
+  @override
+  String get submittedFeedback => 'जमा किया गया फीडबैक';
+
+  @override
+  String get rating => 'रेटिंग';
+
+  @override
+  String get feedbackComments => 'फीडबैक टिप्पणियाँ';
 }

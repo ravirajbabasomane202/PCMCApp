@@ -73,7 +73,7 @@
   "noComplaints": "कोई शिकायत नहीं",
   "noComplaintsMessage": "प्रदर्शित करने के लिए कोई शिकायत नहीं है।",
   "tryAgain": "पुनः प्रयास करें",
-  "reassignComplaint": "शिकायत पुनः सौंपें",
+  "reassignComplaint": "शिकायत सौंपें",
   "escalateComplaint": "शिकायत बढ़ाएँ",
   "userIdRequired": "उपयोगकर्ता आईडी आवश्यक है",
   "@userIdRequired": {
@@ -326,5 +326,10 @@
   "welcomeBack": "वापसी पर स्वागत है! कृपया जारी रखने के लिए साइन इन करें",
   "createAccountPrompt": "शुरू करने के लिए एक खाता बनाएं",
   "voterId": "मतदाता पहचान पत्र",
-  "invalidMobileNumber": "एक वैध मोबाइल नंबर दर्ज करें"
+  "invalidMobileNumber": "एक वैध मोबाइल नंबर दर्ज करें",
+  "citizenName": "नागरिक का नाम",
+  "citizenId": "नागरिक आईडी",
+  "submittedFeedback": "जमा किया गया फीडबैक",
+  "rating": "रेटिंग",
+  "feedbackComments": "फीडबैक टिप्पणियाँ"
 }

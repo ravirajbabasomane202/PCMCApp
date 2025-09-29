@@ -152,7 +152,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                             DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
                             DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('SUPERVISOR')),
                             DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
-                            DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                            // DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
                           ],
                           onChanged: (value) => role = value ?? 'CITIZEN',
                           validator: validateRequired,
@@ -337,7 +337,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                   DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
                                   DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('Supervisor')),
                                   DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
-                                  DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                                  // DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
                                 ],
                                 onChanged: (value) => setDialogState(() {
                                   role = value ?? 'CITIZEN';

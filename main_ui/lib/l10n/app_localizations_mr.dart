@@ -175,7 +175,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get tryAgain => 'पुन्हा प्रयत्न करा';
 
   @override
-  String get reassignComplaint => 'तक्रार पुनः नियुक्त करा';
+  String get reassignComplaint => 'तक्रार नियुक्त करा';
 
   @override
   String get escalateComplaint => 'तक्रार वाढवा';
@@ -931,4 +931,19 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get invalidMobileNumber => 'एक वैध मोबाइल नंबर प्रविष्ट करा';
+
+  @override
+  String get citizenName => 'नागरिकाचे नाव';
+
+  @override
+  String get citizenId => 'नागरिक आयडी';
+
+  @override
+  String get submittedFeedback => 'सादर केलेला अभिप्राय';
+
+  @override
+  String get rating => 'रेटिंग';
+
+  @override
+  String get feedbackComments => 'अभिप्राय टिप्पण्या';
 }

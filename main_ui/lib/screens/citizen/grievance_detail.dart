@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:main_ui/models/workproof_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
+import '../../models/user_model.dart';
 import '../../models/comment_model.dart';
 import '../../services/grievance_service.dart';
 import '../../widgets/status_badge.dart';
@@ -164,7 +166,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
         ],
       ),
       body: grievanceAsync.when(
-        data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance),
+        data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance, currentUser),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => EmptyState(
           icon: Icons.error,
@@ -175,7 +177,12 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     );
   }
 
-  Widget _buildGrievanceDetail(ThemeData theme, AppLocalizations l10n, Grievance grievance) {
+  Widget _buildGrievanceDetail(
+    ThemeData theme,
+    AppLocalizations l10n,
+    Grievance grievance,
+    User? currentUser,
+  ) {
     return Column(
       children: [
         // Grievance details section
@@ -209,7 +216,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                             IconButton(
                               icon: const Icon(Icons.refresh),
                               onPressed: () {
-                                ref.refresh(grievanceProvider(widget.id));
+                                ref.invalidate(grievanceProvider(widget.id));
                               },
                               tooltip: l10n.refresh,
                             ),
@@ -241,6 +248,12 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                         const SizedBox(height: 12),
                         
                         _buildDetailRow(theme, l10n.description, grievance.description),
+
+                        if (grievance.citizen != null)
+                          _buildDetailRow(theme, l10n.citizenName, grievance.citizen!.name ?? 'N/A'),
+
+                        if (grievance.citizenId != null)
+                          _buildDetailRow(theme, l10n.citizenId, grievance.citizenId.toString()),
                         
                         if (grievance.subject != null)
                           _buildDetailRow(theme, l10n.filterBySubject, grievance.subject!.name),
@@ -338,6 +351,34 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                   ),
                 ],
                 
+                // Workproofs section
+                if (grievance.workproofs != null && grievance.workproofs!.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  Card(
+                    color: const Color(0xFFecf2fe),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Work Proofs',
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          ...grievance.workproofs!.map((workproof) {
+                            return _buildWorkproofCard(theme, workproof);
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+
                 // Comments section
                 const SizedBox(height: 16),
                 Card(
@@ -372,8 +413,13 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                   ),
                 ),
                 
-                // Feedback section (only for resolved grievances)
-                if (grievance.status == 'resolved') ...[
+                // --- Conditional Feedback Section ---
+
+                // Show feedback form to the CITIZEN OWNER if the grievance is resolved and feedback is NOT yet given.
+                if (grievance.status?.toLowerCase() == 'resolved' &&
+                    grievance.feedbackRating == null &&
+                    currentUser?.role == 'citizen' &&
+                    grievance.citizenId == currentUser?.id) ...[
                   const SizedBox(height: 16),
                   Card(
                     color: const Color(0xFFecf2fe), 
@@ -475,6 +521,41 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                     ),
                   ),
                 ],
+
+                // Show submitted feedback info to ADMINS, SUPERVISORS, or the original CITIZEN if feedback has been given.
+                if (grievance.feedbackRating != null && grievance.feedbackRating! > 0 &&
+                    (currentUser?.role == 'admin' ||
+                     currentUser?.role == 'member_head' ||
+                     (currentUser?.role == 'citizen' && grievance.citizenId == currentUser?.id))) ...[
+                  const SizedBox(height: 16),
+                  Card(
+                    color: const Color(0xFFecf2fe),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.submittedFeedback,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDetailRow(
+                            theme,
+                            l10n.rating,
+                            '${'⭐' * grievance.feedbackRating!} (${grievance.feedbackRating}/5)',
+                          ),
+                          if (grievance.feedbackText != null && grievance.feedbackText!.isNotEmpty)
+                            _buildDetailRow(theme, l10n.feedbackComments, grievance.feedbackText!),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -565,6 +646,64 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWorkproofCard(ThemeData theme, Workproof workproof) {
+    final fileName = workproof.filePath.split('/').last;
+    final isImage = fileName.endsWith('.jpg') || fileName.endsWith('.jpeg') || fileName.endsWith('.png');
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => _launchURL(workproof.filePath),
+              child: Row(
+                children: [
+                  isImage
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            '${Constants.baseUrl}/uploads/${workproof.filePath}',
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.broken_image, size: 40),
+                          ),
+                        )
+                      : const Icon(Icons.insert_drive_file, size: 40),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(fileName, style: theme.textTheme.bodyMedium),
+                  ),
+                  const Icon(Icons.open_in_new, size: 20),
+                ],
+              ),
+            ),
+            const Divider(height: 20),
+            if (workproof.notes != null && workproof.notes!.isNotEmpty) ...[
+              Text(
+                'Notes:',
+                style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(workproof.notes!, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: 8),
+            ],
+            Text(
+              'Uploaded by: ${workproof.uploader?.name ?? 'Unknown'} on ${DateFormat('MMM dd, yyyy').format(workproof.uploadedAt)}',
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+            ),
+          ],
+        ),
       ),
     );
   }

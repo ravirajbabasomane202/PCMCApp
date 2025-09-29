@@ -197,7 +197,7 @@ Map<String, WidgetBuilder> appRoutes = {
     if (args == null || args <= 0) {
       return const Scaffold(body: Center(child: Text('Invalid grievance ID')));
     }
-    return GrievanceDetail(id: args);
+    return GrievanceDetail(id: args ?? 0);
   },
   '/member_head/view': (context) => const ViewGrievances(),
   '/admin/dashboard': (context) => const Dashboard(),
@@ -672,7 +672,7 @@ abstract class AppLocalizations {
   /// No description provided for @reassignComplaint.
   ///
   /// In en, this message translates to:
-  /// **'Reassign'**
+  /// **'Assign'**
   String get reassignComplaint;
 
   /// No description provided for @escalateComplaint.
@@ -1472,6 +1472,654 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Grievance'**
   String get editGrievance;
+
+  /// No description provided for @statusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get statusNew;
+
+  /// No description provided for @statusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get statusInProgress;
+
+  /// No description provided for @statusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get statusResolved;
+
+  /// No description provided for @statusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get statusRejected;
+
+  /// No description provided for @statusOnHold.
+  ///
+  /// In en, this message translates to:
+  /// **'On Hold'**
+  String get statusOnHold;
+
+  /// No description provided for @statusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get statusClosed;
+
+  /// No description provided for @statusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get statusUnknown;
+
+  /// No description provided for @submitGrievanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Report issues in just a few taps'**
+  String get submitGrievanceSubtitle;
+
+  /// No description provided for @trackGrievancesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time updates on your complaints'**
+  String get trackGrievancesSubtitle;
+
+  /// No description provided for @quickResolutionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Resolutions'**
+  String get quickResolutionsTitle;
+
+  /// No description provided for @quickResolutionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get your issues resolved faster'**
+  String get quickResolutionsSubtitle;
+
+  /// No description provided for @track.
+  ///
+  /// In en, this message translates to:
+  /// **'Track'**
+  String get track;
+
+  /// No description provided for @stageReviewedBySupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed by Supervisor'**
+  String get stageReviewedBySupervisor;
+
+  /// No description provided for @stageAssignedToFieldStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to Field Staff'**
+  String get stageAssignedToFieldStaff;
+
+  /// No description provided for @stageResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get stageResolved;
+
+  /// No description provided for @submittedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted on'**
+  String get submittedOn;
+
+  /// No description provided for @userLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get userLabel;
+
+  /// No description provided for @grievanceProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grievance Progress'**
+  String get grievanceProgressTitle;
+
+  /// No description provided for @stageSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get stageSubmitted;
+
+  /// No description provided for @assignedToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to'**
+  String get assignedToLabel;
+
+  /// No description provided for @fieldStaffLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Field Staff'**
+  String get fieldStaffLabel;
+
+  /// No description provided for @resolvedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved on'**
+  String get resolvedOn;
+
+  /// Time difference in days
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day ago} other{{days} days ago}}'**
+  String timeAgoDays(num days);
+
+  /// Time difference in hours
+  ///
+  /// In en, this message translates to:
+  /// **'{hours, plural, one{1 hour ago} other{{hours} hours ago}}'**
+  String timeAgoHours(num hours);
+
+  /// Time difference in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, one{1 minute ago} other{{minutes} minutes ago}}'**
+  String timeAgoMinutes(num minutes);
+
+  /// No description provided for @timeAgoJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeAgoJustNow;
+
+  /// No description provided for @notApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get notApplicable;
+
+  /// Error message when a URL cannot be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch {url}'**
+  String couldNotLaunchUrl(Object url);
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @lastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get lastUpdated;
+
+  /// No description provided for @attachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachments;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @unknownRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Role'**
+  String get unknownRole;
+
+  /// No description provided for @profilePictureUpdateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile picture selected. Save to upload.'**
+  String get profilePictureUpdateMessage;
+
+  /// No description provided for @lastLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Login'**
+  String get lastLogin;
+
+  /// No description provided for @accountStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Status'**
+  String get accountStatus;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @statusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get statusInactive;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
+  /// No description provided for @loadingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get loadingData;
+
+  /// No description provided for @appNameFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'PCMC App'**
+  String get appNameFallback;
+
+  /// No description provided for @packageNameFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'com.example.pcmcapp'**
+  String get packageNameFallback;
+
+  /// No description provided for @currentVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Version'**
+  String get currentVersion;
+
+  /// No description provided for @minimumOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum OS'**
+  String get minimumOS;
+
+  /// No description provided for @checkForUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get checkForUpdates;
+
+  /// No description provided for @versionInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Version Information'**
+  String get versionInformation;
+
+  /// No description provided for @upToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get upToDate;
+
+  /// No description provided for @releaseType.
+  ///
+  /// In en, this message translates to:
+  /// **'Release Type'**
+  String get releaseType;
+
+  /// No description provided for @size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get size;
+
+  /// No description provided for @thankYouMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for using our app!'**
+  String get thankYouMessage;
+
+  /// No description provided for @needHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Need Help?'**
+  String get needHelp;
+
+  /// No description provided for @supportTeamMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Our support team is here to help you with any questions or issues you might have'**
+  String get supportTeamMessage;
+
+  /// No description provided for @contactOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Options'**
+  String get contactOptions;
+
+  /// No description provided for @emailSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Support'**
+  String get emailSupport;
+
+  /// No description provided for @emailSupportResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Get responses within 24 hours'**
+  String get emailSupportResponseTime;
+
+  /// No description provided for @callSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Call Support'**
+  String get callSupport;
+
+  /// No description provided for @callSupportAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Available 9AM - 6PM (Mon-Sat)'**
+  String get callSupportAvailability;
+
+  /// No description provided for @faqsHelpCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQs & Help Center'**
+  String get faqsHelpCenter;
+
+  /// No description provided for @faqsHelpCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find answers to common questions'**
+  String get faqsHelpCenterSubtitle;
+
+  /// No description provided for @weAreHereToHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re here to help you!'**
+  String get weAreHereToHelp;
+
+  /// No description provided for @couldNotLaunchPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch phone'**
+  String get couldNotLaunchPhone;
+
+  /// No description provided for @privacyPolicyCommitmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Our Commitment'**
+  String get privacyPolicyCommitmentTitle;
+
+  /// No description provided for @privacyPolicyCommitmentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information securely.'**
+  String get privacyPolicyCommitmentBody;
+
+  /// No description provided for @privacyPolicyDataCollectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Data Collection'**
+  String get privacyPolicyDataCollectionTitle;
+
+  /// No description provided for @privacyPolicyDataCollectionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We collect your name, email, and grievance details only to process complaints.'**
+  String get privacyPolicyDataCollectionBody;
+
+  /// No description provided for @privacyPolicyDataUsageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Data Usage'**
+  String get privacyPolicyDataUsageTitle;
+
+  /// No description provided for @privacyPolicyDataUsageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is used solely for grievance redressal and system improvement.'**
+  String get privacyPolicyDataUsageBody;
+
+  /// No description provided for @privacyPolicySecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Security'**
+  String get privacyPolicySecurityTitle;
+
+  /// No description provided for @privacyPolicySecurityBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We implement encryption and strict access policies to safeguard your information.'**
+  String get privacyPolicySecurityBody;
+
+  /// No description provided for @faqsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find answers to common questions about using our app'**
+  String get faqsHeaderSubtitle;
+
+  /// No description provided for @faqsCommonQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Common Questions'**
+  String get faqsCommonQuestions;
+
+  /// No description provided for @faqsStillNeedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Still need help?'**
+  String get faqsStillNeedHelp;
+
+  /// No description provided for @faqsContactSupportMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t find the answer you\'re looking for? Contact our support team for assistance.'**
+  String get faqsContactSupportMessage;
+
+  /// No description provided for @faq1_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How to submit a grievance?'**
+  String get faq1_q;
+
+  /// No description provided for @faq1_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to \'Submit Grievance\' from the home screen and fill in details.'**
+  String get faq1_a;
+
+  /// No description provided for @faq2_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How can I track my complaint?'**
+  String get faq2_q;
+
+  /// No description provided for @faq2_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to \'Track Grievance\' and enter your grievance ID.'**
+  String get faq2_a;
+
+  /// No description provided for @faq3_q.
+  ///
+  /// In en, this message translates to:
+  /// **'Can I upload documents?'**
+  String get faq3_q;
+
+  /// No description provided for @faq3_a.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, you can upload photos or PDFs as proof while submitting grievances.'**
+  String get faq3_a;
+
+  /// No description provided for @faq4_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How long does it take to resolve?'**
+  String get faq4_q;
+
+  /// No description provided for @faq4_a.
+  ///
+  /// In en, this message translates to:
+  /// **'It usually takes 7 working days, depending on priority.'**
+  String get faq4_a;
+
+  /// No description provided for @faq5_q.
+  ///
+  /// In en, this message translates to:
+  /// **'What types of grievances can I report?'**
+  String get faq5_q;
+
+  /// No description provided for @faq5_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.'**
+  String get faq5_a;
+
+  /// No description provided for @faq6_q.
+  ///
+  /// In en, this message translates to:
+  /// **'Is there a way to edit my submitted grievance?'**
+  String get faq6_q;
+
+  /// No description provided for @faq6_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You can edit your grievance within 24 hours of submission from the \'My Grievances\' section.'**
+  String get faq6_a;
+
+  /// No description provided for @faq7_q.
+  ///
+  /// In en, this message translates to:
+  /// **'How will I be notified about updates?'**
+  String get faq7_q;
+
+  /// No description provided for @faq7_a.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll receive push notifications and email updates when there\'s progress on your grievance.'**
+  String get faq7_a;
+
+  /// No description provided for @phoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumber;
+
+  /// No description provided for @phoneNumberRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number is required'**
+  String get phoneNumberRequired;
+
+  /// No description provided for @invalidPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid phone number'**
+  String get invalidPhoneNumber;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordTooShort;
+
+  /// No description provided for @departmentIdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Department ID (Optional)'**
+  String get departmentIdOptional;
+
+  /// No description provided for @roleCitizen.
+  ///
+  /// In en, this message translates to:
+  /// **'CITIZEN'**
+  String get roleCitizen;
+
+  /// No description provided for @roleSupervisor.
+  ///
+  /// In en, this message translates to:
+  /// **'SUPERVISOR'**
+  String get roleSupervisor;
+
+  /// No description provided for @roleFieldStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'FIELD_STAFF'**
+  String get roleFieldStaff;
+
+  /// No description provided for @roleAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get roleAdmin;
+
+  /// No description provided for @noMatchingUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found matching your search'**
+  String get noMatchingUsers;
+
+  /// No description provided for @searchByNameOrEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name or email...'**
+  String get searchByNameOrEmail;
+
+  /// No description provided for @welcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back! Please sign in to continue'**
+  String get welcomeBack;
+
+  /// No description provided for @createAccountPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to get started'**
+  String get createAccountPrompt;
+
+  /// No description provided for @voterId.
+  ///
+  /// In en, this message translates to:
+  /// **'Voter ID'**
+  String get voterId;
+
+  /// No description provided for @invalidMobileNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid mobile number'**
+  String get invalidMobileNumber;
+
+  /// No description provided for @citizenName.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen Name'**
+  String get citizenName;
+
+  /// No description provided for @citizenId.
+  ///
+  /// In en, this message translates to:
+  /// **'Citizen ID'**
+  String get citizenId;
+
+  /// No description provided for @submittedFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted Feedback'**
+  String get submittedFeedback;
+
+  /// No description provided for @rating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get rating;
+
+  /// No description provided for @feedbackComments.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback Comments'**
+  String get feedbackComments;
 }
 
 class _AppLocalizationsDelegate
@@ -1687,7 +2335,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryAgain => 'Retry';
 
   @override
-  String get reassignComplaint => 'Reassign';
+  String get reassignComplaint => 'Assign';
 
   @override
   String get escalateComplaint => 'Escalate';
@@ -2092,6 +2740,371 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editGrievance => 'Edit Grievance';
+
+  @override
+  String get statusNew => 'New';
+
+  @override
+  String get statusInProgress => 'In Progress';
+
+  @override
+  String get statusResolved => 'Resolved';
+
+  @override
+  String get statusRejected => 'Rejected';
+
+  @override
+  String get statusOnHold => 'On Hold';
+
+  @override
+  String get statusClosed => 'Closed';
+
+  @override
+  String get statusUnknown => 'Unknown';
+
+  @override
+  String get submitGrievanceSubtitle => 'Report issues in just a few taps';
+
+  @override
+  String get trackGrievancesSubtitle => 'Real-time updates on your complaints';
+
+  @override
+  String get quickResolutionsTitle => 'Quick Resolutions';
+
+  @override
+  String get quickResolutionsSubtitle => 'Get your issues resolved faster';
+
+  @override
+  String get track => 'Track';
+
+  @override
+  String get stageReviewedBySupervisor => 'Reviewed by Supervisor';
+
+  @override
+  String get stageAssignedToFieldStaff => 'Assigned to Field Staff';
+
+  @override
+  String get stageResolved => 'Resolved';
+
+  @override
+  String get submittedOn => 'Submitted on';
+
+  @override
+  String get userLabel => 'User';
+
+  @override
+  String get grievanceProgressTitle => 'Grievance Progress';
+
+  @override
+  String get stageSubmitted => 'Submitted';
+
+  @override
+  String get assignedToLabel => 'Assigned to';
+
+  @override
+  String get fieldStaffLabel => 'Field Staff';
+
+  @override
+  String get resolvedOn => 'Resolved on';
+
+  @override
+  String timeAgoDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoHours(num hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoMinutes(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeAgoJustNow => 'just now';
+
+  @override
+  String get notApplicable => 'N/A';
+
+  @override
+  String couldNotLaunchUrl(Object url) {
+    return 'Could not launch $url';
+  }
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get lastUpdated => 'Last Updated';
+
+  @override
+  String get attachments => 'Attachments';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get unknownRole => 'Unknown Role';
+
+  @override
+  String get profilePictureUpdateMessage =>
+      'Profile picture selected. Save to upload.';
+
+  @override
+  String get lastLogin => 'Last Login';
+
+  @override
+  String get accountStatus => 'Account Status';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusInactive => 'Inactive';
+
+  @override
+  String get editProfile => 'Edit Profile';
+
+  @override
+  String get loadingData => 'Loading...';
+
+  @override
+  String get appNameFallback => 'PCMC App';
+
+  @override
+  String get packageNameFallback => 'com.example.pcmcapp';
+
+  @override
+  String get currentVersion => 'Current Version';
+
+  @override
+  String get minimumOS => 'Minimum OS';
+
+  @override
+  String get checkForUpdates => 'Check for Updates';
+
+  @override
+  String get versionInformation => 'Version Information';
+
+  @override
+  String get upToDate => 'Up to date';
+
+  @override
+  String get releaseType => 'Release Type';
+
+  @override
+  String get size => 'Size';
+
+  @override
+  String get thankYouMessage => 'Thank you for using our app!';
+
+  @override
+  String get needHelp => 'Need Help?';
+
+  @override
+  String get supportTeamMessage =>
+      'Our support team is here to help you with any questions or issues you might have';
+
+  @override
+  String get contactOptions => 'Contact Options';
+
+  @override
+  String get emailSupport => 'Email Support';
+
+  @override
+  String get emailSupportResponseTime => 'Get responses within 24 hours';
+
+  @override
+  String get callSupport => 'Call Support';
+
+  @override
+  String get callSupportAvailability => 'Available 9AM - 6PM (Mon-Sat)';
+
+  @override
+  String get faqsHelpCenter => 'FAQs & Help Center';
+
+  @override
+  String get faqsHelpCenterSubtitle => 'Find answers to common questions';
+
+  @override
+  String get weAreHereToHelp => 'We\'re here to help you!';
+
+  @override
+  String get couldNotLaunchPhone => 'Could not launch phone';
+
+  @override
+  String get privacyPolicyCommitmentTitle => 'Our Commitment';
+
+  @override
+  String get privacyPolicyCommitmentBody =>
+      'We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information securely.';
+
+  @override
+  String get privacyPolicyDataCollectionTitle => '1. Data Collection';
+
+  @override
+  String get privacyPolicyDataCollectionBody =>
+      'We collect your name, email, and grievance details only to process complaints.';
+
+  @override
+  String get privacyPolicyDataUsageTitle => '2. Data Usage';
+
+  @override
+  String get privacyPolicyDataUsageBody =>
+      'Your data is used solely for grievance redressal and system improvement.';
+
+  @override
+  String get privacyPolicySecurityTitle => '3. Security';
+
+  @override
+  String get privacyPolicySecurityBody =>
+      'We implement encryption and strict access policies to safeguard your information.';
+
+  @override
+  String get faqsHeaderSubtitle =>
+      'Find answers to common questions about using our app';
+
+  @override
+  String get faqsCommonQuestions => 'Common Questions';
+
+  @override
+  String get faqsStillNeedHelp => 'Still need help?';
+
+  @override
+  String get faqsContactSupportMessage =>
+      'Can\'t find the answer you\'re looking for? Contact our support team for assistance.';
+
+  @override
+  String get faq1_q => 'How to submit a grievance?';
+
+  @override
+  String get faq1_a =>
+      'Go to \'Submit Grievance\' from the home screen and fill in details.';
+
+  @override
+  String get faq2_q => 'How can I track my complaint?';
+
+  @override
+  String get faq2_a =>
+      'Navigate to \'Track Grievance\' and enter your grievance ID.';
+
+  @override
+  String get faq3_q => 'Can I upload documents?';
+
+  @override
+  String get faq3_a =>
+      'Yes, you can upload photos or PDFs as proof while submitting grievances.';
+
+  @override
+  String get faq4_q => 'How long does it take to resolve?';
+
+  @override
+  String get faq4_a =>
+      'It usually takes 7 working days, depending on priority.';
+
+  @override
+  String get faq5_q => 'What types of grievances can I report?';
+
+  @override
+  String get faq5_a =>
+      'You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.';
+
+  @override
+  String get faq6_q => 'Is there a way to edit my submitted grievance?';
+
+  @override
+  String get faq6_a =>
+      'You can edit your grievance within 24 hours of submission from the \'My Grievances\' section.';
+
+  @override
+  String get faq7_q => 'How will I be notified about updates?';
+
+  @override
+  String get faq7_a =>
+      'You\'ll receive push notifications and email updates when there\'s progress on your grievance.';
+
+  @override
+  String get phoneNumber => 'Phone Number';
+
+  @override
+  String get phoneNumberRequired => 'Phone number is required';
+
+  @override
+  String get invalidPhoneNumber => 'Invalid phone number';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 6 characters';
+
+  @override
+  String get departmentIdOptional => 'Department ID (Optional)';
+
+  @override
+  String get roleCitizen => 'CITIZEN';
+
+  @override
+  String get roleSupervisor => 'SUPERVISOR';
+
+  @override
+  String get roleFieldStaff => 'FIELD_STAFF';
+
+  @override
+  String get roleAdmin => 'ADMIN';
+
+  @override
+  String get noMatchingUsers => 'No users found matching your search';
+
+  @override
+  String get searchByNameOrEmail => 'Search by name or email...';
+
+  @override
+  String get welcomeBack => 'Welcome back! Please sign in to continue';
+
+  @override
+  String get createAccountPrompt => 'Create an account to get started';
+
+  @override
+  String get voterId => 'Voter ID';
+
+  @override
+  String get invalidMobileNumber => 'Enter a valid mobile number';
+
+  @override
+  String get citizenName => 'Citizen Name';
+
+  @override
+  String get citizenId => 'Citizen ID';
+
+  @override
+  String get submittedFeedback => 'Submitted Feedback';
+
+  @override
+  String get rating => 'Rating';
+
+  @override
+  String get feedbackComments => 'Feedback Comments';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_hi.dart ---
@@ -2271,7 +3284,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get tryAgain => 'पुनः प्रयास करें';
 
   @override
-  String get reassignComplaint => 'शिकायत पुनः सौंपें';
+  String get reassignComplaint => 'शिकायत सौंपें';
 
   @override
   String get escalateComplaint => 'शिकायत बढ़ाएँ';
@@ -2336,7 +3349,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get role => 'भूमिका';
 
   @override
-  String get add => 'जोडा';
+  String get add => 'जोड़ें';
 
   @override
   String get userAddedSuccess => 'उपयोगकर्ता सफलतापूर्वक जोड़ा गया';
@@ -2578,10 +3591,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get clearFilters => 'फ़िल्टर साफ़ करें';
 
   @override
-  String get addAnnouncement => 'जाहिरात जोडा';
+  String get addAnnouncement => 'घोषणा जोड़ें';
 
   @override
-  String get noAnnouncements => 'कोणत्याही जाहिराती उपलब्ध नाहीत';
+  String get noAnnouncements => 'कोई घोषणाएँ उपलब्ध नहीं हैं';
 
   @override
   String get title => 'शीर्षक';
@@ -2593,13 +3606,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get type => 'प्रकार';
 
   @override
-  String get targetRole => 'लक्ष्य भूमिका';
+  String get targetRole => 'लक्षित भूमिका';
 
   @override
-  String get selectExpiration => 'कालावधी निवडा';
+  String get selectExpiration => 'समाप्ति तिथि चुनें';
 
   @override
-  String get announcementAdded => 'जाहिरात यशस्वीरीत्या जोडली गेली';
+  String get announcementAdded => 'घोषणा सफलतापूर्वक जोड़ी गई';
 
   @override
   String get takeAction => 'कार्रवाई करें';
@@ -2676,6 +3689,376 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get editGrievance => 'शिकायत संपादित करें';
+
+  @override
+  String get statusNew => 'नया';
+
+  @override
+  String get statusInProgress => 'प्रगति में';
+
+  @override
+  String get statusResolved => 'हल किया गया';
+
+  @override
+  String get statusRejected => 'अस्वीकृत';
+
+  @override
+  String get statusOnHold => 'होल्ड पर';
+
+  @override
+  String get statusClosed => 'बंद';
+
+  @override
+  String get statusUnknown => 'अज्ञात';
+
+  @override
+  String get submitGrievanceSubtitle =>
+      'कुछ ही टैप में समस्याओं की रिपोर्ट करें';
+
+  @override
+  String get trackGrievancesSubtitle => 'आपकी शिकायतों पर रीयल-टाइम अपडेट';
+
+  @override
+  String get quickResolutionsTitle => 'त्वरित समाधान';
+
+  @override
+  String get quickResolutionsSubtitle => 'अपनी समस्याओं का तेजी से समाधान पाएं';
+
+  @override
+  String get track => 'ट्रैक';
+
+  @override
+  String get stageReviewedBySupervisor => 'पर्यवेक्षक द्वारा समीक्षा की गई';
+
+  @override
+  String get stageAssignedToFieldStaff => 'फील्ड स्टाफ को सौंपा गया';
+
+  @override
+  String get stageResolved => 'हल किया गया';
+
+  @override
+  String get submittedOn => 'पर जमा किया गया';
+
+  @override
+  String get userLabel => 'उपयोगकर्ता';
+
+  @override
+  String get grievanceProgressTitle => 'शिकायत प्रगति';
+
+  @override
+  String get stageSubmitted => 'जमा किया गया';
+
+  @override
+  String get assignedToLabel => 'को सौंपा गया';
+
+  @override
+  String get fieldStaffLabel => 'फील्ड स्टाफ';
+
+  @override
+  String get resolvedOn => 'पर हल किया गया';
+
+  @override
+  String timeAgoDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिन पहले',
+      one: '1 दिन पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoHours(num hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours घंटे पहले',
+      one: '1 घंटा पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoMinutes(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes मिनट पहले',
+      one: '1 मिनट पहले',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeAgoJustNow => 'अभी';
+
+  @override
+  String get notApplicable => 'लागू नहीं';
+
+  @override
+  String couldNotLaunchUrl(Object url) {
+    return '$url लॉन्च नहीं किया जा सका';
+  }
+
+  @override
+  String get details => 'विवरण';
+
+  @override
+  String get created => 'बनाया गया';
+
+  @override
+  String get lastUpdated => 'अंतिम अपडेट';
+
+  @override
+  String get attachments => 'अटैचमेंट्स';
+
+  @override
+  String get address => 'पता';
+
+  @override
+  String get unknownRole => 'अज्ञात भूमिका';
+
+  @override
+  String get profilePictureUpdateMessage =>
+      'प्रोफ़ाइल चित्र चुना गया। अपलोड करने के लिए सहेजें।';
+
+  @override
+  String get lastLogin => 'अंतिम लॉगिन';
+
+  @override
+  String get accountStatus => 'खाते की स्थिति';
+
+  @override
+  String get statusActive => 'सक्रिय';
+
+  @override
+  String get statusInactive => 'निष्क्रिय';
+
+  @override
+  String get editProfile => 'प्रोफ़ाइल संपादित करें';
+
+  @override
+  String get loadingData => 'लोड हो रहा है...';
+
+  @override
+  String get appNameFallback => 'पीसीएमसी ऐप';
+
+  @override
+  String get packageNameFallback => 'com.example.pcmcapp';
+
+  @override
+  String get currentVersion => 'वर्तमान संस्करण';
+
+  @override
+  String get minimumOS => 'न्यूनतम ओएस';
+
+  @override
+  String get checkForUpdates => 'अपडेट्स के लिए जांचें';
+
+  @override
+  String get versionInformation => 'संस्करण जानकारी';
+
+  @override
+  String get upToDate => 'अप टू डेट';
+
+  @override
+  String get releaseType => 'रिलीज प्रकार';
+
+  @override
+  String get size => 'आकार';
+
+  @override
+  String get thankYouMessage => 'हमारे ऐप का उपयोग करने के लिए धन्यवाद!';
+
+  @override
+  String get needHelp => 'मदद चाहिए?';
+
+  @override
+  String get supportTeamMessage =>
+      'हमारी सहायता टीम आपके किसी भी प्रश्न या समस्या में मदद करने के लिए यहाँ है';
+
+  @override
+  String get contactOptions => 'संपर्क विकल्प';
+
+  @override
+  String get emailSupport => 'ईमेल सहायता';
+
+  @override
+  String get emailSupportResponseTime => '24 घंटे के भीतर जवाब पाएं';
+
+  @override
+  String get callSupport => 'कॉल सहायता';
+
+  @override
+  String get callSupportAvailability =>
+      'सुबह 9 बजे से शाम 6 बजे तक (सोम-शनि) उपलब्ध';
+
+  @override
+  String get faqsHelpCenter => 'अक्सर पूछे जाने वाले प्रश्न और सहायता केंद्र';
+
+  @override
+  String get faqsHelpCenterSubtitle => 'सामान्य प्रश्नों के उत्तर खोजें';
+
+  @override
+  String get weAreHereToHelp => 'हम आपकी मदद के लिए यहां हैं!';
+
+  @override
+  String get couldNotLaunchPhone => 'फोन लॉन्च नहीं किया जा सका';
+
+  @override
+  String get privacyPolicyCommitmentTitle => 'हमारी प्रतिबद्धता';
+
+  @override
+  String get privacyPolicyCommitmentBody =>
+      'हम आपकी गोपनीयता का महत्व देते हैं और आपके व्यक्तिगत डेटा की सुरक्षा के लिए प्रतिबद्ध हैं। यह नीति बताती है कि हम आपकी जानकारी को सुरक्षित रूप से कैसे संभालते हैं।';
+
+  @override
+  String get privacyPolicyDataCollectionTitle => '१. डेटा संग्रह';
+
+  @override
+  String get privacyPolicyDataCollectionBody =>
+      'हम शिकायतों पर कार्रवाई करने के लिए केवल आपका नाम, ईमेल और शिकायत विवरण एकत्र करते हैं।';
+
+  @override
+  String get privacyPolicyDataUsageTitle => '२. डेटा उपयोग';
+
+  @override
+  String get privacyPolicyDataUsageBody =>
+      'आपका डेटा केवल शिकायत निवारण और सिस्टम सुधार के लिए उपयोग किया जाता है।';
+
+  @override
+  String get privacyPolicySecurityTitle => '३. सुरक्षा';
+
+  @override
+  String get privacyPolicySecurityBody =>
+      'हम आपकी जानकारी को सुरक्षित रखने के लिए एन्क्रिप्शन और सख्त पहुंच नीतियां लागू करते हैं।';
+
+  @override
+  String get faqsHeaderSubtitle =>
+      'हमारे ऐप का उपयोग करने के बारे में सामान्य प्रश्नों के उत्तर खोजें';
+
+  @override
+  String get faqsCommonQuestions => 'सामान्य प्रश्न';
+
+  @override
+  String get faqsStillNeedHelp => 'अभी भी मदद चाहिए?';
+
+  @override
+  String get faqsContactSupportMessage =>
+      'क्या आप जिस उत्तर की तलाश में हैं वह नहीं मिल रहा है? सहायता के लिए हमारी सहायता टीम से संपर्क करें।';
+
+  @override
+  String get faq1_q => 'शिकायत कैसे दर्ज करें?';
+
+  @override
+  String get faq1_a =>
+      'होम स्क्रीन से \'शिकायत दर्ज करें\' पर जाएं और विवरण भरें।';
+
+  @override
+  String get faq2_q => 'मैं अपनी शिकायत को कैसे ट्रैक कर सकता हूं?';
+
+  @override
+  String get faq2_a =>
+      '\'शिकायत ट्रैक करें\' पर नेविगेट करें और अपनी शिकायत आईडी दर्ज करें।';
+
+  @override
+  String get faq3_q => 'क्या मैं दस्तावेज़ अपलोड कर सकता हूं?';
+
+  @override
+  String get faq3_a =>
+      'हां, आप शिकायत दर्ज करते समय सबूत के तौर पर फोटो या पीडीएफ अपलोड कर सकते हैं।';
+
+  @override
+  String get faq4_q => 'समाधान में कितना समय लगता है?';
+
+  @override
+  String get faq4_a =>
+      'प्राथमिकता के आधार पर, इसमें आमतौर पर 7 कार्य दिवस लगते हैं।';
+
+  @override
+  String get faq5_q => 'मैं किस प्रकार की शिकायतें दर्ज कर सकता हूं?';
+
+  @override
+  String get faq5_a =>
+      'आप स्वच्छता, सड़क, जलापूर्ति, बिजली और अन्य नागरिक मुद्दों से संबंधित मुद्दों की रिपोर्ट कर सकते हैं।';
+
+  @override
+  String get faq6_q =>
+      'क्या मेरी दर्ज की गई शिकायत को संपादित करने का कोई तरीका है?';
+
+  @override
+  String get faq6_a =>
+      'आप \'मेरी शिकायतें\' अनुभाग से अपनी शिकायत जमा करने के 24 घंटे के भीतर उसे संपादित कर सकते हैं।';
+
+  @override
+  String get faq7_q => 'मुझे अपडेट के बारे में कैसे सूचित किया जाएगा?';
+
+  @override
+  String get faq7_a =>
+      'आपकी शिकायत पर प्रगति होने पर आपको पुश सूचनाएं और ईमेल अपडेट प्राप्त होंगे।';
+
+  @override
+  String get phoneNumber => 'फ़ोन नंबर';
+
+  @override
+  String get phoneNumberRequired => 'फ़ोन नंबर आवश्यक है';
+
+  @override
+  String get invalidPhoneNumber => 'अमान्य फ़ोन नंबर';
+
+  @override
+  String get passwordTooShort => 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए';
+
+  @override
+  String get departmentIdOptional => 'विभाग आईडी (वैकल्पिक)';
+
+  @override
+  String get roleCitizen => 'नागरिक';
+
+  @override
+  String get roleSupervisor => 'पर्यवेक्षक';
+
+  @override
+  String get roleFieldStaff => 'क्षेत्र कर्मचारी';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String get noMatchingUsers =>
+      'आपकी खोज से मेल खाने वाले कोई उपयोगकर्ता नहीं मिले';
+
+  @override
+  String get searchByNameOrEmail => 'नाम या ईमेल से खोजें...';
+
+  @override
+  String get welcomeBack =>
+      'वापसी पर स्वागत है! कृपया जारी रखने के लिए साइन इन करें';
+
+  @override
+  String get createAccountPrompt => 'शुरू करने के लिए एक खाता बनाएं';
+
+  @override
+  String get voterId => 'मतदाता पहचान पत्र';
+
+  @override
+  String get invalidMobileNumber => 'एक वैध मोबाइल नंबर दर्ज करें';
+
+  @override
+  String get citizenName => 'नागरिक का नाम';
+
+  @override
+  String get citizenId => 'नागरिक आईडी';
+
+  @override
+  String get submittedFeedback => 'जमा किया गया फीडबैक';
+
+  @override
+  String get rating => 'रेटिंग';
+
+  @override
+  String get feedbackComments => 'फीडबैक टिप्पणियाँ';
 }
 
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\l10n\app_localizations_mr.dart ---
@@ -2856,7 +4239,7 @@ class AppLocalizationsMr extends AppLocalizations {
   String get tryAgain => 'पुन्हा प्रयत्न करा';
 
   @override
-  String get reassignComplaint => 'तक्रार पुनः नियुक्त करा';
+  String get reassignComplaint => 'तक्रार नियुक्त करा';
 
   @override
   String get escalateComplaint => 'तक्रार वाढवा';
@@ -3261,6 +4644,372 @@ class AppLocalizationsMr extends AppLocalizations {
 
   @override
   String get editGrievance => 'तक्रार संपादित करा';
+
+  @override
+  String get statusNew => 'नवीन';
+
+  @override
+  String get statusInProgress => 'प्रगतीपथावर';
+
+  @override
+  String get statusResolved => 'निकाली';
+
+  @override
+  String get statusRejected => 'नाकारले';
+
+  @override
+  String get statusOnHold => 'होल्डवर';
+
+  @override
+  String get statusClosed => 'बंद';
+
+  @override
+  String get statusUnknown => 'अज्ञात';
+
+  @override
+  String get submitGrievanceSubtitle => 'काही टॅपमध्ये समस्या नोंदवा';
+
+  @override
+  String get trackGrievancesSubtitle => 'तुमच्या तक्रारींवर रिअल-टाइम अपडेट्स';
+
+  @override
+  String get quickResolutionsTitle => 'जलद निराकरण';
+
+  @override
+  String get quickResolutionsSubtitle => 'तुमच्या समस्यांचे जलद निराकरण करा';
+
+  @override
+  String get track => 'ट्रॅक';
+
+  @override
+  String get stageReviewedBySupervisor => 'पर्यवेक्षकाद्वारे पुनरावलोकन केले';
+
+  @override
+  String get stageAssignedToFieldStaff => 'क्षेत्र कर्मचाऱ्याला नियुक्त केले';
+
+  @override
+  String get stageResolved => 'निकाली';
+
+  @override
+  String get submittedOn => 'सादर केले';
+
+  @override
+  String get userLabel => 'वापरकर्ता';
+
+  @override
+  String get grievanceProgressTitle => 'तक्रार प्रगती';
+
+  @override
+  String get stageSubmitted => 'सादर केले';
+
+  @override
+  String get assignedToLabel => 'यांना नियुक्त केले';
+
+  @override
+  String get fieldStaffLabel => 'क्षेत्र कर्मचारी';
+
+  @override
+  String get resolvedOn => 'निकाली केले';
+
+  @override
+  String timeAgoDays(num days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days दिवसांपूर्वी',
+      one: '1 दिवसापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoHours(num hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours तासांपूर्वी',
+      one: '1 तासापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String timeAgoMinutes(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes मिनिटांपूर्वी',
+      one: '1 मिनिटापूर्वी',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get timeAgoJustNow => 'आत्ताच';
+
+  @override
+  String get notApplicable => 'लागू नाही';
+
+  @override
+  String couldNotLaunchUrl(Object url) {
+    return '$url उघडू शकलो नाही';
+  }
+
+  @override
+  String get details => 'तपशील';
+
+  @override
+  String get created => 'तयार केले';
+
+  @override
+  String get lastUpdated => 'शेवटचे अद्यतनित';
+
+  @override
+  String get attachments => 'जोडण्या';
+
+  @override
+  String get address => 'पत्ता';
+
+  @override
+  String get unknownRole => 'अज्ञात भूमिका';
+
+  @override
+  String get profilePictureUpdateMessage =>
+      'प्रोफाइल चित्र निवडले. अपलोड करण्यासाठी जतन करा.';
+
+  @override
+  String get lastLogin => 'शेवटचे लॉगिन';
+
+  @override
+  String get accountStatus => 'खात्याची स्थिती';
+
+  @override
+  String get statusActive => 'सक्रिय';
+
+  @override
+  String get statusInactive => 'निष्क्रिय';
+
+  @override
+  String get editProfile => 'प्रोफाइल संपादित करा';
+
+  @override
+  String get loadingData => 'लोड होत आहे...';
+
+  @override
+  String get appNameFallback => 'पीसीएमसी ॲप';
+
+  @override
+  String get packageNameFallback => 'com.example.pcmcapp';
+
+  @override
+  String get currentVersion => 'सध्याची आवृत्ती';
+
+  @override
+  String get minimumOS => 'किमान ओएस';
+
+  @override
+  String get checkForUpdates => 'अपडेटसाठी तपासा';
+
+  @override
+  String get versionInformation => 'आवृत्ती माहिती';
+
+  @override
+  String get upToDate => 'अद्ययावत';
+
+  @override
+  String get releaseType => 'रिलीज प्रकार';
+
+  @override
+  String get size => 'आकार';
+
+  @override
+  String get thankYouMessage => 'आमचे ॲप वापरल्याबद्दल धन्यवाद!';
+
+  @override
+  String get needHelp => 'मदत हवी आहे?';
+
+  @override
+  String get supportTeamMessage =>
+      'आमची समर्थन टीम आपल्याला कोणत्याही प्रश्नांसाठी किंवा समस्यांसाठी मदत करण्यास येथे आहे';
+
+  @override
+  String get contactOptions => 'संपर्क पर्याय';
+
+  @override
+  String get emailSupport => 'ईमेल समर्थन';
+
+  @override
+  String get emailSupportResponseTime => '२४ तासांच्या आत प्रतिसाद मिळवा';
+
+  @override
+  String get callSupport => 'कॉल समर्थन';
+
+  @override
+  String get callSupportAvailability =>
+      'सकाळी ९ ते संध्याकाळी ६ (सोम-शनि) उपलब्ध';
+
+  @override
+  String get faqsHelpCenter => 'वारंवार विचारले जाणारे प्रश्न आणि मदत केंद्र';
+
+  @override
+  String get faqsHelpCenterSubtitle => 'सामान्य प्रश्नांची उत्तरे शोधा';
+
+  @override
+  String get weAreHereToHelp => 'आम्ही आपल्याला मदत करण्यासाठी येथे आहोत!';
+
+  @override
+  String get couldNotLaunchPhone => 'फोन लावू शकलो नाही';
+
+  @override
+  String get privacyPolicyCommitmentTitle => 'आमची वचनबद्धता';
+
+  @override
+  String get privacyPolicyCommitmentBody =>
+      'आम्ही तुमच्या गोपनीयतेचा आदर करतो आणि तुमच्या वैयक्तिक डेटाचे संरक्षण करण्यास वचनबद्ध आहोत. हे धोरण आम्ही तुमची माहिती सुरक्षितपणे कशी हाताळतो हे स्पष्ट करते.';
+
+  @override
+  String get privacyPolicyDataCollectionTitle => '१. डेटा संकलन';
+
+  @override
+  String get privacyPolicyDataCollectionBody =>
+      'आम्ही तक्रारींवर प्रक्रिया करण्यासाठी फक्त तुमचे नाव, ईमेल आणि तक्रारीचे तपशील गोळा करतो.';
+
+  @override
+  String get privacyPolicyDataUsageTitle => '२. डेटा वापर';
+
+  @override
+  String get privacyPolicyDataUsageBody =>
+      'तुमचा डेटा केवळ तक्रार निवारण आणि प्रणाली सुधारण्यासाठी वापरला जातो.';
+
+  @override
+  String get privacyPolicySecurityTitle => '३. सुरक्षा';
+
+  @override
+  String get privacyPolicySecurityBody =>
+      'तुमची माहिती सुरक्षित ठेवण्यासाठी आम्ही एन्क्रिप्शन आणि कठोर प्रवेश धोरणे लागू करतो.';
+
+  @override
+  String get faqsHeaderSubtitle =>
+      'आमचे ॲप वापरण्याबद्दल सामान्य प्रश्नांची उत्तरे शोधा';
+
+  @override
+  String get faqsCommonQuestions => 'सामान्य प्रश्न';
+
+  @override
+  String get faqsStillNeedHelp => 'अजूनही मदतीची गरज आहे?';
+
+  @override
+  String get faqsContactSupportMessage =>
+      'तुम्ही शोधत असलेले उत्तर सापडत नाहीये? मदतीसाठी आमच्या समर्थन टीमशी संपर्क साधा.';
+
+  @override
+  String get faq1_q => 'तक्रार कशी नोंदवायची?';
+
+  @override
+  String get faq1_a => 'होम स्क्रीनवरून \'तक्रार नोंदवा\' वर जा आणि तपशील भरा.';
+
+  @override
+  String get faq2_q => 'मी माझ्या तक्रारीचा मागोवा कसा घेऊ शकेन?';
+
+  @override
+  String get faq2_a =>
+      '\'तक्रार मागोवा\' वर नेव्हिगेट करा आणि तुमचा तक्रार आयडी प्रविष्ट करा.';
+
+  @override
+  String get faq3_q => 'मी कागदपत्रे अपलोड करू शकेन का?';
+
+  @override
+  String get faq3_a =>
+      'होय, तक्रार नोंदवताना तुम्ही पुरावा म्हणून फोटो किंवा पीडीएफ अपलोड करू शकता.';
+
+  @override
+  String get faq4_q => 'निराकरण होण्यासाठी किती वेळ लागतो?';
+
+  @override
+  String get faq4_a => 'प्राधान्यानुसार, साधारणपणे ७ कामकाजाचे दिवस लागतात.';
+
+  @override
+  String get faq5_q => 'मी कोणत्या प्रकारच्या तक्रारी नोंदवू शकेन?';
+
+  @override
+  String get faq5_a =>
+      'तुम्ही स्वच्छता, रस्ते, पाणीपुरवठा, वीज आणि इतर नागरी समस्यांशी संबंधित तक्रारी नोंदवू शकता.';
+
+  @override
+  String get faq6_q =>
+      'मी नोंदवलेली तक्रार संपादित करण्याचा काही मार्ग आहे का?';
+
+  @override
+  String get faq6_a =>
+      'तुम्ही \'माझ्या तक्रारी\' विभागातून तक्रार नोंदवल्याच्या २४ तासांच्या आत तुमची तक्रार संपादित करू शकता.';
+
+  @override
+  String get faq7_q => 'मला अपडेट्सबद्दल कसे सूचित केले जाईल?';
+
+  @override
+  String get faq7_a =>
+      'तुमच्या तक्रारीवर प्रगती झाल्यावर तुम्हाला पुश सूचना आणि ईमेल अपडेट्स मिळतील.';
+
+  @override
+  String get phoneNumber => 'फोन नंबर';
+
+  @override
+  String get phoneNumberRequired => 'फोन नंबर आवश्यक आहे';
+
+  @override
+  String get invalidPhoneNumber => 'अवैध फोन नंबर';
+
+  @override
+  String get passwordTooShort => 'पासवर्ड किमान ६ अक्षरांचा असावा';
+
+  @override
+  String get departmentIdOptional => 'विभाग आयडी (पर्यायी)';
+
+  @override
+  String get roleCitizen => 'नागरिक';
+
+  @override
+  String get roleSupervisor => 'पर्यवेक्षक';
+
+  @override
+  String get roleFieldStaff => 'क्षेत्र कर्मचारी';
+
+  @override
+  String get roleAdmin => 'प्रशासक';
+
+  @override
+  String get noMatchingUsers =>
+      'तुमच्या शोधाशी जुळणारे कोणतेही वापरकर्ते आढळले नाहीत';
+
+  @override
+  String get searchByNameOrEmail => 'नाव किंवा ईमेलद्वारे शोधा...';
+
+  @override
+  String get welcomeBack => 'परत स्वागत आहे! कृपया पुढे जाण्यासाठी साइन इन करा';
+
+  @override
+  String get createAccountPrompt => 'सुरुवात करण्यासाठी एक खाते तयार करा';
+
+  @override
+  String get voterId => 'मतदार ओळखपत्र';
+
+  @override
+  String get invalidMobileNumber => 'एक वैध मोबाइल नंबर प्रविष्ट करा';
+
+  @override
+  String get citizenName => 'नागरिकाचे नाव';
+
+  @override
+  String get citizenId => 'नागरिक आयडी';
+
+  @override
+  String get submittedFeedback => 'सादर केलेला अभिप्राय';
+
+  @override
+  String get rating => 'रेटिंग';
+
+  @override
+  String get feedbackComments => 'अभिप्राय टिप्पण्या';
 }
 
 
@@ -4475,23 +6224,10 @@ class _AllUsersHistoryScreenState extends State<AllUsersHistoryScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(
-          l10n.allUsersHistory ?? 'All Users History',
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        shadowColor: Colors.black12,
-        foregroundColor: theme.primaryColor,
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(16),
-          ),
-        ),
+        title: Text(l10n.allUsersHistory),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: Container(
         color: const Color(0xFFf8fbff),
@@ -5322,42 +7058,24 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   Expanded(
                                     child: CustomButton2(
                                       text: l10n.reassignComplaint,
-                                      onPressed: () => _showReassignDialog(grievance.id),
-                                      icon: Icons.person_add,
-                                      variant: ButtonVariant.outlined,
+                                      onPressed: grievance.assignedTo != null
+                                          ? null : () => _showReassignDialog(grievance.id),
+                                      icon: Icons.person_add,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: CustomButton2(
-                                      text: l10n.escalateComplaint,
-                                      onPressed: () async {
-                                        try {
-                                          int newAssigneeId = 13;
-                                          int admin = 4;
-                                          await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('${l10n.escalateComplaint} Successful'),
-                                              backgroundColor: theme.colorScheme.primary,
-                                            ),
-                                          );
-                                          _fetchData();
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(e.toString()),
-                                              backgroundColor: theme.colorScheme.error,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      icon: Icons.arrow_upward,
-                                      variant: ButtonVariant.outlined,
-                                      size: ButtonSize.small,
-                                    ),
-                                  ),
+                                  // const SizedBox(width: 8),
+                                  // Expanded(
+                                  //   child: CustomButton2(
+                                  //     text: l10n.escalateComplaint,
+                                  //     onPressed: () => _showEscalateDialog(grievance.id),
+                                  //     icon: Icons.arrow_upward,
+                                  //     variant: ButtonVariant.outlined,
+                                  //     size: ButtonSize.small,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -5366,18 +7084,21 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                 children: [
                                   Expanded(
                                     child: CustomButton2(
-                                      text: l10n.updateStatus,
-                                      onPressed: () => _showStatusDialog(grievance.id),
-                                      icon: Icons.update,
-                                      variant: ButtonVariant.outlined,
+                                      text: l10n.updateStatus, // Changed from updateStatus
+                                      onPressed: grievance.status == 'resolved'
+                                          ? null
+                                          : () => _showStatusDialog(grievance.id),
+                                      icon: Icons.update,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: CustomButton2(
                                       text: l10n.viewDetails,
-                                      onPressed: () {
+                                      onPressed: () { // Changed from viewDetails
                                         if (grievance.id > 0) {
                                           Navigator.pushNamed(
                                             context,
@@ -5393,9 +7114,10 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                           );
                                         }
                                       },
-                                      icon: Icons.info,
-                                      variant: ButtonVariant.outlined,
+                                      icon: Icons.info,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
                                 ],
@@ -5548,6 +7270,70 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       },
     );
   }
+
+  // void _showEscalateDialog(int grievanceId) {
+  //   final l10n = AppLocalizations.of(context)!;
+  //   final theme = Theme.of(context);
+  //   int? selectedAssigneeId;
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           return AlertDialog(
+  //             title: Text(l10n.escalateComplaint, style: theme.textTheme.titleLarge),
+  //             content: _assignees.isEmpty
+  //                 ? Text('No field staff available for escalation.')
+  //                 : DropdownButtonFormField<int>(
+  //                     decoration: InputDecoration(
+  //                       labelText: l10n.selectAssignee,
+  //                       border: OutlineInputBorder(
+  //                         borderRadius: BorderRadius.circular(8),
+  //                       ),
+  //                     ),
+  //                     value: selectedAssigneeId,
+  //                     isExpanded: true,
+  //                     items: _assignees
+  //                         .map((u) => DropdownMenuItem(
+  //                               value: u.id,
+  //                               child: Text(u.name ?? "Unknown User"),
+  //                             ))
+  //                         .toList(),
+  //                     onChanged: (value) {
+  //                       setState(() => selectedAssigneeId = value);
+  //                     },
+  //                   ),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () => Navigator.pop(ctx),
+  //                 child: Text(l10n.cancel),
+  //               ),
+  //               ElevatedButton(
+  //                 onPressed: () async {
+  //                   if (selectedAssigneeId != null) {
+  //                     try {
+  //                       // Assuming the current user is an admin with a static ID for now.
+  //                       // This should be replaced with the actual logged-in admin's ID.
+  //                       int adminId = 4;
+  //                       await ref.read(adminProvider.notifier).escalateGrievance(grievanceId, selectedAssigneeId!, adminId);
+  //                       Navigator.pop(ctx);
+  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Grievance escalated successfully')));
+  //                       _fetchData();
+  //                     } catch (e) {
+  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Escalation failed: $e')));
+  //                     }
+  //                   }
+  //                 },
+  //                 child: Text(l10n.escalate),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   void _showReassignDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
@@ -5771,15 +7557,10 @@ class _DashboardState extends ConsumerState<Dashboard> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(loc.appTitle,
-    style: TextStyle(color: Colors.black),),
-        centerTitle: true,
-        elevation: 2,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue.shade800,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        title: Text(loc.appTitle),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: RefreshIndicator(
@@ -6701,11 +8482,11 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
         elevation: 0,
         backgroundColor: Colors.blue.shade600,
       ),
-      floatingActionButton: FloatingActionButton(
+      /* floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue.shade600,
         onPressed: () => _showAreaDialog(),
         child: const Icon(Icons.add),
-      ),
+      ), */
       body: FutureBuilder<List<MasterArea>>(
         future: _areasFuture,
         builder: (context, snapshot) {
@@ -6756,16 +8537,16 @@ class _ManageAreasScreenState extends State<ManageAreasScreen> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
+                      /* IconButton(
                         icon: Icon(Icons.edit, color: Colors.blue.shade800),
                         onPressed: () => _showAreaDialog(area: area),
                         tooltip: 'Edit Area',
-                      ),
-                      IconButton(
+                      ), */
+                      /* IconButton(
                         icon: Icon(Icons.delete, color: Colors.red.shade700),
                         onPressed: () => _confirmDeleteArea(area),
                         tooltip: 'Delete Area',
-                      ),
+                      ), */
                     ],
                   ),
                   onTap: () => _showAreaDialog(area: area),
@@ -7584,7 +9365,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                         const SizedBox(height: 12),
                         TextFormField(
                           decoration: InputDecoration(
-                            labelText: 'Phone Number',
+                            labelText: l10n.phoneNumber,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -7593,10 +9374,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Phone number is required';
+                              return l10n.phoneNumberRequired;
                             }
                             if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                              return 'Invalid phone number';
+                              return l10n.invalidPhoneNumber;
                             }
                             return null;
                           },
@@ -7615,10 +9396,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                           obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Password is required';
+                              return l10n.passwordRequired;
                             }
                             if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                              return l10n.passwordTooShort;
                             }
                             return null;
                           },
@@ -7635,9 +9416,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                             filled: true,
                             fillColor: Colors.grey[50],
                           ),
-                          items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                              .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                              .toList(),
+                          items: const [
+                            DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
+                            DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('SUPERVISOR')),
+                            DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
+                            // DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                          ],
                           onChanged: (value) => role = value ?? 'CITIZEN',
                           validator: validateRequired,
                         ),
@@ -7788,7 +9572,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                               TextFormField(
                                 initialValue: phoneNumber,
                                 decoration: InputDecoration(
-                                  labelText: 'Phone Number',
+                                  labelText: l10n.phoneNumber,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -7797,10 +9581,10 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Phone number is required';
+                                    return l10n.phoneNumberRequired;
                                   }
                                   if (!RegExp(r'^\+?\d{10,15}$').hasMatch(value)) {
-                                    return 'Invalid phone number';
+                                    return l10n.invalidPhoneNumber;
                                   }
                                   return null;
                                 },
@@ -7817,9 +9601,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                   filled: true,
                                   fillColor: Colors.grey[50],
                                 ),
-                                items: ['CITIZEN', 'MEMBER_HEAD', 'FIELD_STAFF', 'ADMIN']
-                                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                                    .toList(),
+                                items: const [
+                                  DropdownMenuItem(value: 'CITIZEN', child: Text('CITIZEN')),
+                                  DropdownMenuItem(value: 'MEMBER_HEAD', child: Text('Supervisor')),
+                                  DropdownMenuItem(value: 'FIELD_STAFF', child: Text('FIELD_STAFF')),
+                                  // DropdownMenuItem(value: 'ADMIN', child: Text('ADMIN')),
+                                ],
                                 onChanged: (value) => setDialogState(() {
                                   role = value ?? 'CITIZEN';
                                 }),
@@ -7871,16 +9658,14 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(l10n.userUpdatedSuccess ??
-                                            'User updated successfully'),
+                                        content: Text(l10n.userUpdatedSuccess),
                                         backgroundColor: Colors.green,
                                       ),
                                     );
                                   } catch (e) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text(
-                                            '${l10n.failedToUpdateUser ?? 'Failed to update user'}: $e'),
+                                        content: Text('${l10n.failedToUpdateUser}: $e'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -7920,13 +9705,12 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
               Icon(Icons.warning_amber_rounded, size: 48, color: Colors.orange[700]),
               const SizedBox(height: 16),
               Text(
-                l10n.deleteUser ?? 'Delete User',
+                l10n.deleteUser,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
               Text(
-                l10n.deleteUserConfirmation ??
-                    'Are you sure you want to delete this user?',
+                l10n.deleteUserConfirmation,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey[700]),
               ),
@@ -7942,7 +9726,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                   SizedBox(
                     width: 100, // Fixed width to avoid layout issues
                     child: CustomButton(
-                      text: l10n.delete ?? 'Delete',
+                      text: l10n.delete,
                       backgroundColor: Colors.red,
                       onPressed: () => Navigator.pop(context, true),
                     ),
@@ -7960,14 +9744,14 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
         await ref.read(usersProvider.notifier).deleteUser(userId);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.userDeletedSuccess ?? 'User deleted successfully'),
+            content: Text(l10n.userDeletedSuccess),
             backgroundColor: Colors.green,
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${l10n.failedToDeleteUser ?? 'Failed to delete user'}: $e'),
+            content: Text('${l10n.failedToDeleteUser}: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -7986,9 +9770,9 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       backgroundColor: const Color(0xFFf8fbff), // Set background color
       appBar: AppBar(
         title: Text(l10n.manageUsers),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue[800],
-        elevation: 1,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -8010,7 +9794,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: 'Search by name...',
+                hintText: l10n.searchByNameOrEmail,
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 filled: true,
@@ -8048,8 +9832,8 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
     if (filteredUsers.isEmpty) {
       return EmptyState(
         icon: Icons.search_off,
-        title: 'No Results',
-        message: 'No users found matching your search',
+        title: l10n.noResultsFound,
+        message: l10n.noMatchingUsers,
         actionButton: CustomButton(
           text: l10n.retry,
           onPressed: () => _searchController.clear(),
@@ -8110,7 +9894,7 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  user.role ?? '',
+                  _getDisplayRole(user.role),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -8149,8 +9933,19 @@ class _ManageUsersState extends ConsumerState<ManageUsers> {
       case 'FIELD_STAFF':
         return Colors.green;
       case 'CITIZEN':
+      
       default:
         return Colors.blue;
+    }
+  }
+
+  String _getDisplayRole(String? role) {
+    if (role == null) return '';
+    switch (role.toLowerCase()) {
+      case 'member_head':
+        return AppLocalizations.of(context)!.roleSupervisor;
+      default:
+        return role.toUpperCase();
     }
   }
 }
@@ -8571,12 +10366,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
-  String? validatePhone(String? value) {
+  String? validatePhone(String? value, AppLocalizations l10n) {
     if (value == null || value.isEmpty) {
-      return 'Mobile number is required';
+      return l10n.phoneNumberRequired;
     }
     if (!RegExp(r'^\+?[1-9]\d{1,14}$').hasMatch(value)) {
-      return 'Enter a valid mobile number';
+      return l10n.invalidMobileNumber;
     }
     return null;
   }
@@ -8610,8 +10405,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 8),
               Text(
                 _isLogin 
-                  ? 'Welcome back! Please sign in to continue'
-                  : 'Create an account to get started',
+                  ? l10n.welcomeBack
+                  : l10n.createAccountPrompt,
                 style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6)),
               ),
               const SizedBox(height: 40),
@@ -8633,8 +10428,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Address field
-                            decoration: const InputDecoration(
-                              labelText: 'Address',
+                            decoration: InputDecoration(
+                              labelText: l10n.address,
                               prefixIcon: Icon(Icons.home_outlined),
                             ),
                             validator: validateRequired,
@@ -8642,18 +10437,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Mobile Number field
-                            decoration: const InputDecoration(
-                              labelText: 'Mobile Number',
+                            decoration: InputDecoration(
+                              labelText: l10n.phoneNumber,
                               prefixIcon: Icon(Icons.phone_outlined),
                             ),
                             keyboardType: TextInputType.phone,
-                            validator: validatePhone,
+                            validator: (value) => validatePhone(value, l10n),
                             onSaved: (value) => _phone = value!,
                           ),
                           const SizedBox(height: 16),
                           TextFormField(  // New: Voter ID field
-                            decoration: const InputDecoration(
-                              labelText: 'Voter ID',
+                            decoration: InputDecoration(
+                              labelText: l10n.voterId,
                               prefixIcon: Icon(Icons.badge_outlined),
                             ),
                             validator: validateRequired,
@@ -9370,6 +11165,7 @@ import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../models/grievance_model.dart';
+import '../../models/user_model.dart';
 import '../../models/comment_model.dart';
 import '../../services/grievance_service.dart';
 import '../../widgets/status_badge.dart';
@@ -9412,8 +11208,9 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     final Uri uri = Uri.parse(url);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not launch $url')),
+          SnackBar(content: Text(l10n.couldNotLaunchUrl(url))),
         );
       }
     }
@@ -9476,7 +11273,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
       // Assuming you have an EditGrievance screen.
       // Navigator.push(context, MaterialPageRoute(builder: (context) => EditGrievance(id: widget.id))).then((_) {
       Navigator.pushNamed(context, '/citizen/edit', arguments: widget.id).then((result) {
-        // Refresh data after returning from edit screen
+        // Refresh data after returning from the edit screen
         ref.refresh(grievanceProvider(widget.id));
       });
     } else if (value == 'delete') {
@@ -9519,7 +11316,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
           if (currentUser != null &&
               (grievanceAsync.value?.citizenId == currentUser.id ||
                   currentUser.role?.toLowerCase() == 'admin'))
-            PopupMenuButton<String>(
+            PopupMenuButton<String>( // Already localized
               onSelected: _onMenuSelected,
               itemBuilder: (context) => [
                 PopupMenuItem(value: 'edit', child: Text(l10n.edit)),
@@ -9529,7 +11326,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
         ],
       ),
       body: grievanceAsync.when(
-        data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance),
+        data: (grievance) => _buildGrievanceDetail(theme, l10n, grievance, currentUser),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => EmptyState(
           icon: Icons.error,
@@ -9540,7 +11337,12 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     );
   }
 
-  Widget _buildGrievanceDetail(ThemeData theme, AppLocalizations l10n, Grievance grievance) {
+  Widget _buildGrievanceDetail(
+    ThemeData theme,
+    AppLocalizations l10n,
+    Grievance grievance,
+    User? currentUser,
+  ) {
     return Column(
       children: [
         // Grievance details section
@@ -9574,9 +11376,9 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                             IconButton(
                               icon: const Icon(Icons.refresh),
                               onPressed: () {
-                                ref.refresh(grievanceProvider(widget.id));
+                                ref.invalidate(grievanceProvider(widget.id));
                               },
-                              tooltip: 'Refresh',
+                              tooltip: l10n.refresh,
                             ),
                           ],
                         ),
@@ -9598,39 +11400,45 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Details',
+                          l10n.details,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         const SizedBox(height: 12),
                         
-                        _buildDetailRow(theme, 'Description', grievance.description),
+                        _buildDetailRow(theme, l10n.description, grievance.description),
+
+                        if (grievance.citizen != null)
+                          _buildDetailRow(theme, l10n.citizenName, grievance.citizen!.name ?? 'N/A'),
+
+                        if (grievance.citizenId != null)
+                          _buildDetailRow(theme, l10n.citizenId, grievance.citizenId.toString()),
                         
                         if (grievance.subject != null)
-                          _buildDetailRow(theme, 'Subject', grievance.subject!.name),
+                          _buildDetailRow(theme, l10n.filterBySubject, grievance.subject!.name),
                         
                         if (grievance.area != null)
-                          _buildDetailRow(theme, 'Area', grievance.area!.name),
+                          _buildDetailRow(theme, l10n.filterByArea, grievance.area!.name),
                         
                         if (grievance.priority != null)
-                          _buildDetailRow(theme, 'Priority', grievance.priority?.toString() ?? 'medium'),
+                          _buildDetailRow(theme, l10n.filterByPriority, grievance.priority?.toString() ?? 'medium'),
                         
                         _buildDetailRow(
                           theme, 
-                          'Created', 
+                          l10n.created,
                           DateFormat('MMM dd, yyyy - HH:mm').format(grievance.createdAt)
                         ),
                         
                         if (grievance.updatedAt != grievance.createdAt)
                           _buildDetailRow(
                             theme, 
-                            'Last Updated', 
+                            l10n.lastUpdated,
                             DateFormat('MMM dd, yyyy - HH:mm').format(grievance.updatedAt)
                           ),
                         
                         if (grievance.assignee != null)
-                          _buildDetailRow(theme, 'Assigned To', grievance.assignee!.name ?? ""),
+                          _buildDetailRow(theme, l10n.assignedToLabel, grievance.assignee!.name ?? ""),
                       ],
                     ),
                   ),
@@ -9649,7 +11457,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Attachments',
+                            l10n.attachments,
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
@@ -9715,7 +11523,7 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Comments',
+                          l10n.comments,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -9737,8 +11545,13 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                   ),
                 ),
                 
-                // Feedback section (only for resolved grievances)
-                if (grievance.status == 'resolved') ...[
+                // --- Conditional Feedback Section ---
+
+                // Show feedback form to the CITIZEN OWNER if the grievance is resolved and feedback is NOT yet given.
+                if (grievance.status?.toLowerCase() == 'resolved' &&
+                    grievance.feedbackRating == null &&
+                    currentUser?.role == 'citizen' &&
+                    grievance.citizenId == currentUser?.id) ...[
                   const SizedBox(height: 16),
                   Card(
                     color: const Color(0xFFecf2fe), 
@@ -9835,6 +11648,41 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
                             icon: Icons.send,
                             fullWidth: true,
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+
+                // Show submitted feedback info to ADMINS, SUPERVISORS, or the original CITIZEN if feedback has been given.
+                if (grievance.feedbackRating != null && grievance.feedbackRating! > 0 &&
+                    (currentUser?.role == 'admin' ||
+                     currentUser?.role == 'member_head' ||
+                     (currentUser?.role == 'citizen' && grievance.citizenId == currentUser?.id))) ...[
+                  const SizedBox(height: 16),
+                  Card(
+                    color: const Color(0xFFecf2fe),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.submittedFeedback,
+                            style: theme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _buildDetailRow(
+                            theme,
+                            l10n.rating,
+                            '${'⭐' * grievance.feedbackRating!} (${grievance.feedbackRating}/5)',
+                          ),
+                          if (grievance.feedbackText != null && grievance.feedbackText!.isNotEmpty)
+                            _buildDetailRow(theme, l10n.feedbackComments, grievance.feedbackText!),
                         ],
                       ),
                     ),
@@ -10491,20 +12339,20 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                             final List<Map<String, dynamic>> banners = [
                               {
                                 'title': localizations.submitGrievance,
-                                'subtitle': 'Report issues in just a few taps',
+                                'subtitle': localizations.submitGrievanceSubtitle,
                                 'color': theme.colorScheme.primaryContainer,
                                 'icon': Icons.add_task_rounded,
                               },
                               {
                                 'title': localizations.track_grievances,
                                 'subtitle':
-                                    'Real-time updates on your complaints',
+                                    localizations.trackGrievancesSubtitle,
                                 'color': theme.colorScheme.secondaryContainer,
                                 'icon': Icons.track_changes_rounded,
                               },
                               {
-                                'title': 'Quick Resolutions',
-                                'subtitle': 'Get your issues resolved faster',
+                                'title': localizations.quickResolutionsTitle,
+                                'subtitle': localizations.quickResolutionsSubtitle,
                                 'color': theme.colorScheme.tertiaryContainer,
                                 'icon': Icons.verified_user_rounded,
                               },
@@ -10711,7 +12559,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.addAnnouncement ,
+                      AppLocalizations.of(context)!.addAnnouncement,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
@@ -10723,18 +12571,18 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error : null,
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _messageController,
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.message ,
+                        labelText: AppLocalizations.of(context)!.message,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
                       ),
-                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error  : null,
+                      validator: (value) => value!.isEmpty ? AppLocalizations.of(context)!.error : null,
                       maxLines: 3,
                     ),
                     const SizedBox(height: 16),
@@ -10746,7 +12594,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       )).toList(),
                       onChanged: (value) => setState(() => _type = value!),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.type ,
+                        labelText: AppLocalizations.of(context)!.type,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -10763,7 +12611,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       child: ListTile(
                         title: Text(
                           _expiresAt == null
-                              ? AppLocalizations.of(context)!.selectExpiration 
+                              ? AppLocalizations.of(context)!.selectExpiration
                               : DateFormat('yyyy-MM-dd').format(_expiresAt!),
                           style: const TextStyle(fontSize: 14),
                         ),
@@ -10793,7 +12641,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       )).toList(),
                       onChanged: (value) => setState(() => _targetRole = value),
                       decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.targetRole ,
+                        labelText: AppLocalizations.of(context)!.targetRole,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                         filled: true,
                         fillColor: const Color(0xFFf8fbff),
@@ -10806,7 +12654,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: Text(AppLocalizations.of(context)!.cancel ),
+                          child: Text(AppLocalizations.of(context)!.cancel),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -10831,7 +12679,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                 _targetRole = null;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(AppLocalizations.of(context)!.announcementAdded ),
+                                    content: Text(AppLocalizations.of(context)!.announcementAdded),
                                     backgroundColor: Colors.green,
                                   ),
                                 );
@@ -10850,7 +12698,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                           ),
-                          child: Text(AppLocalizations.of(context)!.submit ),
+                          child: Text(AppLocalizations.of(context)!.submit),
                         ),
                       ],
                     ),
@@ -10874,10 +12722,10 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: Text(localizations.announcements ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.blue,
-        elevation: 1,
+        title: Text(localizations.announcements),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        elevation: Theme.of(context).appBarTheme.elevation,
       ),
       floatingActionButton: isAdmin
           ? FloatingActionButton(
@@ -10897,7 +12745,7 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                     Icon(Icons.announcement, size: 64, color: Colors.grey.shade400),
                     const SizedBox(height: 16),
                     Text(
-                      localizations.noAnnouncements ,
+                      localizations.noAnnouncements,
                       style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
                     ),
                   ],
@@ -11047,6 +12895,7 @@ extension StringExtension on String {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\app_version_screen.dart ---
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class AppVersionScreen extends StatefulWidget {
   const AppVersionScreen({super.key});
@@ -11056,7 +12905,7 @@ class AppVersionScreen extends StatefulWidget {
 }
 
 class _AppVersionScreenState extends State<AppVersionScreen> {
-  String version = "Loading...";
+  String version = "";
   String appName = "";
   String packageName = "";
 
@@ -11068,6 +12917,10 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
 
   Future<void> _loadVersion() async {
     final info = await PackageInfo.fromPlatform();
+    if (!mounted) return;
+    if (version.isEmpty) {
+      version = AppLocalizations.of(context)?.loadingData ?? "Loading...";
+    }
     setState(() {
       version = "${info.version} (Build ${info.buildNumber})";
       appName = info.appName;
@@ -11077,20 +12930,15 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "App Version",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.appVersion),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -11121,7 +12969,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
             const SizedBox(height: 24),
             // App Name
             Text(
-              appName.isNotEmpty ? appName : "PCMC App",
+              appName.isNotEmpty ? appName : l10n.appNameFallback,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -11131,7 +12979,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
             const SizedBox(height: 8),
             // Package Name
             Text(
-              packageName.isNotEmpty ? packageName : "com.example.pcmcapp",
+              packageName.isNotEmpty ? packageName : l10n.packageNameFallback,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -11166,8 +13014,8 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                         color: Colors.blue,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        "Current Version",
+                      Text(
+                        l10n.currentVersion,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -11176,7 +13024,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        version,
+                        version.isEmpty ? l10n.loadingData : version,
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -11192,13 +13040,15 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           _buildInfoItem(
+                            l10n,
                             Icons.update,
-                            "Last Updated",
+                            l10n.lastUpdated,
                             "October 2023",
                           ),
                           _buildInfoItem(
+                            l10n,
                             Icons.system_security_update,
-                            "Minimum OS",
+                            l10n.minimumOS,
                             "Android 8.0+",
                           ),
                         ],
@@ -11225,8 +13075,8 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  "Check for Updates",
+                child: Text(
+                  l10n.checkForUpdates,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -11245,25 +13095,25 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "Version Information",
+                  Text(
+                    l10n.versionInformation,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  _buildVersionInfoItem("Status", "Up to date", Colors.green),
+                  _buildVersionInfoItem(l10n.status, l10n.upToDate, Colors.green),
                   const SizedBox(height: 8),
-                  _buildVersionInfoItem("Release Type", "Stable", Colors.blue),
+                  _buildVersionInfoItem(l10n.releaseType, "Stable", Colors.blue),
                   const SizedBox(height: 8),
-                  _buildVersionInfoItem("Size", "28.5 MB", Colors.grey),
+                  _buildVersionInfoItem(l10n.size, "28.5 MB", Colors.grey),
                 ],
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              "Thank you for using our app!",
+              l10n.thankYouMessage,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
@@ -11276,7 +13126,7 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
     );
   }
 
-  Widget _buildInfoItem(IconData icon, String title, String value) {
+  Widget _buildInfoItem(AppLocalizations l10n, IconData icon, String title, String value) {
     return Column(
       children: [
         Icon(icon, size: 20, color: Colors.blue),
@@ -11325,49 +13175,47 @@ class _AppVersionScreenState extends State<AppVersionScreen> {
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\contact_support_screen.dart ---
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactSupportScreen extends StatelessWidget {
   const ContactSupportScreen({super.key});
 
-  void _launchEmail() async {
+  void _launchEmail(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final Uri emailUri = Uri(
       scheme: 'mailto', 
       path: 'support@pcmcapp.com', 
       query: 'subject=App Support'
     );
-    if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri);
-    } else {
-      throw 'Could not launch email';
+    if (!await launchUrl(emailUri)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotLaunchUrl('email'))),
+      );
     }
   }
 
-  void _launchPhone() async {
+  void _launchPhone(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final Uri phoneUri = Uri(scheme: 'tel', path: '+91-9876543210');
-    if (await canLaunchUrl(phoneUri)) {
-      await launchUrl(phoneUri);
-    } else {
-      throw 'Could not launch phone';
+    if (!await launchUrl(phoneUri)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.couldNotLaunchPhone)),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "Contact Support",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.contactSupport),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -11397,8 +13245,8 @@ class ContactSupportScreen extends StatelessWidget {
                       color: Colors.blue.shade700,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      "Need Help?",
+                    Text(
+                      l10n.needHelp,
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -11406,7 +13254,7 @@ class ContactSupportScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Our support team is here to help you with any questions or issues you might have",
+                      l10n.supportTeamMessage,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
@@ -11418,8 +13266,8 @@ class ContactSupportScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
-              "Contact Options",
+            Text(
+              l10n.contactOptions,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -11446,7 +13294,7 @@ class ContactSupportScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
-                  onTap: _launchEmail,
+                  onTap: () => _launchEmail(context),
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -11470,8 +13318,8 @@ class ContactSupportScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Email Support",
+                              Text(
+                                l10n.emailSupport,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -11487,7 +13335,7 @@ class ContactSupportScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "Get responses within 24 hours",
+                                l10n.emailSupportResponseTime,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -11527,7 +13375,7 @@ class ContactSupportScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: InkWell(
-                  onTap: _launchPhone,
+                  onTap: () => _launchPhone(context),
                   borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
@@ -11551,8 +13399,8 @@ class ContactSupportScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                "Call Support",
+                              Text(
+                                l10n.callSupport,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -11568,7 +13416,7 @@ class ContactSupportScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "Available 9AM - 6PM (Mon-Sat)",
+                                l10n.callSupportAvailability,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade600,
@@ -11607,52 +13455,56 @@ class ContactSupportScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.help_outline,
-                        color: Colors.orange,
-                        size: 26,
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "FAQs & Help Center",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              "Find answers to common questions",
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ],
+                child: InkWell(
+                  onTap: () => Navigator.pushNamed(context, '/faqs'),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.help_outline,
+                          color: Colors.orange,
+                          size: 26,
                         ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
-                    ],
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.faqsHelpCenter,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                l10n.faqsHelpCenterSubtitle,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const Center(
+            Center(
               child: Text(
-                "We're here to help you!",
+                l10n.weAreHereToHelp,
                 style: TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
@@ -11668,64 +13520,60 @@ class ContactSupportScreen extends StatelessWidget {
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\faqs_screen.dart ---
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class FaqsScreen extends StatelessWidget {
   const FaqsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final faqs = [
       {
-        "q": "How to submit a grievance?",
-        "a": "Go to 'Submit Grievance' from the home screen and fill in details.",
+        "q": l10n.faq1_q,
+        "a": l10n.faq1_a,
         "icon": Icons.report_problem_outlined
       },
       {
-        "q": "How can I track my complaint?",
-        "a": "Navigate to 'Track Grievance' and enter your grievance ID.",
+        "q": l10n.faq2_q,
+        "a": l10n.faq2_a,
         "icon": Icons.track_changes_outlined
       },
       {
-        "q": "Can I upload documents?",
-        "a": "Yes, you can upload photos or PDFs as proof while submitting grievances.",
+        "q": l10n.faq3_q,
+        "a": l10n.faq3_a,
         "icon": Icons.attach_file_outlined
       },
       {
-        "q": "How long does it take to resolve?",
-        "a": "It usually takes 7 working days, depending on priority.",
+        "q": l10n.faq4_q,
+        "a": l10n.faq4_a,
         "icon": Icons.schedule_outlined
       },
       {
-        "q": "What types of grievances can I report?",
-        "a": "You can report issues related to sanitation, roads, water supply, electricity, and other civic issues.",
+        "q": l10n.faq5_q,
+        "a": l10n.faq5_a,
         "icon": Icons.list_alt_outlined
       },
       {
-        "q": "Is there a way to edit my submitted grievance?",
-        "a": "You can edit your grievance within 24 hours of submission from the 'My Grievances' section.",
+        "q": l10n.faq6_q,
+        "a": l10n.faq6_a,
         "icon": Icons.edit_outlined
       },
       {
-        "q": "How will I be notified about updates?",
-        "a": "You'll receive push notifications and email updates when there's progress on your grievance.",
+        "q": l10n.faq7_q,
+        "a": l10n.faq7_a,
         "icon": Icons.notifications_outlined
       },
     ];
 
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
-        title: const Text(
-          "Frequently Asked Questions",
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        title: Text(l10n.faqs),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -11758,8 +13606,8 @@ class FaqsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          "Need Help?",
+                        Text(
+                          l10n.needHelp,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -11767,7 +13615,7 @@ class FaqsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "Find answers to common questions about using our app",
+                          l10n.faqsHeaderSubtitle,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,
@@ -11780,8 +13628,8 @@ class FaqsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              "Common Questions",
+            Text(
+              l10n.faqsCommonQuestions,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -11871,8 +13719,8 @@ class FaqsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        "Still need help?",
+                      Text(
+                        l10n.faqsStillNeedHelp,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -11880,7 +13728,7 @@ class FaqsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Can't find the answer you're looking for? Contact our support team for assistance.",
+                        l10n.faqsContactSupportMessage,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,
@@ -11890,9 +13738,7 @@ class FaqsScreen extends StatelessWidget {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Navigate to contact support
-                          },
+                          onPressed: () => Navigator.pushNamed(context, '/contact-support'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
                             foregroundColor: Colors.white,
@@ -11902,7 +13748,7 @@ class FaqsScreen extends StatelessWidget {
                             ),
                           ),
                           icon: const Icon(Icons.support_agent, size: 20),
-                          label: const Text("Contact Support"),
+                          label: Text(l10n.contactSupport),
                         ),
                       ),
                     ],
@@ -11958,16 +13804,15 @@ class NotificationsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFf8fbff),
       appBar: AppBar(
         title: const Text(
-          "Notifications",
+          "Notifications", // This should be localized, e.g., localizations.notifications
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Colors.blue),
-        centerTitle: true,
+        backgroundColor: const Color(0xFFF8FBFF),
+        elevation: 0,
+        foregroundColor: Colors.blue,
       ),
       body: notifications.isEmpty
           ? Center(
@@ -12305,7 +14150,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                       setState(() => _profilePic = files.first);
                                       Navigator.pop(context);
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Profile picture selected. Save to upload.')),
+                                        SnackBar(content: Text(localizations.profilePictureUpdateMessage)),
                                       );
                                     }
                                   },
@@ -12325,7 +14170,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      user.role?.toUpperCase() ?? 'UNKNOWN',
+                      user.role?.toUpperCase() ?? localizations.unknownRole,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.w600,
@@ -12346,6 +14191,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.email,
                         label: localizations.email,
                         value: user.email,
@@ -12356,6 +14202,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.person,
                         label: localizations.name,
                         value: user.name,
@@ -12366,8 +14213,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       const Divider(),
                       _buildProfileField(
+                          localizations: localizations,
                         icon: Icons.location_on,
-                        label: 'Address',
+                        label: localizations.address,
                         value: user.address,
                         controller: _addressController,
                         enabled: _isEditing,
@@ -12375,24 +14223,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.access_time, color: theme.colorScheme.primary),
-                        title: Text('Last Login'),
+                        title: Text(localizations.lastLogin),
                         subtitle: Text(
                           user.lastLogin != null
                               ? DateFormat('dd/MM/yyyy HH:mm').format(user.lastLogin!)
-                              : 'N/A',
+                              : localizations.notApplicable,
                         ),
                       ),
                       const Divider(),
                       ListTile(
                         leading: Icon(Icons.verified_user, color: theme.colorScheme.primary),
-                        title: Text('Account Status'),
-                        subtitle: Text(user.isActive ? 'Active' : 'Inactive'),
+                        title: Text(localizations.accountStatus),
+                        subtitle: Text(user.isActive ? localizations.statusActive : localizations.statusInactive),
                       ),
                       if (user.departmentId != null) ...[
                         const Divider(),
                         ListTile(
                           leading: Icon(Icons.location_city, color: theme.colorScheme.primary),
-                          title: Text('Department'),
+                          title: Text(localizations.department),
                           subtitle: FutureBuilder(
                             future: ApiService.getMasterArea(user.departmentId!),
                             builder: (context, snapshot) {
@@ -12400,9 +14248,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 return const Text('Loading...');
                               }
                               if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-                                return const Text('Unknown');
+                                return Text(localizations.statusUnknown);
                               }
-                              return Text(snapshot.data!['name'] ?? 'Unknown');
+                              return Text(snapshot.data!['name'] ?? localizations.statusUnknown);
                             },
                           ),
                         ),
@@ -12448,8 +14296,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               else
                 SizedBox(
                   width: double.infinity,
-                  child: CustomButton(
-                    text: 'Edit Profile',
+                  child: CustomButton( // Localize 'Edit Profile'
+                    text: localizations.editProfile,
                     icon: Icons.edit,
                     onPressed: () => setState(() => _isEditing = true),
                   ),
@@ -12463,6 +14311,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildProfileField({
+    required AppLocalizations localizations,
     required IconData icon,
     required String label,
     required String? value,
@@ -12482,7 +14331,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               validator: validator,
             )
-          : Text(value ?? 'N/A'),
+          : Text(value ?? localizations.notApplicable),
     );
   }
 }
@@ -12585,19 +14434,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final locale = ref.watch(localeNotifierProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF),
       appBar: AppBar(
-        title: Text(
-          localizations.settings,
-          style: const TextStyle(fontWeight: FontWeight.w600,
-          color: Colors.black, 
-          ),
-        ),
-        backgroundColor: const Color(0xFFF8FBFF),
-        elevation: 0,
-        foregroundColor: Colors.blue,
+        title: Text(localizations.settings),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: _isLoading
           ? const LoadingIndicator()
@@ -12826,20 +14671,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\common\view_privacy_policy_screen.dart ---
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: const Text("Privacy Policy",
-    style: TextStyle(color: Colors.black), ),
-        backgroundColor: const Color(0xFFECF2FE), // Matching card theme
-        elevation: 0,
-  iconTheme: const IconThemeData(color: Colors.black), 
+        title: Text(l10n.privacyPolicy),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -12853,62 +14700,61 @@ class PrivacyPolicyScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  "Our Commitment",
-                  style: TextStyle(
+                  l10n.privacyPolicyCommitmentTitle,
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
-                  "We value your privacy and are committed to protecting your personal data. "
-                  "This policy explains how we handle your information securely.",
-                  style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
+                  l10n.privacyPolicyCommitmentBody,
+                  style: const TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "1. Data Collection",
-                  style: TextStyle(
+                  l10n.privacyPolicyDataCollectionTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "We collect your name, email, and grievance details only to process complaints.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicyDataCollectionBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "2. Data Usage",
-                  style: TextStyle(
+                  l10n.privacyPolicyDataUsageTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "Your data is used solely for grievance redressal and system improvement.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicyDataUsageBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
-                  "3. Security",
-                  style: TextStyle(
+                  l10n.privacyPolicySecurityTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "We implement encryption and strict access policies to safeguard your information.",
-                  style: TextStyle(fontSize: 15, height: 1.4),
+                  l10n.privacyPolicySecurityBody,
+                  style: const TextStyle(fontSize: 15, height: 1.4),
                 ),
               ],
             ),
@@ -12965,61 +14811,38 @@ class _AssignedListState extends ConsumerState<AssignedList> {
     }
   }
 
-  Future<void> _acceptGrievance(int grievanceId) async {
+  Future<void> _updateStatus(int grievanceId, String newStatus) async {
     try {
-      await ApiService.post('/grievances/$grievanceId/accept', {});
-      setState(() => _grievancesFuture = _fetchAssignedGrievances());
+      // Perform the API call
+      await ApiService.put('/grievances/$grievanceId/status', {
+        'status': newStatus,
+      });
+
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Grievance accepted')));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Status updated successfully')),
+      );
+      // Refresh the list to show the updated status
+      setState(() {
+        _grievancesFuture = _fetchAssignedGrievances();
+      });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to accept: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update status: $e')),
+      );
     }
   }
 
-  Future<void> _updateStatus(int grievanceId, String newStatus) async {
-  try {
-    
 
-    // Perform the API call
-    await ApiService.put('/grievances/$grievanceId/status', {
-      'status': newStatus,
-    });
-
-    // Fetch updated grievances first (async work outside setState)
-    final updatedGrievances = _fetchAssignedGrievances();
-
-    if (!mounted) return;
-
-    // Update the state synchronously
-    setState(() {
-      _grievancesFuture = updatedGrievances;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Status updated')),
-    );
-  } catch (e) {
-   
-    
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to update status: $e')),
-    );
-  }
-}
-
-
-  Future<void> _uploadWorkproof(int grievanceId, PlatformFile file) async {
+  Future<void> _uploadWorkproof(int grievanceId, PlatformFile file, String notes) async {
     try {
       await ApiService.postMultipart(
         '/grievances/$grievanceId/workproof',
         files: [file],
         fieldName: 'file',
+        data: {'notes': notes},
       );
       setState(() => _grievancesFuture = _fetchAssignedGrievances());
       if (!mounted) return;
@@ -13123,13 +14946,57 @@ class _AssignedListState extends ConsumerState<AssignedList> {
   }
 
   void _showUploadWorkproofPopup(Grievance grievance) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'mp4', 'mov'],
-    );
-    if (result != null && result.files.isNotEmpty) {
-      final file = result.files.first;
-      _uploadWorkproof(grievance.id, file);
+    final notesController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final file = await FilePicker.platform.pickFiles(
+      type: FileType.any,
+    ).then((result) => result?.files.first);
+
+    if (file == null) return;
+
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Add Workproof Notes'),
+            content: Form(
+              key: formKey,
+              child: TextFormField(
+                controller: notesController,
+                decoration: const InputDecoration(
+                  labelText: 'Notes',
+                  hintText: 'Describe the work done...',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Notes are required';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    _uploadWorkproof(grievance.id, file, notesController.text);
+                    Navigator.pop(context);
+                  }
+                },
+                child: const Text('Upload'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -13433,28 +15300,10 @@ class _AssignedListState extends ConsumerState<AssignedList> {
               runSpacing: 8.0,
               alignment: WrapAlignment.end,
               children: [
-                if (grievance.status == 'new')
-                  ElevatedButton(
-                    onPressed: () => _acceptGrievance(grievance.id),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF4CAF50),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.check, size: 18),
-                        SizedBox(width: 4),
-                        Text('Accept'),
-                      ],
-                    ),
-                  ),
                 ElevatedButton(
-                  onPressed: () => _showUpdateStatusPopup(grievance),
+                  onPressed: grievance.status == 'resolved'
+                      ? null
+                      : () => _showUpdateStatusPopup(grievance),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2196F3),
                     foregroundColor: Colors.white,
@@ -13473,7 +15322,9 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () => _showUploadWorkproofPopup(grievance),
+                  onPressed: grievance.status == 'resolved'
+                      ? null
+                      : () => _showUploadWorkproofPopup(grievance),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF9800),
                     foregroundColor: Colors.white,
@@ -13491,26 +15342,26 @@ class _AssignedListState extends ConsumerState<AssignedList> {
                     ],
                   ),
                 ),
-                if (grievance.status == 'resolved')
-                  ElevatedButton(
-                    onPressed: () => _closeGrievance(grievance.id),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF44336),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.close, size: 18),
-                        SizedBox(width: 4),
-                        Text('Close'),
-                      ],
-                    ),
-                  ),
+                // if (grievance.status == 'resolved')
+                //   ElevatedButton(
+                //     onPressed: () => _closeGrievance(grievance.id),
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: const Color(0xFFF44336),
+                //       foregroundColor: Colors.white,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(12.0),
+                //       ),
+                //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                //     ),
+                //     child: const Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: [
+                //         Icon(Icons.close, size: 18),
+                //         SizedBox(width: 4),
+                //         Text('Close'),
+                //       ],
+                //     ),
+                //   ),
               ],
             ),
           ],
@@ -13522,18 +15373,14 @@ class _AssignedListState extends ConsumerState<AssignedList> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF), // Background color
       appBar: AppBar(
-        title: Text(l10n.assignedGrievances ?? 'Assigned Grievances'),
-        backgroundColor: Colors.white,
-        elevation: 1,
-        iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
-        titleTextStyle: const TextStyle(
-          color: Color(0xFF1A237E),
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        title: Text(l10n.assignedGrievances),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: FutureBuilder<List<Grievance>>(
@@ -13662,26 +15509,32 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
       grievances = (response.data as List).map((e) {
         try {
-         
           return Grievance.fromJson(e);
         } catch (e) {
-          
           rethrow;
         }
       }).toList();
 
-     
       filteredGrievances = List.from(grievances);
     
 
       final areasResponse = await ApiService.get('/areas');
-      areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      areas = (areasResponse.data as List?)
+              ?.map((a) => {"id": a["id"].toString(), "name": a["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
 
       final subjectsResponse = await ApiService.get('/subjects');
-      subjects = (subjectsResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      subjects = (subjectsResponse.data as List?)
+              ?.map((s) => {"id": s["id"].toString(), "name": s["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
 
       final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff');
-      fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      fieldStaff = (staffResponse.data as List?)
+              ?.map((s) => {"id": s["id"].toString(), "name": s["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
     } catch (e) {
       
       if (mounted) {
@@ -13701,6 +15554,16 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     }
   }
 
+  void _resetFilters() {
+    setState(() {
+      selectedStatus = null;
+      selectedPriority = null;
+      selectedArea = null;
+      selectedSubject = null;
+      _applyFilters();
+    });
+  }
+
   void _applyFilters() {
     filteredGrievances = grievances.where((g) {
       return (selectedStatus == null || g.status == selectedStatus) &&
@@ -13714,61 +15577,93 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   }
 
   void _showActionSheet(Grievance grievance) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  final isFinalStatus = ['resolved', 'closed', 'rejected']
+      .contains(grievance.status?.toLowerCase());
+
+  final alreadyAssigned = grievance.assignedTo != null; // ✅ check if assigned
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (ctx) => SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Update Status
+          ListTile(
+            enabled: !isFinalStatus,
+            leading: Icon(Icons.update,
+                color: isFinalStatus ? Colors.grey : Colors.blue),
+            title: Text(
+              AppLocalizations.of(context)!.updateStatus,
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: isFinalStatus ? Colors.grey : null),
+            ),
+            onTap: isFinalStatus
+                ? null
+                : () {
+                    Navigator.pop(ctx);
+                    _showUpdateStatusDialog(grievance);
+                  },
+          ),
+          const Divider(height: 1),
+
+          // Assign Grievance
+          ListTile(
+            enabled: !alreadyAssigned, // ✅ disable if already assigned
+            leading: Icon(Icons.assignment_ind,
+                color: alreadyAssigned ? Colors.grey : Colors.blue),
+            title: Text(
+              AppLocalizations.of(context)!.assignGrievance,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: alreadyAssigned ? Colors.grey : null,
+              ),
+            ),
+            onTap: alreadyAssigned
+                ? null
+                : () {
+                    Navigator.pop(ctx);
+                    _showAssignDialog(grievance);
+                  },
+          ),
+          const Divider(height: 1),
+
+          // Reject
+          ListTile(
+            leading: const Icon(Icons.cancel, color: Colors.red),
+            title: Text(AppLocalizations.of(context)!.rejectGrievance,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w500, color: Colors.red)),
+            onTap: () {
+              Navigator.pop(ctx);
+              _showRejectDialog(grievance);
+            },
+          ),
+          const Divider(height: 1),
+
+          // View Details
+          ListTile(
+            leading: const Icon(Icons.visibility, color: Colors.blue),
+            title: Text(AppLocalizations.of(context)!.viewDetails,
+                style: const TextStyle(fontWeight: FontWeight.w500)),
+            onTap: () {
+              Navigator.pop(ctx);
+              Navigator.pushNamed(context, '/citizen/detail',
+                  arguments: grievance.id);
+            },
+          ),
+        ],
       ),
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
-          children: [
-            ListTile(
-              leading: const Icon(Icons.update, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.updateStatus,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showUpdateStatusDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.assignment_ind, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.assignGrievance,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showAssignDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.cancel, color: Colors.red),
-              title: Text(AppLocalizations.of(context)!.rejectGrievance,
-                  style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.red)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showRejectDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.visibility, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.viewDetails,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                Navigator.pushNamed(context, '/citizen/detail', arguments: grievance.id);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
+
 
   void _showUpdateStatusDialog(Grievance grievance) {
     String? newStatus;
@@ -13938,15 +15833,15 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: const Color(0xfff8fbff),
       appBar: AppBar(
-        title: Text(l.viewgrievanceetails,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.white,
-        elevation: 2,
-        iconTheme: const IconThemeData(color: Colors.blue),
+        title: Text(l.viewgrievanceetails),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       drawer: const CustomNavigationDrawer(),
       body: isLoading
@@ -13971,71 +15866,207 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                             child: Text(l.retry, style: const TextStyle(color: Colors.white)),
                           ),
                         )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              color: Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Filters",
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  const SizedBox(height: 12),
-                                  Wrap(
-                                    spacing: 12,
-                                    runSpacing: 12,
+                      : RefreshIndicator(
+                          onRefresh: _loadData,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredGrievances.length + 1, // +1 for the filter section
+                            itemBuilder: (ctx, i) {
+                              if (i == 0) {
+                                // The first item is the filter section
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.all(16),
+                                  color: Colors.white,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildFilterDropdown(
-                                        l.filterByStatus,
-                                        statuses,
-                                        selectedStatus,
-                                        (v) {
-                                          selectedStatus = v;
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterByPriority,
-                                        priorities,
-                                        selectedPriority,
-                                        (v) {
-                                          selectedPriority = v;
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterByArea,
-                                        areas.map((a) => a['name'] as String).toList(),
-                                        selectedArea,
-                                        (v) {
-                                          selectedArea = v == null
-                                              ? null
-                                              : areas.firstWhere((a) => a['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterBySubject,
-                                        subjects.map((s) => s['name'] as String).toList(),
-                                        selectedSubject,
-                                        (v) {
-                                          selectedSubject = v == null
-                                              ? null
-                                              : subjects.firstWhere((s) => s['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                          _applyFilters();
-                                        },
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text("Filters", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                        TextButton.icon(
+                                          onPressed: _resetFilters,
+                                          icon: const Icon(Icons.clear_all, size: 18),
+                                          label: Text(l.clearFilters),
+                                        ),
+                                      ],
+                                    ),
+                                      const SizedBox(height: 12),
+                                      Wrap(
+                                        spacing: 12,
+                                        runSpacing: 12,
+                                        children: [
+                                          _buildFilterDropdown(l.filterByStatus, statuses, selectedStatus, (v) {
+                                            selectedStatus = v;
+                                            _applyFilters();
+                                          }),
+                                          _buildFilterDropdown(l.filterByPriority, priorities, selectedPriority, (v) {
+                                            selectedPriority = v;
+                                            _applyFilters();
+                                          }),
+                                          _buildFilterDropdown(
+                                            l.filterByArea,
+                                            areas,
+                                            selectedArea, (v) {
+                                            setState(() {
+                                              selectedArea = v;
+                                              _applyFilters();
+                                            });
+                                          },
+                                          ),
+                                          _buildFilterDropdown(
+                                            l.filterBySubject,
+                                            subjects,
+                                            selectedSubject, (v) {
+                                            setState(() {
+                                              selectedSubject = v;
+                                              _applyFilters();
+                                            });
+                                          },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
+                                );
+                              }
+                              final g = filteredGrievances[i - 1]; // Adjust index for grievance items
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffecf2fe),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(g.title ?? 'Untitled',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                                          ),
+                                          StatusBadge(status: g.status ?? 'new'),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(g.description ?? '',
+                                          style: TextStyle(color: Colors.grey[700])),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          if (g.priority != null)
+                                            Chip(
+                                              label: Text(g.priority!,
+                                                  style: const TextStyle(fontSize: 12, color: Colors.white)),
+                                              backgroundColor: _getPriorityColor(g.priority!),
+                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            onPressed: () => _showActionSheet(g),
+                                            child: Text(l.takeAction ?? 'Take Action',
+                                                style: const TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  /* This was the old structure that caused the overflow
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Filters",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                                  children: [
+                                    _buildFilterDropdown(
+                                      l.filterByStatus,
+                                      statuses,
+                                      selectedStatus,
+                                      (v) {
+                                        setState(() {
+                                          selectedStatus = v;
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterByPriority,
+                                      priorities,
+                                      selectedPriority,
+                                      (v) {
+                                        setState(() {
+                                          selectedPriority = v;
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterByArea,
+                                      areas.map((a) => a['name'] as String).toList(),
+                                      areas.firstWhere((a) => a['id'] == selectedArea, orElse: () => {'name': null})['name'],
+                                      (v) {
+                                        setState(() {
+                                          selectedArea = v == null ? null : areas.firstWhere((a) => a['name'] == v)['id'];
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterBySubject,
+                                      subjects.map((s) => s['name'] as String).toList(),
+                                      subjects.firstWhere((s) => s['id'] == selectedSubject, orElse: () => {'name': null})['name'],
+                                      (v) {
+                                        setState(() {
+                                          selectedSubject = v == null ? null : subjects.firstWhere((s) => s['name'] == v)['id'];
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                  ],
                             ),
-                            const SizedBox(height: 16),
-                            RefreshIndicator(
-                              onRefresh: _loadData,
-                              child: ListView.builder(
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      RefreshIndicator(
+                        onRefresh: _loadData,
+                        child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: filteredGrievances.length,
@@ -14104,9 +16135,9 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                                   );
                                 },
                               ),
-                            ),
-                          ],
-                        ),
+                      ),
+                    ],
+                  ),*/
                 ],
               ),
             ),
@@ -14132,12 +16163,12 @@ class _ViewGrievancesState extends State<ViewGrievances> {
       dropdownItems.addAll(
         items.map(
           (s) => DropdownMenuItem(
-            value: s,
-            child: Text(s),
-          ),
+        value: s,
+        child: Text(s, overflow: TextOverflow.ellipsis), // Prevent long text overflow
+      ),
         ),
       );
-    } else if (items is List<Map<String, dynamic>>) {
+    } else if (items is List<Map<String, dynamic>>) { // Handle maps with {id, name} (areas, subjects, staff)
       // Handle maps with {id, name} (areas, subjects, staff)
       dropdownItems.addAll(
         items.map(
@@ -14145,7 +16176,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
             value: m['id']?.toString(),
             child: Text(m['name'] ?? 'Unknown'),
           ),
-        ),
+        ), // Prevent long text overflow
       );
     }
 
@@ -14155,16 +16186,23 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         color: const Color(0xffecf2fe),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: DropdownButton<String?>(
-        hint: Text(label, style: const TextStyle(fontSize: 14)),
-        value: selected,
-        items: dropdownItems,
-        onChanged: onChanged,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
-        isDense: true,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      child: Row(
+      children: [
+        Expanded(
+          child: DropdownButton<String?>(
+            hint: Text(label, style: const TextStyle(fontSize: 14)),
+            value: selected,
+            items: dropdownItems,
+            onChanged: onChanged,
+            underline: const SizedBox(),
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
+            isDense: true,
+            isExpanded: true, // ✅ fixes overflow issue
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ],
+    ),
     );
   }
 
@@ -15435,8 +17473,8 @@ class Constants {
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return "http://10.0.2.2:5000"; // Android emulator
-        // return "https://pcmcapp.onrender.com"; 
+        // return "http://10.0.2.2:5000"; // Android emulator
+        return "https://pcmcapp.onrender.com"; 
       case TargetPlatform.iOS:
       case TargetPlatform.macOS:
       case TargetPlatform.windows:
@@ -15756,16 +17794,42 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:main_ui/models/grievance_model.dart';
 import 'package:main_ui/widgets/status_badge.dart';
+import 'package:main_ui/l10n/app_localizations.dart'; // Import AppLocalizations
 
 class CombinedGrievanceCard extends StatelessWidget {
   final Grievance grievance;
 
+  // Define stage keys for localization
+  static const _stageKeys = [
+    {'status': 'new', 'key': 'stageSubmitted', 'icon': Icons.send},
+    {'status': 'in_progress', 'key': 'stageReviewedBySupervisor', 'icon': Icons.visibility},
+    {'status': 'in_progress', 'key': 'stageAssignedToFieldStaff', 'icon': Icons.assignment_ind},
+    {'status': 'resolved', 'key': 'stageResolved', 'icon': Icons.check_circle},
+  ];
+
   const CombinedGrievanceCard({super.key, required this.grievance});
+
+  // Helper to get localized stage labels
+  String _getLocalizedStageLabel(String key, AppLocalizations l10n) {
+    switch (key) {
+      case 'stageSubmitted':
+        return l10n.stageSubmitted;
+      case 'stageReviewedBySupervisor':
+        return l10n.stageReviewedBySupervisor;
+      case 'stageAssignedToFieldStaff':
+        return l10n.stageAssignedToFieldStaff;
+      case 'stageResolved':
+        return l10n.stageResolved;
+      default:
+        return key; // Fallback
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final status = grievance.status?.toLowerCase() ?? 'new';
+    final l10n = AppLocalizations.of(context)!; // Get l10n instance
 
     return Card(
   elevation: 2,
@@ -15819,7 +17883,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          _formatDate(grievance.createdAt!),
+                          _formatDate(grievance.createdAt!, l10n), // Pass l10n
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurface.withAlpha(128),
                           ),
@@ -15833,8 +17897,8 @@ class CombinedGrievanceCard extends StatelessWidget {
                 children: [
                   StatusBadge(status: status),
                   const SizedBox(width: 8),
-                  Text(
-                    grievance.priority ?? 'N/A',
+                  Text( // Priority is data, but 'N/A' is a static string
+                    grievance.priority ?? l10n.notApplicable,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurface.withAlpha(179),
                     ),
@@ -15851,8 +17915,8 @@ class CombinedGrievanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Grievance Progress Section
-          Text(
-            'Grievance Progress',
+          Text( // Localize "Grievance Progress"
+            l10n.grievanceProgressTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: theme.colorScheme.primary,
@@ -15860,15 +17924,10 @@ class CombinedGrievanceCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Column(
-            children: List.generate(4, (index) {
-              final stage = {
-                0: {'status': 'new', 'label': 'Submitted', 'icon': Icons.send},
-                1: {'status': 'in_progress', 'label': 'Reviewed by Member Head', 'icon': Icons.visibility},
-                2: {'status': 'in_progress', 'label': 'Assigned to Field Staff', 'icon': Icons.assignment_ind},
-                3: {'status': 'resolved', 'label': 'Resolved', 'icon': Icons.check_circle},
-              }[index]!;
+            children: List.generate(_stageKeys.length, (index) {
+              final stageData = _stageKeys[index];
+              final String stageLabel = _getLocalizedStageLabel(stageData['key'] as String, l10n);
               final isActive = index <= _getCurrentStageIndex(status, grievance);
-              final isCompleted = index < _getCurrentStageIndex(status, grievance);
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -15885,7 +17944,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                               : theme.colorScheme.onSurface.withAlpha(51),
                         ),
                         child: Icon(
-                          stage['icon'] as IconData,
+                              stageData['icon'] as IconData,
                           size: 20,
                           color: isActive
                               ? theme.colorScheme.onPrimary
@@ -15893,7 +17952,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                       ),
                       if (index < 3)
-                        Container(
+                          Container( // Corrected to use _stageKeys.length - 1 for maintainability
                           width: 2,
                           height: 40,
                           color: isActive
@@ -15907,8 +17966,8 @@ class CombinedGrievanceCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          stage['label'] as String,
+                          Text( // Use localized label
+                            stageLabel,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                             color: isActive
@@ -15918,7 +17977,7 @@ class CombinedGrievanceCard extends StatelessWidget {
                         ),
                         if (isActive)
                           Text(
-                            _getStageDetails(index, status, grievance),
+                              _getStageDetails(index, status, grievance, l10n), // Pass l10n
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurface.withAlpha(179),
                             ),
@@ -15950,35 +18009,35 @@ class CombinedGrievanceCard extends StatelessWidget {
     return 0; // Submitted
   }
 
-  String _getStageDetails(int index, String status, Grievance grievance) {
+  String _getStageDetails(int index, String status, Grievance grievance, AppLocalizations l10n) {
     switch (index) {
       case 0:
-        return 'Submitted on ${_formatDate(grievance.createdAt)}';
+        return '${l10n.submittedOn} ${_formatDate(grievance.createdAt, l10n)}';
       case 1:
-        return 'Reviewed by Member Head${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
+        return '${l10n.stageReviewedBySupervisor}${grievance.assignedBy != null ? " (${l10n.userLabel} ${grievance.assignedBy})" : ""}';
       case 2:
-        return 'Assigned to${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " Field Staff"}';
+        return '${l10n.assignedToLabel}${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " ${l10n.fieldStaffLabel}"}';
       case 3:
-        return 'Resolved on ${_formatDate(grievance.resolvedAt)}';
+        return '${l10n.resolvedOn} ${_formatDate(grievance.resolvedAt, l10n)}';
       default:
         return '';
     }
   }
 
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
+  String _formatDate(DateTime? date, AppLocalizations l10n) {
+    if (date == null) return l10n.notApplicable;
     final now = DateTime.now();
     final difference = now.difference(date);
     if (difference.inDays > 1) {
-      return 'Submitted ${difference.inDays} days ago';
+      return l10n.timeAgoDays(difference.inDays);
     } else if (difference.inDays == 1) {
-      return 'Submitted 1 day ago';
+      return l10n.timeAgoDays(1); // Use plural for singular case
     } else if (difference.inHours > 1) {
-      return 'Submitted ${difference.inHours} hours ago';
+      return l10n.timeAgoHours(difference.inHours);
     } else if (difference.inMinutes > 1) {
-      return 'Submitted ${difference.inMinutes} minutes ago';
+      return l10n.timeAgoMinutes(difference.inMinutes);
     } else {
-      return 'Submitted just now';
+      return l10n.timeAgoJustNow;
     }
   }
 }
@@ -16925,6 +18984,7 @@ class CustomNavigationDrawer extends ConsumerWidget {
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\status_badge.dart ---
 // main_ui/lib/widgets/status_badge.dart
 import 'package:flutter/material.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
 
 class StatusBadge extends StatelessWidget {
   final String status;
@@ -16941,7 +19001,8 @@ class StatusBadge extends StatelessWidget {
       case 'rejected':
         return Colors.red;
       case 'on_hold':
-        return Colors.yellow;
+        // return Colors.yellow;
+        return const Color(0xFF6B21A8);
       case 'closed':
         return Colors.grey;
       default:
@@ -16949,22 +19010,23 @@ class StatusBadge extends StatelessWidget {
     }
   }
 
-  String get displayText {
+  String displayText(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case 'new':
-        return 'New';
+        return l10n.statusNew;
       case 'in_progress':
-        return 'In Progress';
+        return l10n.statusInProgress;
       case 'resolved':
-        return 'Resolved';
+        return l10n.statusResolved;
       case 'rejected':
-        return 'Rejected';
+        return l10n.statusRejected;
       case 'on_hold':
-        return 'On Hold';
+        return l10n.statusOnHold;
       case 'closed':
-        return 'Closed';
+        return l10n.statusClosed;
       default:
-        return 'Unknown';
+        return l10n.statusUnknown;
     }
   }
 
@@ -17006,7 +19068,7 @@ class StatusBadge extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            displayText,
+            displayText(context),
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -17031,7 +19093,7 @@ class TrackGrievanceProgress extends StatelessWidget {
 
   static const _stages = [
     {'status': 'new', 'label': 'Submitted', 'icon': Icons.send},
-    {'status': 'in_progress', 'label': 'Reviewed by Member Head', 'icon': Icons.visibility},
+    {'status': 'in_progress', 'label': 'Reviewed by Supervisor Head', 'icon': Icons.visibility},
     {'status': 'in_progress', 'label': 'Assigned to Field Staff', 'icon': Icons.assignment_ind},
     {'status': 'resolved', 'label': 'Resolved', 'icon': Icons.check_circle},
   ];
@@ -17158,7 +19220,7 @@ class TrackGrievanceProgress extends StatelessWidget {
       case 0:
         return 'Submitted on ${_formatDate(grievance.createdAt)}';
       case 1:
-        return 'Reviewed by Member Head${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
+        return 'Reviewed by Supervisor Head${grievance.assignedBy != null ? " (User ${grievance.assignedBy})" : ""}';
       case 2:
         return 'Assigned to${grievance.assignee?.name != null ? " ${grievance.assignee!.name}" : " Field Staff"}';
       case 3:

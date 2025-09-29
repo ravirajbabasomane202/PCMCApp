@@ -73,7 +73,7 @@
   "noComplaints": "तक्रारी नाहीत",
   "noComplaintsMessage": "दाखवण्यासाठी कोणत्याही तक्रारी नाहीत.",
   "tryAgain": "पुन्हा प्रयत्न करा",
-  "reassignComplaint": "तक्रार पुनः नियुक्त करा",
+  "reassignComplaint": "तक्रार नियुक्त करा",
   "escalateComplaint": "तक्रार वाढवा",
   "userIdRequired": "वापरकर्ता आयडी आवश्यक आहे",
   "@userIdRequired": {
@@ -333,5 +333,10 @@
   "welcomeBack": "परत स्वागत आहे! कृपया पुढे जाण्यासाठी साइन इन करा",
   "createAccountPrompt": "सुरुवात करण्यासाठी एक खाते तयार करा",
   "voterId": "मतदार ओळखपत्र",
-  "invalidMobileNumber": "एक वैध मोबाइल नंबर प्रविष्ट करा"
+  "invalidMobileNumber": "एक वैध मोबाइल नंबर प्रविष्ट करा",
+  "citizenName": "नागरिकाचे नाव",
+  "citizenId": "नागरिक आयडी",
+  "submittedFeedback": "सादर केलेला अभिप्राय",
+  "rating": "रेटिंग",
+  "feedbackComments": "अभिप्राय टिप्पण्या"
 }

@@ -70,26 +70,32 @@ class _ViewGrievancesState extends State<ViewGrievances> {
 
       grievances = (response.data as List).map((e) {
         try {
-         
           return Grievance.fromJson(e);
         } catch (e) {
-          
           rethrow;
         }
       }).toList();
 
-     
       filteredGrievances = List.from(grievances);
     
 
       final areasResponse = await ApiService.get('/areas');
-      areas = (areasResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      areas = (areasResponse.data as List?)
+              ?.map((a) => {"id": a["id"].toString(), "name": a["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
 
       final subjectsResponse = await ApiService.get('/subjects');
-      subjects = (subjectsResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      subjects = (subjectsResponse.data as List?)
+              ?.map((s) => {"id": s["id"].toString(), "name": s["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
 
       final staffResponse = await ApiService.get('/fieldStaff/fieldStaff?role=field_staff');
-      fieldStaff = (staffResponse.data as List?)?.cast<Map<String, dynamic>>() ?? [];
+      fieldStaff = (staffResponse.data as List?)
+              ?.map((s) => {"id": s["id"].toString(), "name": s["name"] ?? "Unknown"})
+              .toSet() // removes duplicates
+              .toList() ?? [];
     } catch (e) {
       
       if (mounted) {
@@ -109,6 +115,16 @@ class _ViewGrievancesState extends State<ViewGrievances> {
     }
   }
 
+  void _resetFilters() {
+    setState(() {
+      selectedStatus = null;
+      selectedPriority = null;
+      selectedArea = null;
+      selectedSubject = null;
+      _applyFilters();
+    });
+  }
+
   void _applyFilters() {
     filteredGrievances = grievances.where((g) {
       return (selectedStatus == null || g.status == selectedStatus) &&
@@ -122,61 +138,93 @@ class _ViewGrievancesState extends State<ViewGrievances> {
   }
 
   void _showActionSheet(Grievance grievance) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  final isFinalStatus = ['resolved', 'closed', 'rejected']
+      .contains(grievance.status?.toLowerCase());
+
+  final alreadyAssigned = grievance.assignedTo != null; // ✅ check if assigned
+
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (ctx) => SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Update Status
+          ListTile(
+            enabled: !isFinalStatus,
+            leading: Icon(Icons.update,
+                color: isFinalStatus ? Colors.grey : Colors.blue),
+            title: Text(
+              AppLocalizations.of(context)!.updateStatus,
+              style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: isFinalStatus ? Colors.grey : null),
+            ),
+            onTap: isFinalStatus
+                ? null
+                : () {
+                    Navigator.pop(ctx);
+                    _showUpdateStatusDialog(grievance);
+                  },
+          ),
+          const Divider(height: 1),
+
+          // Assign Grievance
+          ListTile(
+            enabled: !alreadyAssigned, // ✅ disable if already assigned
+            leading: Icon(Icons.assignment_ind,
+                color: alreadyAssigned ? Colors.grey : Colors.blue),
+            title: Text(
+              AppLocalizations.of(context)!.assignGrievance,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: alreadyAssigned ? Colors.grey : null,
+              ),
+            ),
+            onTap: alreadyAssigned
+                ? null
+                : () {
+                    Navigator.pop(ctx);
+                    _showAssignDialog(grievance);
+                  },
+          ),
+          const Divider(height: 1),
+
+          // Reject
+          ListTile(
+            leading: const Icon(Icons.cancel, color: Colors.red),
+            title: Text(AppLocalizations.of(context)!.rejectGrievance,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w500, color: Colors.red)),
+            onTap: () {
+              Navigator.pop(ctx);
+              _showRejectDialog(grievance);
+            },
+          ),
+          const Divider(height: 1),
+
+          // View Details
+          ListTile(
+            leading: const Icon(Icons.visibility, color: Colors.blue),
+            title: Text(AppLocalizations.of(context)!.viewDetails,
+                style: const TextStyle(fontWeight: FontWeight.w500)),
+            onTap: () {
+              Navigator.pop(ctx);
+              Navigator.pushNamed(context, '/citizen/detail',
+                  arguments: grievance.id);
+            },
+          ),
+        ],
       ),
-      builder: (ctx) => SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(16),
-          children: [
-            ListTile(
-              leading: const Icon(Icons.update, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.updateStatus,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showUpdateStatusDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.assignment_ind, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.assignGrievance,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showAssignDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.cancel, color: Colors.red),
-              title: Text(AppLocalizations.of(context)!.rejectGrievance,
-                  style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.red)),
-              onTap: () {
-                Navigator.pop(ctx);
-                _showRejectDialog(grievance);
-              },
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading: const Icon(Icons.visibility, color: Colors.blue),
-              title: Text(AppLocalizations.of(context)!.viewDetails,
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              onTap: () {
-                Navigator.pop(ctx);
-                Navigator.pushNamed(context, '/citizen/detail', arguments: grievance.id);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
+
 
   void _showUpdateStatusDialog(Grievance grievance) {
     String? newStatus;
@@ -379,71 +427,207 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                             child: Text(l.retry, style: const TextStyle(color: Colors.white)),
                           ),
                         )
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              color: Colors.white,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text("Filters",
-                                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                  const SizedBox(height: 12),
-                                  Wrap(
-                                    spacing: 12,
-                                    runSpacing: 12,
+                      : RefreshIndicator(
+                          onRefresh: _loadData,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredGrievances.length + 1, // +1 for the filter section
+                            itemBuilder: (ctx, i) {
+                              if (i == 0) {
+                                // The first item is the filter section
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  padding: const EdgeInsets.all(16),
+                                  color: Colors.white,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      _buildFilterDropdown(
-                                        l.filterByStatus,
-                                        statuses,
-                                        selectedStatus,
-                                        (v) {
-                                          selectedStatus = v;
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterByPriority,
-                                        priorities,
-                                        selectedPriority,
-                                        (v) {
-                                          selectedPriority = v;
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterByArea,
-                                        areas.map((a) => a['name'] as String).toList(),
-                                        selectedArea,
-                                        (v) {
-                                          selectedArea = v == null
-                                              ? null
-                                              : areas.firstWhere((a) => a['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                          _applyFilters();
-                                        },
-                                      ),
-                                      _buildFilterDropdown(
-                                        l.filterBySubject,
-                                        subjects.map((s) => s['name'] as String).toList(),
-                                        selectedSubject,
-                                        (v) {
-                                          selectedSubject = v == null
-                                              ? null
-                                              : subjects.firstWhere((s) => s['name'] == v, orElse: () => {'id': null})['id']?.toString();
-                                          _applyFilters();
-                                        },
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text("Filters", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                        TextButton.icon(
+                                          onPressed: _resetFilters,
+                                          icon: const Icon(Icons.clear_all, size: 18),
+                                          label: Text(l.clearFilters),
+                                        ),
+                                      ],
+                                    ),
+                                      const SizedBox(height: 12),
+                                      Wrap(
+                                        spacing: 12,
+                                        runSpacing: 12,
+                                        children: [
+                                          _buildFilterDropdown(l.filterByStatus, statuses, selectedStatus, (v) {
+                                            selectedStatus = v;
+                                            _applyFilters();
+                                          }),
+                                          _buildFilterDropdown(l.filterByPriority, priorities, selectedPriority, (v) {
+                                            selectedPriority = v;
+                                            _applyFilters();
+                                          }),
+                                          _buildFilterDropdown(
+                                            l.filterByArea,
+                                            areas,
+                                            selectedArea, (v) {
+                                            setState(() {
+                                              selectedArea = v;
+                                              _applyFilters();
+                                            });
+                                          },
+                                          ),
+                                          _buildFilterDropdown(
+                                            l.filterBySubject,
+                                            subjects,
+                                            selectedSubject, (v) {
+                                            setState(() {
+                                              selectedSubject = v;
+                                              _applyFilters();
+                                            });
+                                          },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
+                                );
+                              }
+                              final g = filteredGrievances[i - 1]; // Adjust index for grievance items
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xffecf2fe),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Text(g.title ?? 'Untitled',
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold, fontSize: 16)),
+                                          ),
+                                          StatusBadge(status: g.status ?? 'new'),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(g.description ?? '',
+                                          style: TextStyle(color: Colors.grey[700])),
+                                      const SizedBox(height: 12),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          if (g.priority != null)
+                                            Chip(
+                                              label: Text(g.priority!,
+                                                  style: const TextStyle(fontSize: 12, color: Colors.white)),
+                                              backgroundColor: _getPriorityColor(g.priority!),
+                                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                                            ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                            onPressed: () => _showActionSheet(g),
+                                            child: Text(l.takeAction ?? 'Take Action',
+                                                style: const TextStyle(color: Colors.white)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                  /* This was the old structure that caused the overflow
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Filters",
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            const SizedBox(height: 12),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                                  children: [
+                                    _buildFilterDropdown(
+                                      l.filterByStatus,
+                                      statuses,
+                                      selectedStatus,
+                                      (v) {
+                                        setState(() {
+                                          selectedStatus = v;
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterByPriority,
+                                      priorities,
+                                      selectedPriority,
+                                      (v) {
+                                        setState(() {
+                                          selectedPriority = v;
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterByArea,
+                                      areas.map((a) => a['name'] as String).toList(),
+                                      areas.firstWhere((a) => a['id'] == selectedArea, orElse: () => {'name': null})['name'],
+                                      (v) {
+                                        setState(() {
+                                          selectedArea = v == null ? null : areas.firstWhere((a) => a['name'] == v)['id'];
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                    _buildFilterDropdown(
+                                      l.filterBySubject,
+                                      subjects.map((s) => s['name'] as String).toList(),
+                                      subjects.firstWhere((s) => s['id'] == selectedSubject, orElse: () => {'name': null})['name'],
+                                      (v) {
+                                        setState(() {
+                                          selectedSubject = v == null ? null : subjects.firstWhere((s) => s['name'] == v)['id'];
+                                          _applyFilters();
+                                        });
+                                      },
+                                    ),
+                                  ],
                             ),
-                            const SizedBox(height: 16),
-                            RefreshIndicator(
-                              onRefresh: _loadData,
-                              child: ListView.builder(
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      RefreshIndicator(
+                        onRefresh: _loadData,
+                        child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: filteredGrievances.length,
@@ -512,9 +696,9 @@ class _ViewGrievancesState extends State<ViewGrievances> {
                                   );
                                 },
                               ),
-                            ),
-                          ],
-                        ),
+                      ),
+                    ],
+                  ),*/
                 ],
               ),
             ),
@@ -540,12 +724,12 @@ class _ViewGrievancesState extends State<ViewGrievances> {
       dropdownItems.addAll(
         items.map(
           (s) => DropdownMenuItem(
-            value: s,
-            child: Text(s),
-          ),
+        value: s,
+        child: Text(s, overflow: TextOverflow.ellipsis), // Prevent long text overflow
+      ),
         ),
       );
-    } else if (items is List<Map<String, dynamic>>) {
+    } else if (items is List<Map<String, dynamic>>) { // Handle maps with {id, name} (areas, subjects, staff)
       // Handle maps with {id, name} (areas, subjects, staff)
       dropdownItems.addAll(
         items.map(
@@ -553,7 +737,7 @@ class _ViewGrievancesState extends State<ViewGrievances> {
             value: m['id']?.toString(),
             child: Text(m['name'] ?? 'Unknown'),
           ),
-        ),
+        ), // Prevent long text overflow
       );
     }
 
@@ -563,16 +747,23 @@ class _ViewGrievancesState extends State<ViewGrievances> {
         color: const Color(0xffecf2fe),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: DropdownButton<String?>(
-        hint: Text(label, style: const TextStyle(fontSize: 14)),
-        value: selected,
-        items: dropdownItems,
-        onChanged: onChanged,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
-        isDense: true,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      child: Row(
+      children: [
+        Expanded(
+          child: DropdownButton<String?>(
+            hint: Text(label, style: const TextStyle(fontSize: 14)),
+            value: selected,
+            items: dropdownItems,
+            onChanged: onChanged,
+            underline: const SizedBox(),
+            icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
+            isDense: true,
+            isExpanded: true, // ✅ fixes overflow issue
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ],
+    ),
     );
   }
 

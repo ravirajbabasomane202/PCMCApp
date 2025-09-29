@@ -57,7 +57,7 @@ def create_grievance(user):
 def my_grievances(user):
     current_app.logger.info(f"Fetching grievances for user {user.id} with role {user.role}")
     try:
-        if user.role == Role.ADMIN:
+        if user.role == Role.ADMIN or user.role == Role.MEMBER_HEAD:
             grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()  # Admins see all grievances
         else:
             grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()  # Citizens see only their own
@@ -77,6 +77,14 @@ def get_grievance(user, id):
         return jsonify({"msg": "Grievance not found"}), 404
     schema = GrievanceSchema()
     current_app.logger.info(f"Grievance found: {schema.dump(grievance)}")
+
+    # Authorization check: Ensure the user is the owner or an admin
+    if user.role != Role.ADMIN and grievance.citizen_id != user.id:
+        # Allow other roles like FIELD_STAFF if they are assigned
+        if user.role not in [Role.MEMBER_HEAD, Role.FIELD_STAFF] or grievance.assigned_to != user.id:
+             current_app.logger.warning(f"Unauthorized access attempt for grievance {id} by user {user.id}")
+             return jsonify({"msg": "Access forbidden"}), 403
+
     return jsonify(schema.dump(grievance)), 200
 
 @grievance_bp.route('/<int:id>/comments', methods=['POST'])
@@ -230,11 +238,16 @@ def update_grievance_status(user, id):
         db.session.commit()
         print(f"Status updated from {old_status} to {grievance.status}")
         log_audit(f'Status updated from {old_status} to {grievance.status}', user.id, id)
-        send_notification(
-            grievance.citizen.email,
-            'Status Updated',
-            f'Your grievance #{id} status is now {new_status_str}.'
-        )
+        # try:
+        #     send_notification(
+        #         grievance.citizen.email,
+        #         'Status Updated',
+        #         f'Your grievance #{id} status is now {new_status_str}.'
+        #     )
+        # except Exception as e:
+        #     current_app.logger.error(f"Failed to send notification for grievance {id}: {str(e)}")
+        #     # Do not re-raise; the main operation succeeded.
+
         schema = GrievanceSchema()
         return jsonify(schema.dump(grievance)), 200
     except ValueError as e:

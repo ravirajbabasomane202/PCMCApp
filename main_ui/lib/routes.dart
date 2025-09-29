@@ -40,7 +40,7 @@ Map<String, WidgetBuilder> appRoutes = {
     if (args == null || args <= 0) {
       return const Scaffold(body: Center(child: Text('Invalid grievance ID')));
     }
-    return GrievanceDetail(id: args);
+    return GrievanceDetail(id: args ?? 0);
   },
   '/member_head/view': (context) => const ViewGrievances(),
   '/admin/dashboard': (context) => const Dashboard(),

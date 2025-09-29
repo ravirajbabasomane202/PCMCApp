@@ -289,42 +289,24 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   Expanded(
                                     child: CustomButton2(
                                       text: l10n.reassignComplaint,
-                                      onPressed: () => _showReassignDialog(grievance.id),
-                                      icon: Icons.person_add,
-                                      variant: ButtonVariant.outlined,
+                                      onPressed: grievance.assignedTo != null
+                                          ? null : () => _showReassignDialog(grievance.id),
+                                      icon: Icons.person_add,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: CustomButton2(
-                                      text: l10n.escalateComplaint,
-                                      onPressed: () async {
-                                        try {
-                                          int newAssigneeId = 13;
-                                          int admin = 4;
-                                          await ref.read(adminProvider.notifier).escalateGrievance(grievance.id, newAssigneeId, admin);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('${l10n.escalateComplaint} Successful'),
-                                              backgroundColor: theme.colorScheme.primary,
-                                            ),
-                                          );
-                                          _fetchData();
-                                        } catch (e) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(e.toString()),
-                                              backgroundColor: theme.colorScheme.error,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      icon: Icons.arrow_upward,
-                                      variant: ButtonVariant.outlined,
-                                      size: ButtonSize.small,
-                                    ),
-                                  ),
+                                  // const SizedBox(width: 8),
+                                  // Expanded(
+                                  //   child: CustomButton2(
+                                  //     text: l10n.escalateComplaint,
+                                  //     onPressed: () => _showEscalateDialog(grievance.id),
+                                  //     icon: Icons.arrow_upward,
+                                  //     variant: ButtonVariant.outlined,
+                                  //     size: ButtonSize.small,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 8),
@@ -333,18 +315,21 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                 children: [
                                   Expanded(
                                     child: CustomButton2(
-                                      text: l10n.updateStatus,
-                                      onPressed: () => _showStatusDialog(grievance.id),
-                                      icon: Icons.update,
-                                      variant: ButtonVariant.outlined,
+                                      text: l10n.updateStatus, // Changed from updateStatus
+                                      onPressed: grievance.status == 'resolved'
+                                          ? null
+                                          : () => _showStatusDialog(grievance.id),
+                                      icon: Icons.update,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: CustomButton2(
                                       text: l10n.viewDetails,
-                                      onPressed: () {
+                                      onPressed: () { // Changed from viewDetails
                                         if (grievance.id > 0) {
                                           Navigator.pushNamed(
                                             context,
@@ -360,9 +345,10 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                           );
                                         }
                                       },
-                                      icon: Icons.info,
-                                      variant: ButtonVariant.outlined,
+                                      icon: Icons.info,                                      
                                       size: ButtonSize.small,
+                                      backgroundColor: theme.colorScheme.primary,
+                                      foregroundColor: Colors.white,
                                     ),
                                   ),
                                 ],
@@ -515,6 +501,70 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       },
     );
   }
+
+  // void _showEscalateDialog(int grievanceId) {
+  //   final l10n = AppLocalizations.of(context)!;
+  //   final theme = Theme.of(context);
+  //   int? selectedAssigneeId;
+
+  //   showDialog(
+  //     context: context,
+  //     builder: (ctx) {
+  //       return StatefulBuilder(
+  //         builder: (context, setState) {
+  //           return AlertDialog(
+  //             title: Text(l10n.escalateComplaint, style: theme.textTheme.titleLarge),
+  //             content: _assignees.isEmpty
+  //                 ? Text('No field staff available for escalation.')
+  //                 : DropdownButtonFormField<int>(
+  //                     decoration: InputDecoration(
+  //                       labelText: l10n.selectAssignee,
+  //                       border: OutlineInputBorder(
+  //                         borderRadius: BorderRadius.circular(8),
+  //                       ),
+  //                     ),
+  //                     value: selectedAssigneeId,
+  //                     isExpanded: true,
+  //                     items: _assignees
+  //                         .map((u) => DropdownMenuItem(
+  //                               value: u.id,
+  //                               child: Text(u.name ?? "Unknown User"),
+  //                             ))
+  //                         .toList(),
+  //                     onChanged: (value) {
+  //                       setState(() => selectedAssigneeId = value);
+  //                     },
+  //                   ),
+  //             actions: [
+  //               TextButton(
+  //                 onPressed: () => Navigator.pop(ctx),
+  //                 child: Text(l10n.cancel),
+  //               ),
+  //               ElevatedButton(
+  //                 onPressed: () async {
+  //                   if (selectedAssigneeId != null) {
+  //                     try {
+  //                       // Assuming the current user is an admin with a static ID for now.
+  //                       // This should be replaced with the actual logged-in admin's ID.
+  //                       int adminId = 4;
+  //                       await ref.read(adminProvider.notifier).escalateGrievance(grievanceId, selectedAssigneeId!, adminId);
+  //                       Navigator.pop(ctx);
+  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Grievance escalated successfully')));
+  //                       _fetchData();
+  //                     } catch (e) {
+  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Escalation failed: $e')));
+  //                     }
+  //                   }
+  //                 },
+  //                 child: Text(l10n.escalate),
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   void _showReassignDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;

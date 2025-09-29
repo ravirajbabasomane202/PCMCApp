@@ -55,6 +55,7 @@ class GrievanceSchema(Schema):
     assigner = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New: for assigned_by
     attachments = fields.Nested('GrievanceAttachmentSchema', many=True, dump_only=True)
     comments = fields.Nested('GrievanceCommentSchema', many=True, dump_only=True)
+    workproofs = fields.Nested('WorkproofSchema', many=True, dump_only=True)
 
     @validates('citizen')
     def validate_citizen(self, value):
@@ -97,7 +98,7 @@ class WorkproofSchema(Schema):
     file_path = fields.Str(dump_only=True)
     file_type = fields.Str(dump_only=True)  # New field
     file_size = fields.Int(dump_only=True)  # New field
-    notes = fields.Str(allow_none=True)
+    notes = fields.Str(required=True)
     uploaded_at = fields.DateTime(dump_only=True)
     uploader = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)  # New nested field
 
