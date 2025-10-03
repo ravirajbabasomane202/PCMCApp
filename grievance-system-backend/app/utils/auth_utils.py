@@ -1,5 +1,3 @@
-# app/utils/auth_utils.py
-
 from functools import wraps
 from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
 from flask import jsonify
@@ -36,8 +34,8 @@ def field_staff_required(fn):
 def admin_required(fn):
     return jwt_required_with_role([Role.ADMIN])(fn)
 
-def citizen_or_admin_required(fn):  # New decorator
+def citizen_or_admin_required(fn): 
     return jwt_required_with_role([Role.CITIZEN, Role.ADMIN,Role.MEMBER_HEAD,Role.FIELD_STAFF])(fn)
 
-def field_staff_or_admin_required(fn):  # New decorator
+def field_staff_or_admin_required(fn): 
     return jwt_required_with_role([Role.FIELD_STAFF, Role.ADMIN, Role.MEMBER_HEAD])(fn)

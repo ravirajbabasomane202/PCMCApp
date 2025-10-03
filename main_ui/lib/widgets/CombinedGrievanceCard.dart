@@ -6,6 +6,7 @@ import 'package:main_ui/l10n/app_localizations.dart'; // Import AppLocalizations
 
 class CombinedGrievanceCard extends StatelessWidget {
   final Grievance grievance;
+  final VoidCallback? onTap;
 
   // Define stage keys for localization
   static const _stageKeys = [
@@ -15,7 +16,7 @@ class CombinedGrievanceCard extends StatelessWidget {
     {'status': 'resolved', 'key': 'stageResolved', 'icon': Icons.check_circle},
   ];
 
-  const CombinedGrievanceCard({super.key, required this.grievance});
+  const CombinedGrievanceCard({super.key, required this.grievance, this.onTap});
 
   // Helper to get localized stage labels
   String _getLocalizedStageLabel(String key, AppLocalizations l10n) {
@@ -45,12 +46,7 @@ class CombinedGrievanceCard extends StatelessWidget {
   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   color: const Color(0xFFECF2FE),
   child: InkWell(
-    borderRadius: BorderRadius.circular(16),
-    onTap: () => Navigator.pushNamed(
-      context,
-      '/citizen/detail',
-      arguments: grievance.id,
-    ),
+    borderRadius: BorderRadius.circular(16),    onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

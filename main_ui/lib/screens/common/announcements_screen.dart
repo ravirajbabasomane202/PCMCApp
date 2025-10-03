@@ -200,6 +200,43 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     );
   }
 
+  Future<void> _deleteAnnouncement(int id) async {
+    final localizations = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(localizations.confirmDelete),
+        content: const Text('Are you sure you want to delete this announcement?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(localizations.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(localizations.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await ApiService.delete('/admins/announcements/$id');
+        ref.refresh(announcementsProvider);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Announcement deleted successfully'), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+        }
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -297,20 +334,30 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    ann.type.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        ann.type.toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    if (isAdmin)
+                                      IconButton(
+                                        icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                        onPressed: () => _deleteAnnouncement(ann.id),
+                                        tooltip: 'Delete Announcement',
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),

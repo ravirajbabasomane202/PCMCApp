@@ -10,7 +10,7 @@ from ..services.grievance_service import (
     get_assigned_grievances, update_status, upload_workproof,
     escalate_grievance, save_workproof_record
 )
-from ..services.notification_service import send_notification
+
 from .. import db
 from ..services.grievance_service import log_audit
 from datetime import datetime, timezone
@@ -28,18 +28,12 @@ def create_grievance(user):
             data = request.form.to_dict()
         else:
             data = request.json
-
-        # Collect all files uploaded under the 'attachments' key
-        files = request.files.getlist('attachments')  # This gets all files with the same key
+        files = request.files.getlist('attachments')
         
         current_app.logger.info(f"Collected {len(files)} files for upload")
-        
-        # Set default priority if not provided
         if 'priority' not in data or not data['priority']:
             default_priority = MasterConfig.query.filter_by(key='DEFAULT_PRIORITY').first()
             data['priority'] = default_priority.value if default_priority else 'medium'
-
-        # Ensure lat/lng passed as float
         if "latitude" in data and data["latitude"]:
             data["latitude"] = float(data["latitude"])
         if "longitude" in data and data["longitude"]:
@@ -58,9 +52,9 @@ def my_grievances(user):
     current_app.logger.info(f"Fetching grievances for user {user.id} with role {user.role}")
     try:
         if user.role == Role.ADMIN or user.role == Role.MEMBER_HEAD:
-            grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()  # Admins see all grievances
+            grievances = Grievance.query.order_by(Grievance.created_at.desc()).all()  
         else:
-            grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()  # Citizens see only their own
+            grievances = Grievance.query.filter_by(citizen_id=user.id).order_by(Grievance.created_at.desc()).all()  
             print(f"Fetched {[g.to_dict() for g in grievances]} grievances for user {user.id}")
         return jsonify([grievance.to_dict() for grievance in grievances]), 200
     except Exception as e:
@@ -77,10 +71,7 @@ def get_grievance(user, id):
         return jsonify({"msg": "Grievance not found"}), 404
     schema = GrievanceSchema()
     current_app.logger.info(f"Grievance found: {schema.dump(grievance)}")
-
-    # Authorization check: Ensure the user is the owner or an admin
     if user.role != Role.ADMIN and grievance.citizen_id != user.id:
-        # Allow other roles like FIELD_STAFF if they are assigned
         if user.role not in [Role.MEMBER_HEAD, Role.FIELD_STAFF] or grievance.assigned_to != user.id:
              current_app.logger.warning(f"Unauthorized access attempt for grievance {id} by user {user.id}")
              return jsonify({"msg": "Access forbidden"}), 403
@@ -91,19 +82,17 @@ def get_grievance(user, id):
 @jwt_required_with_role([Role.CITIZEN, Role.MEMBER_HEAD, Role.FIELD_STAFF, Role.ADMIN])
 def add_grievance_comment(user, id):
     try:
-        # Handle multipart/form-data
         if request.content_type.startswith('multipart/form-data'):
             data = request.form.to_dict()
-            files = request.files.getlist('attachments')  # Support multiple files, like grievances
+            files = request.files.getlist('attachments')  
         else:
             data = request.get_json()
-            files = []  # No files if JSON
+            files = []  
 
         comment_text = data.get('comment_text')
         if not comment_text:
             return jsonify({"msg": "Comment text is required"}), 400
-        
-        # Call updated service with files
+
         result = add_comment(id, user.id, comment_text, files)
         log_audit(f"Comment added to grievance {id}", user.id, id)
         return jsonify(result), 201
@@ -136,7 +125,7 @@ def rejection_reason(user, id):
 @member_head_required
 def new_grievances(user):
     try:
-        result = get_new_grievances() # This fetches all grievances, ordered by creation date
+        result = get_new_grievances() 
         current_app.logger.info(f"New grievances for department: {len(result)} grievances found.")
         return jsonify(result), 200
     except Exception as e:
@@ -184,25 +173,17 @@ def assigned_grievances(user):
         current_app.logger.error(f"Error fetching assigned grievances for user {user.id}: {str(e)}")
         return jsonify({"msg": str(e)}), 400
 
-
-
-
-
-# app/routes/grievance_routes.py
 @grievance_bp.route('/assigned/<int:user_id>', methods=['GET'])
 @jwt_required()
 @field_staff_required
 def get_assigned_grievances_by_user(user, user_id):
-    """
-    Retrieve grievances assigned to a specific user (admin only).
-    """
+
     try:
-        # Verify the target user exists
+
         target_user = User.query.get(user_id)
         if not target_user:
             return jsonify({"msg": "User not found"}), 404
 
-        # Fetch grievances assigned to the specified user
         grievances = Grievance.query.filter_by(assigned_to=user_id).all()
         if not grievances:
             return jsonify({"msg": "No grievances assigned to this user"}), 404
@@ -226,7 +207,6 @@ def update_grievance_status(user, id):
         if not grievance:
             return jsonify({"error": "Grievance not found"}), 404
         current_app.logger.info(f"Grievance found: {grievance}")
-        # Check if the user is the assigned staff OR an ADMIN
         if grievance.assigned_to != user.id and user.role not in [Role.ADMIN, Role.MEMBER_HEAD]:
             return jsonify({"error": "Not authorized to update this grievance"}), 403
         
@@ -238,15 +218,7 @@ def update_grievance_status(user, id):
         db.session.commit()
         print(f"Status updated from {old_status} to {grievance.status}")
         log_audit(f'Status updated from {old_status} to {grievance.status}', user.id, id)
-        # try:
-        #     send_notification(
-        #         grievance.citizen.email,
-        #         'Status Updated',
-        #         f'Your grievance #{id} status is now {new_status_str}.'
-        #     )
-        # except Exception as e:
-        #     current_app.logger.error(f"Failed to send notification for grievance {id}: {str(e)}")
-        #     # Do not re-raise; the main operation succeeded.
+
 
         schema = GrievanceSchema()
         return jsonify(schema.dump(grievance)), 200
@@ -380,7 +352,6 @@ def track_grievances(user):
         
         grievances_data = schema.dump(grievances)
         for grievance in grievances_data:
-            # Ensure no null values in critical fields
             grievance['id'] = grievance.get('id') or 0
             grievance['citizen_id'] = grievance.get('citizen_id') or user.id
             grievance['subject_id'] = grievance.get('subject_id') or 0
@@ -402,11 +373,8 @@ def track_grievances(user):
 @grievance_bp.route("/<int:grievance_id>", methods=["PUT"])
 @jwt_required_with_role([Role.CITIZEN])
 def update_grievance(user, grievance_id):
-    """Update grievance details (title, description, area, subject, etc.)"""
     grievance = Grievance.query.get_or_404(grievance_id)
     data = request.get_json()
-
-    # Verify the user owns this grievance (important security check!)
     if grievance.citizen_id != user.id:
         return jsonify({"error": "Unauthorized to update this grievance"}), 403
 
@@ -441,8 +409,6 @@ def update_grievance(user, grievance_id):
 @jwt_required_with_role([Role.CITIZEN, Role.ADMIN])
 def delete_grievance(user, grievance_id):
     grievance = Grievance.query.get_or_404(grievance_id)
-
-    # Authorization check: only owner or admin can delete
     if user.role != Role.ADMIN and grievance.citizen_id != user.id:
         return jsonify({"msg": "Permission denied to delete this grievance"}), 403
 

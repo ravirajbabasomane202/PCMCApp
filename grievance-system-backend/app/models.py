@@ -1,5 +1,3 @@
-# app/models.py
-
 from datetime import datetime, timezone
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
@@ -38,12 +36,11 @@ class User(db.Model):
     department_id = db.Column(db.Integer, db.ForeignKey('master_areas.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    # New fields for enhanced user profile
-    address = db.Column(db.String(256), nullable=True)  # For user address in settings
-    profile_picture = db.Column(db.String(256), nullable=True)  # Path to profile picture
-    last_login = db.Column(db.DateTime, nullable=True)  # Track last login for security
-    two_factor_enabled = db.Column(db.Boolean, default=False)  # For 2FA in settings
-    is_active = db.Column(db.Boolean, default=True)  # For account status (e.g., disable user)
+    address = db.Column(db.String(256), nullable=True) 
+    profile_picture = db.Column(db.String(256), nullable=True) 
+    last_login = db.Column(db.DateTime, nullable=True)  
+    two_factor_enabled = db.Column(db.Boolean, default=False) 
+    is_active = db.Column(db.Boolean, default=True)  
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -72,12 +69,10 @@ class Grievance(db.Model):
     longitude = db.Column(db.Float, nullable=True)
     address = db.Column(db.String(256), nullable=True)
     escalation_level = db.Column(db.Integer, default=0)
-    feedback_rating = db.Column(db.Integer, nullable=True)  # 1-5 star rating
+    feedback_rating = db.Column(db.Integer, nullable=True)  
     feedback_text = db.Column(db.Text, nullable=True)
-    # New field for categorization
-    category_id = db.Column(db.Integer, db.ForeignKey('master_categories.id'), nullable=True)  # For grouping subjects
+    category_id = db.Column(db.Integer, db.ForeignKey('master_categories.id'), nullable=True) 
 
-    # Relationships
     citizen = db.relationship('User', backref=db.backref('submitted_grievances', lazy=True), foreign_keys=[citizen_id])
     assignee = db.relationship('User', backref=db.backref('assigned_grievances', lazy=True), foreign_keys=[assigned_to])
     assigner = db.relationship('User', backref=db.backref('assigned_by_grievances', lazy=True), foreign_keys=[assigned_by])
@@ -91,7 +86,6 @@ class Grievance(db.Model):
         """
         Convert Grievance object to a dictionary for JSON serialization.
         """
-        # Convert dynamic relationships to lists
         attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
         comments_list = [comment.to_dict() for comment in self.comments.all()]
         workproofs_list = [workproof.to_dict() for workproof in self.workproofs.all()]
@@ -152,16 +146,16 @@ class Grievance(db.Model):
                 'name': self.category.name,
                 'description': self.category.description
             } if self.category else None,
-            'attachments': attachments_list,  # Use the converted list
-            'comments': comments_list,  # Use the converted list
+            'attachments': attachments_list,  
+            'comments': comments_list,  
             'workproofs': workproofs_list
         }
 class GrievanceAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
-    file_type = db.Column(db.String(10), nullable=False)  # e.g., 'pdf', 'jpeg'
-    file_size = db.Column(db.Integer, nullable=True)  # New: Store file size for validation
+    file_type = db.Column(db.String(10), nullable=False)  
+    file_size = db.Column(db.Integer, nullable=True)  
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     def to_dict(self):
         return {
@@ -179,13 +173,10 @@ class GrievanceComment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     comment_text = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    # New field for comment visibility
-    is_public = db.Column(db.Boolean, default=True)  # Public or internal (e.g., for staff only)
+    is_public = db.Column(db.Boolean, default=True)  
     attachments = db.relationship('CommentAttachment', backref='comment', lazy='dynamic', cascade="all, delete-orphan")
-    # Relationship to User
     user = db.relationship('User', backref='comments')
     def to_dict(self):
-        # Convert dynamic relationship to list
         attachments_list = [attachment.to_dict() for attachment in self.attachments.all()]
         
         return {
@@ -195,7 +186,7 @@ class GrievanceComment(db.Model):
             'comment_text': self.comment_text,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'is_public': self.is_public,
-            'attachments': attachments_list,  # Include comment attachments
+            'attachments': attachments_list, 
             'user': {
                 'id': self.user.id,
                 'name': self.user.name
@@ -207,8 +198,8 @@ class CommentAttachment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     comment_id = db.Column(db.Integer, db.ForeignKey('grievance_comment.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
-    file_type = db.Column(db.String(10), nullable=True)  # e.g., 'jpg', 'pdf'
-    file_size = db.Column(db.Integer, nullable=True)  # In bytes
+    file_type = db.Column(db.String(10), nullable=True) 
+    file_size = db.Column(db.Integer, nullable=True)  
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
@@ -227,12 +218,10 @@ class Workproof(db.Model):
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=False)
     uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     file_path = db.Column(db.String(256), nullable=False)
-    file_type = db.Column(db.String(10), nullable=False)  # New: Store file type
-    file_size = db.Column(db.Integer, nullable=False)  # New: Store file size
+    file_type = db.Column(db.String(10), nullable=False)  
+    file_size = db.Column(db.Integer, nullable=False) 
     notes = db.Column(db.Text, nullable=False)
     uploaded_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
-    # Relationship
     uploader = db.relationship('User', backref='workproofs')
     def to_dict(self):
         return {
@@ -252,55 +241,35 @@ class MasterSubjects(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    # New field for categorization
     category_id = db.Column(db.Integer, db.ForeignKey('master_categories.id'), nullable=True)
-    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable subjects
-
-    # Relationship
+    is_active = db.Column(db.Boolean, default=True)  
     category = db.relationship('MasterCategories', backref='subjects')
 
 class MasterAreas(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text, nullable=True)
-    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable areas
+    is_active = db.Column(db.Boolean, default=True)  
 
 class MasterCategories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)  # e.g., 'Roads', 'Sanitation'
+    name = db.Column(db.String(128), nullable=False)  
     description = db.Column(db.Text, nullable=True)
-    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable categories
+    is_active = db.Column(db.Boolean, default=True)  
 
 class AuditLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     action = db.Column(db.Text, nullable=False)
-    action_type = db.Column(db.String(50), nullable=True)  # New: e.g., 'create', 'update', 'delete'
+    action_type = db.Column(db.String(50), nullable=True)  
     performed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     grievance_id = db.Column(db.Integer, db.ForeignKey('grievance.id'), nullable=True)
-    details = db.Column(db.Text, nullable=True)  # New: Additional context (e.g., JSON of changes)
+    details = db.Column(db.Text, nullable=True)  
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    # Relationship
+    
     performer = db.relationship('User', backref='audit_logs')
 
-class OtpToken(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    phone_number = db.Column(db.String(15), nullable=False)
-    otp = db.Column(db.String(6), nullable=False)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    used = db.Column(db.Boolean, default=False)  # New: Track if OTP was used
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-class NotificationToken(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    fcm_token = db.Column(db.String(256), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable token
-
-    # Relationship
-    user = db.relationship('User', backref='notification_tokens')
 
 class MasterConfig(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -308,25 +277,25 @@ class MasterConfig(db.Model):
     value = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    description = db.Column(db.Text, nullable=True)  # New: Describe config purpose
+    description = db.Column(db.Text, nullable=True) 
 
 class Announcement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(50), default="general")  # general / emergency
+    type = db.Column(db.String(50), default="general")  
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    expires_at = db.Column(db.DateTime, nullable=True)  # New: Expiration for announcements
-    target_role = db.Column(db.Enum(Role), nullable=True)  # New: Target specific roles
-    is_active = db.Column(db.Boolean, default=True)  # New: Enable/disable announcements
+    expires_at = db.Column(db.DateTime, nullable=True) 
+    target_role = db.Column(db.Enum(Role), nullable=True) 
+    is_active = db.Column(db.Boolean, default=True) 
 
 class UserPreference(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    notifications_enabled = db.Column(db.Boolean, default=True)  # Notification preference
-    language = db.Column(db.String(10), default='en')  # Language (e.g., 'en', 'mr', 'hi')
+    notifications_enabled = db.Column(db.Boolean, default=True)  
+    language = db.Column(db.String(10), default='en')
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
-    # Relationship
+
     user = db.relationship('User', backref='preferences')

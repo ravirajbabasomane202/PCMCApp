@@ -19,7 +19,6 @@ def calculate_pending_aging():
     }
 
 def calculate_sla_compliance():
-    # Assuming SLA is resolution within 30 days for example
     resolved = Grievance.query.filter_by(status=GrievanceStatus.CLOSED)
     compliant = resolved.filter(Grievance.updated_at - Grievance.created_at <= timedelta(days=30)).count()
     total_resolved = resolved.count()

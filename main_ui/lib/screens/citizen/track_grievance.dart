@@ -80,9 +80,13 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == 1) {
-      Navigator.pushNamed(context, '/citizen/submit');
-    } else if (index == 2) {
+    if (index == 1) { // Submit      _navigateToSubmit();    } else if (index == 0) { // Track (current screen)
+      // Do nothing or refresh
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    } else if (index == 2) { // Profile
       Navigator.pushNamed(context, '/profile');
     }
   }
@@ -140,9 +144,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                     icon: Icons.inbox_rounded,
                     title: localizations.noGrievances,
                     message: localizations.noGrievancesMessage,
-                    actionButton: ElevatedButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/citizen/submit'),
+                    actionButton: ElevatedButton( // Changed to call _navigateToSubmit
+                      onPressed: _navigateToSubmit,
                       child: Text(localizations.submitGrievance),
                     ),
                   );
@@ -235,7 +238,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     horizontal: 16.0,
     vertical: 8.0,
   ),
-  child: CombinedGrievanceCard(grievance: grievance),
+  child: CombinedGrievanceCard(
+    grievance: grievance,
+    onTap: () async {
+      await _navigateToDetail(grievance.id);
+    },
+  ),
 );
                         },
                       ),
@@ -256,7 +264,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
             ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/citizen/submit'),
+        onPressed: _navigateToSubmit, // Changed to call _navigateToSubmit
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add_rounded),
@@ -331,5 +339,27 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         ),
       ),
     );
+  }
+
+  // Helper method to navigate and refresh
+  Future<void> _navigateToSubmit() async {
+    final result = await Navigator.pushNamed(context, '/citizen/submit');
+    if (result == true && mounted) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    }
+  }
+
+  // Helper method to navigate to detail and refresh
+  Future<void> _navigateToDetail(int grievanceId) async {
+    final result = await Navigator.pushNamed(context, '/citizen/detail', arguments: grievanceId);
+    if (result == true && mounted) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    }
   }
 }

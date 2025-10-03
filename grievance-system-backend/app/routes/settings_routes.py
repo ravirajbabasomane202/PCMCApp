@@ -1,9 +1,8 @@
-# app/routes.py (or in blueprints)
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import User, UserPreference
 from .. import db
-from ..utils.auth_utils import jwt_required_with_role  # If roles are needed, but since common, no role check
+from ..utils.auth_utils import jwt_required_with_role 
 
 settings_bp = Blueprint('settings', __name__)
 

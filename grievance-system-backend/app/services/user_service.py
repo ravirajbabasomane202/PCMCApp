@@ -1,5 +1,3 @@
-# app/services/user_service.py
-
 from ..models import User, Role
 from ..schemas import UserSchema
 from .. import db
@@ -7,8 +5,6 @@ from .. import db
 def add_update_user(data, user_id=None): 
     schema = UserSchema()
     data.pop("id", None)
-
-    # Extract password separately before schema load
     raw_password = data.pop("password", None)
 
     user_data = schema.load(data, partial=True)
@@ -28,8 +24,6 @@ def add_update_user(data, user_id=None):
             raise ValueError("Phone number already exists")
         user = User(**user_data)
         db.session.add(user)
-
-    # ✅ Handle password securely
     if raw_password:
         user.set_password(raw_password)
 
@@ -46,9 +40,6 @@ def delete_user(user_id):
     db.session.commit()
 
 def get_users():
-    """
-    Fetch all users, particularly those suitable for grievance assignment (e.g., FIELD_STAFF).
-    """
     try:
         users = User.query.filter_by(role=Role.FIELD_STAFF).all()
         return [UserSchema().dump(user) for user in users]

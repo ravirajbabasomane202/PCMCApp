@@ -1,5 +1,3 @@
-# app/routes/user_routes.py
-
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required, citizen_required, get_jwt_identity
 from ..services.user_service import add_update_user
@@ -47,16 +45,10 @@ def get_users(user):
     except Exception as e:
         return jsonify({"msg": "Failed to retrieve users", "error": str(e)}), 500
 
-
-
-# Keep your other routes but update the URLs to match
 @user_bp.route('/admin/users', methods=['POST'])
 @admin_required
 def manage_user(user):
-    """Add a new user."""
     data = request.json
-    
-    # Convert role string to Role enum
     if 'role' in data:
         try:
             role_mapping = {

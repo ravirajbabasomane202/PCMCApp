@@ -154,7 +154,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

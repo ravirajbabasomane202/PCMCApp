@@ -10,7 +10,7 @@ from ..models import User, Role
 from .. import db
 from ..schemas import UserSchema
 from werkzeug.security import check_password_hash
-from ..services.otp_service import send_otp, verify_otp
+# from ..services.otp_service import send_otp, verify_otp
 from ..utils.file_utils import allowed_file
 from werkzeug.utils import secure_filename
 import os
@@ -149,7 +149,7 @@ def logout():
 @jwt_required()
 def get_current_user():
     user_id = get_jwt_identity()
-    user = User.query.get(int(user_id))   # convert back to int
+    user = User.query.get(int(user_id))  
     if not user:
         return jsonify({"msg": "User not found"}), 404
     schema = UserSchema()
@@ -163,8 +163,6 @@ def update_current_user():
     user = User.query.get(current_user_id)
     if not user:
         return jsonify({"msg": "User not found"}), 404
-
-    # Handle form data (text fields)
     data = request.form
     if 'name' in data:
         user.name = data['name']
@@ -177,7 +175,6 @@ def update_current_user():
     if 'address' in data:
         user.address = data['address']
 
-    # Handle file upload for profile_picture
     if 'profile_picture' in request.files:
         file = request.files['profile_picture']
         if file and allowed_file(file.filename):
@@ -186,7 +183,6 @@ def update_current_user():
             os.makedirs(user_dir, exist_ok=True)
             file_path = os.path.join(user_dir, filename)
             file.save(file_path)
-            # Store relative path for easy serving (e.g., via /uploads/<path>)
             user.profile_picture = f'user_{user.id}/{filename}'
         else:
             return jsonify({"msg": "Invalid file type"}), 400
@@ -201,44 +197,9 @@ def update_current_user():
         db.session.rollback()
         return jsonify({"msg": f"Update failed: {str(e)}"}), 500
 
-
-
-
-
-
-@auth_bp.route('/otp/send', methods=['POST'])
-def send_otp():
-    data = request.json
-    phone_number = data.get('phone_number')
-    if not phone_number:
-        return jsonify({"msg": "Phone number required"}), 400
-    return jsonify(send_otp(phone_number)), 200
-
-@auth_bp.route('/otp/verify', methods=['POST'])
-def verify_otp_route():
-    data = request.json
-    phone_number = data.get('phone_number')
-    otp = data.get('otp')
-
-    if verify_otp(phone_number, otp):
-        user = User.query.filter_by(phone_number=phone_number).first()
-        if not user:
-            # ✅ Auto-register new user if first OTP login
-            user = User(phone_number=phone_number, role=Role.CITIZEN, name="Guest User")
-            db.session.add(user)
-            db.session.commit()
-
-        access_token = create_access_token(identity=str(user.id))
-        refresh_token = create_refresh_token(identity=str(user.id))
-        return jsonify({"access_token": access_token, "refresh_token": refresh_token}), 200
-    
-    return jsonify({"msg": "Invalid or expired OTP"}), 401
-
 @auth_bp.route('/guest-login', methods=['POST'])
 def guest_login():
-    """
-    Allows users to login as Guest with limited access (read-only).
-    """
+
     guest_user = User(name="Guest User", role=Role.CITIZEN)
     db.session.add(guest_user)
     db.session.commit()

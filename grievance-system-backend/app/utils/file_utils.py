@@ -6,20 +6,15 @@ from flask import current_app
 from mimetypes import guess_type
 
 def allowed_file(filename):
-    # Get MIME type of the file
     mime_type, _ = guess_type(filename)
-    
-    # Define allowed MIME types
     allowed_mime_types = [
-        'image/jpeg',       # jpg/jpeg
-        'image/png',        # png
-        'application/pdf',  # pdf
-        'text/plain',       # txt
-        'video/mp4',        # mp4
-        'video/quicktime'   # mov
+        'image/jpeg',       
+        'image/png',       
+        'application/pdf',  
+        'text/plain',       
+        'video/mp4',        
+        'video/quicktime'  
     ]
-    
-    # Check file extension and MIME type
     return (
         '.' in filename and
         filename.rsplit('.', 1)[1].lower() in current_app.config['ALLOWED_EXTENSIONS'] and
@@ -41,8 +36,6 @@ def upload_files(files, grievance_id):
             filename = secure_filename(file.filename)
             absolute_file_path = os.path.join(absolute_grievance_folder, filename)
             file.save(absolute_file_path)
-            
-            # Store the relative path for URL generation, replacing backslashes
             relative_file_path = os.path.join(relative_grievance_folder, filename).replace('\\', '/')
             
             file_size = os.path.getsize(absolute_file_path)
@@ -64,6 +57,4 @@ def upload_workproof(file, grievance_id):
     filename = secure_filename(file.filename)
     absolute_file_path = os.path.join(absolute_workproof_folder, filename)
     file.save(absolute_file_path)
-    
-    # Return the relative path for URL generation, replacing backslashes
     return os.path.join(relative_workproof_folder, filename).replace('\\', '/')

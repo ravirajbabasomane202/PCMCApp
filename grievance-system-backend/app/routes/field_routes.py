@@ -12,7 +12,7 @@ def get_users():
 
     if role:
         try:
-            role_enum = Role(role)  # validate role string
+            role_enum = Role(role)  
             query = query.filter_by(role=role_enum)
         except ValueError:
             return jsonify({"error": "Invalid role"}), 400

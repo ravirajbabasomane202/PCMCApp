@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from flask import current_app
 from marshmallow import ValidationError
-from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, NotificationToken, Role, CommentAttachment
+from ..models import Grievance, GrievanceAttachment, GrievanceComment, Workproof, GrievanceStatus, Priority, AuditLog, User, Role, CommentAttachment
 from ..schemas import GrievanceSchema, GrievanceAttachmentSchema, GrievanceCommentSchema, WorkproofSchema
 from ..utils.file_utils import upload_files, upload_workproof
 from .. import db
 from ..config import Config
-from .notification_service import send_notification
+
 from flask_jwt_extended import get_jwt_identity
 from werkzeug.utils import secure_filename
 import os
@@ -19,7 +19,6 @@ def submit_grievance(citizen_id, data, files):
             current_app.logger.error(f"Validation error in submit_grievance: {err.messages}")
             raise ValueError(f"Invalid grievance data: {err.messages}")
 
-        # Create grievance, letting the model handle default priority if not provided
         grievance = Grievance(
             citizen_id=citizen_id,
             subject_id=validated_data['subject_id'],
@@ -30,10 +29,10 @@ def submit_grievance(citizen_id, data, files):
             longitude=validated_data.get('longitude'),
             address=validated_data.get('address'),
             status=GrievanceStatus.NEW,
-            priority=validated_data.get('priority', Priority.MEDIUM)  # ← Use validated_data or default
+            priority=validated_data.get('priority', Priority.MEDIUM) 
         )
         db.session.add(grievance)
-        db.session.flush()  # Get grievance ID before committing
+        db.session.flush()  
 
         if files:
             try:
@@ -55,13 +54,8 @@ def submit_grievance(citizen_id, data, files):
 
         log_audit(f'Grievance created (Complaint ID {grievance.complaint_id})', citizen_id, grievance.id)
 
-        token = NotificationToken.query.filter_by(user_id=citizen_id).first()
-        send_notification(
-            grievance.citizen.email,
-            'Grievance Submitted',
-            'Your grievance has been submitted.',
-            fcm_token=token.fcm_token if token else None
-        )
+        
+        
         return schema.dump(grievance)
     except ValidationError as e:
         current_app.logger.error(f"Validation error in submit_grievance: {str(e.messages)}")
@@ -70,19 +64,6 @@ def submit_grievance(citizen_id, data, files):
         db.session.rollback()
         current_app.logger.error(f"Error submitting grievance for citizen {citizen_id}: {str(e)}")
         raise ValueError(f"File upload error: {str(e)}")
-
-        db.session.commit()
-
-        log_audit(f'Grievance created (Complaint ID {grievance.complaint_id})', citizen_id, grievance.id)
-
-        token = NotificationToken.query.filter_by(user_id=citizen_id).first()
-        send_notification(
-            grievance.citizen.email,
-            'Grievance Submitted',
-            'Your grievance has been submitted.',
-            fcm_token=token.fcm_token if token else None
-        )
-        return schema.dump(grievance)
     except ValidationError as e:
         current_app.logger.error(f"Validation error in submit_grievance: {str(e.messages)}")
         raise ValueError(f"Invalid grievance data: {str(e.messages)}")
@@ -129,14 +110,14 @@ def add_comment(grievance_id, user_id, comment_text, files=None):
         grievance_id=grievance_id,
         user_id=user_id,
         comment_text=comment_text,
-        is_public=True  # Default, or from data
+        is_public=True  
     )
     db.session.add(comment)
-    db.session.flush()  # Get comment.id before commit
+    db.session.flush()  
 
     uploaded_paths = []
     if files:
-        uploaded_paths = upload_files(files, grievance_id)  # Reuse, or create a new folder like 'comment_{comment.id}'
+        uploaded_paths = upload_files(files, grievance_id)  
 
         for path, file_type, file_size in uploaded_paths:
             attachment = CommentAttachment(
@@ -160,7 +141,7 @@ def confirm_closure(id, citizen_id):
         grievance.updated_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit('Grievance closed', citizen_id, id)
-        send_notification(grievance.citizen.email, 'Grievance Closed', 'Your grievance has been closed.')
+        
         return {"msg": "Closed"}
     except Exception as e:
         current_app.logger.error(f"Error closing grievance {id}: {str(e)}")
@@ -202,7 +183,7 @@ def accept_grievance(id, head_id, data):
         grievance.status = GrievanceStatus.IN_PROGRESS
         db.session.commit()
         log_audit('Grievance accepted and assigned', head_id, id)
-        send_notification(grievance.citizen.email, 'Grievance Accepted', 'Your grievance has been accepted.')
+     
         return {"msg": "Accepted"}
     except Exception as e:
         current_app.logger.error(f"Error accepting grievance {id}: {str(e)}")
@@ -212,14 +193,11 @@ def reject_grievance(id, head_id, reason):
     try:
         
         grievance = db.session.get(Grievance, id)
-        # if not grievance or grievance.status != GrievanceStatus.NEW or grievance.area_id != db.session.get(User, head_id).department_id:
-        #     current_app.logger.error(f"Invalid reject attempt for grievance {id} by user {head_id}")
-        #     raise ValueError("Invalid operation")
         grievance.status = GrievanceStatus.REJECTED
         grievance.rejection_reason = reason
         db.session.commit()
         log_audit('Grievance rejected', head_id, id)
-        send_notification(grievance.citizen.email, 'Grievance Rejected', f'Your grievance has been rejected: {reason}')
+       
         return {"msg": "Rejected"}
     except Exception as e:
         current_app.logger.error(f"Error rejecting grievance {id}: {str(e)}")
@@ -246,17 +224,13 @@ def update_status(id, employer_id, new_status):
             grievance.resolved_at = datetime.now(timezone.utc)
         db.session.commit()
         log_audit(f'Status updated from {old_status} to {grievance.status}', employer_id, id)
-        send_notification(grievance.citizen.email, 'Status Updated', f'Your grievance status is now {new_status}.')
+      
         return {"msg": "Status updated"}
     except Exception as e:
         current_app.logger.error(f"Error updating status for grievance {id}: {str(e)}")
         raise
 
 def save_file(file, grievance_id):
-    """
-    Save uploaded file to the UPLOAD_FOLDER, grouped by grievance_id.
-    Returns the relative path of the saved file.
-    """
     upload_folder = current_app.config.get("UPLOAD_FOLDER", "uploads")
     grievance_folder = os.path.join(upload_folder, str(grievance_id))
     os.makedirs(grievance_folder, exist_ok=True)
@@ -264,8 +238,6 @@ def save_file(file, grievance_id):
     filename = secure_filename(file.filename)
     filepath = os.path.join(grievance_folder, filename)
     file.save(filepath)
-
-    # Return relative path for DB storage (you can also return absolute if you prefer)
     return filepath
 
 def save_workproof_record(grievance_id, employer_id, file, notes): 
@@ -276,14 +248,9 @@ def save_workproof_record(grievance_id, employer_id, file, notes):
                 f"Invalid workproof upload attempt for grievance {grievance_id} by user {employer_id}"
             )
             raise ValueError("Invalid operation")
-
-        # Save the file
         path = save_file(file, grievance_id)
-
-        # Keep only the path after 'uploads/' folder
         if "uploads" in path:
-            path = path.split("uploads", 1)[1].lstrip("/\\")  # removes any leading slashes
-        # else keep path as is (fallback)
+            path = path.split("uploads", 1)[1].lstrip("/\\") 
 
         workproof = Workproof(
             grievance_id=grievance_id,
@@ -299,10 +266,6 @@ def save_workproof_record(grievance_id, employer_id, file, notes):
     except Exception as e:
         current_app.logger.error(f"Error saving workproof for grievance {grievance_id}: {str(e)}")
         raise
-
-
-
-
 def upload_workproof(id, employer_id, file, notes):
     try:
         grievance = db.session.get(Grievance, id)
@@ -310,7 +273,7 @@ def upload_workproof(id, employer_id, file, notes):
             current_app.logger.error(f"Invalid workproof upload attempt for grievance {id} by user {employer_id}")
             raise ValueError("Invalid operation")
 
-        path = upload_workproof(file, id)   # ❌ Recursive call to itself!
+        path = upload_workproof(file, id)   
 
         workproof = Workproof(grievance_id=id, uploaded_by=employer_id, file_path=path, notes=notes)
         db.session.add(workproof)
@@ -353,7 +316,7 @@ def _check_auto_close(grievance):
                 grievance.status = GrievanceStatus.CLOSED
                 db.session.commit()
                 log_audit('Auto-closed due to SLA', grievance.assigned_to, grievance.id)
-                send_notification(grievance.citizen.email, 'Grievance Auto-Closed', 'Your grievance has been auto-closed.')
+                
     except Exception as e:
         current_app.logger.error(f"Error checking auto-close for grievance {grievance.id}: {str(e)}")
         raise
@@ -394,21 +357,6 @@ def escalate_grievance(grievance_id, escalated_by, new_assignee_id=None):
             escalated_by,
             grievance_id
         )
-
-        send_notification(
-            grievance.citizen.email,
-            "Grievance Escalated",
-            f"Your grievance #{grievance.id} has been escalated to {ESCALATION_FLOW.get(grievance.escalation_level, 'higher authority')}."
-        )
-        if grievance.assigned_to:
-            assignee = db.session.get(User, grievance.assigned_to)
-            if assignee:
-                send_notification(
-                    assignee.email,
-                    "New Escalated Grievance Assigned",
-                    f"You have been assigned an escalated grievance #{grievance.id}."
-                )
-
         return {"success": True, "msg": f" Escalated to level {grievance.escalation_level}"}
     except Exception as e:
         current_app.logger.error(f"Error escalating grievance {grievance_id}: {str(e)}")

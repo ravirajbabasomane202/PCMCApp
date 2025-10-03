@@ -61,13 +61,13 @@ def create_app():
     from .routes.grievance_routes import grievance_bp
     from .routes.user_routes import user_bp
     from .routes.admin_routes import admin_bp
-    from .routes.notification_routes import notification_bp
+    # from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
     from .routes.settings_routes import settings_bp
     from .routes.field_routes import fieldStaff
     app.register_blueprint(fieldStaff)
     app.register_blueprint(public_bp)
-    app.register_blueprint(notification_bp, url_prefix='/notifications')
+    # app.register_blueprint(notification_bp, url_prefix='/notifications')
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(grievance_bp, url_prefix='/grievances')
