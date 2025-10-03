@@ -178,6 +178,24 @@ abstract class AppLocalizations {
   /// **'Google login failed'**
   String get googleLoginFailed;
 
+  /// Title for login failure dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get loginFailed;
+
+  /// Title for registration failure dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Failed'**
+  String get registrationFailed;
+
+  /// Label for OK button in dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
   /// Label for settings screen
   ///
   /// In en, this message translates to:

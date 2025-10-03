@@ -53,9 +53,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(_isLogin ? AppLocalizations.of(context)!.loginFailed : AppLocalizations.of(context)!.registrationFailed),
+              content: Text("username and password is incorrect"),
+              actions: <Widget>[TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(AppLocalizations.of(context)!.ok))],
+            ),
+          );
+        }
       } finally {
         setState(() => _isLoading = false);
       }

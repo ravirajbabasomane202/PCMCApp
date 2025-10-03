@@ -1621,6 +1621,22 @@ def get_announcements():
     ).order_by(Announcement.created_at.desc()).all()
     return AnnouncementSchema(many=True).dump(announcements), 200
 
+@admin_bp.route('/announcements/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_announcement(user, id):
+    """Delete an announcement by ID."""
+    try:
+        announcement = Announcement.query.get(id)
+        if not announcement:
+            return jsonify({"msg": "Announcement not found"}), 404
+        
+        db.session.delete(announcement)
+        db.session.commit()
+        return jsonify({"msg": "Announcement deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": "Failed to delete announcement", "error": str(e)}), 500
+
 @admin_bp.route('/reports/kpis/advanced', methods=['GET', 'OPTIONS'])
 def get_advanced_kpis_route():
     if request.method == "OPTIONS":

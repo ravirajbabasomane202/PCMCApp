@@ -12045,7 +12045,7 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context);
+      Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -12358,9 +12358,13 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == 1) {
-      Navigator.pushNamed(context, '/citizen/submit');
-    } else if (index == 2) {
+    if (index == 1) { // Submit      _navigateToSubmit();    } else if (index == 0) { // Track (current screen)
+      // Do nothing or refresh
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    } else if (index == 2) { // Profile
       Navigator.pushNamed(context, '/profile');
     }
   }
@@ -12418,9 +12422,8 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                     icon: Icons.inbox_rounded,
                     title: localizations.noGrievances,
                     message: localizations.noGrievancesMessage,
-                    actionButton: ElevatedButton(
-                      onPressed: () =>
-                          Navigator.pushNamed(context, '/citizen/submit'),
+                    actionButton: ElevatedButton( // Changed to call _navigateToSubmit
+                      onPressed: _navigateToSubmit,
                       child: Text(localizations.submitGrievance),
                     ),
                   );
@@ -12513,7 +12516,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     horizontal: 16.0,
     vertical: 8.0,
   ),
-  child: CombinedGrievanceCard(grievance: grievance),
+  child: CombinedGrievanceCard(
+    grievance: grievance,
+    onTap: () async {
+      await _navigateToDetail(grievance.id);
+    },
+  ),
 );
                         },
                       ),
@@ -12534,7 +12542,7 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
             ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/citizen/submit'),
+        onPressed: _navigateToSubmit, // Changed to call _navigateToSubmit
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add_rounded),
@@ -12609,6 +12617,28 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         ),
       ),
     );
+  }
+
+  // Helper method to navigate and refresh
+  Future<void> _navigateToSubmit() async {
+    final result = await Navigator.pushNamed(context, '/citizen/submit');
+    if (result == true && mounted) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    }
+  }
+
+  // Helper method to navigate to detail and refresh
+  Future<void> _navigateToDetail(int grievanceId) async {
+    final result = await Navigator.pushNamed(context, '/citizen/detail', arguments: grievanceId);
+    if (result == true && mounted) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
+    }
   }
 }
 
@@ -12818,6 +12848,43 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
     );
   }
 
+  Future<void> _deleteAnnouncement(int id) async {
+    final localizations = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(localizations.confirmDelete),
+        content: const Text('Are you sure you want to delete this announcement?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(localizations.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(localizations.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await ApiService.delete('/admins/announcements/$id');
+        ref.refresh(announcementsProvider);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Announcement deleted successfully'), backgroundColor: Colors.green),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red));
+        }
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
@@ -12915,20 +12982,30 @@ class _AnnouncementsScreenState extends ConsumerState<AnnouncementsScreen> {
                                     ],
                                   ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    ann.type.toUpperCase(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: ann.type == 'emergency' ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        ann.type.toUpperCase(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: ann.type == 'emergency' ? Colors.red : Colors.blue,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    if (isAdmin)
+                                      IconButton(
+                                        icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                        onPressed: () => _deleteAnnouncement(ann.id),
+                                        tooltip: 'Delete Announcement',
+                                      ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -17904,6 +17981,7 @@ import 'package:main_ui/l10n/app_localizations.dart'; // Import AppLocalizations
 
 class CombinedGrievanceCard extends StatelessWidget {
   final Grievance grievance;
+  final VoidCallback? onTap;
 
   // Define stage keys for localization
   static const _stageKeys = [
@@ -17913,7 +17991,7 @@ class CombinedGrievanceCard extends StatelessWidget {
     {'status': 'resolved', 'key': 'stageResolved', 'icon': Icons.check_circle},
   ];
 
-  const CombinedGrievanceCard({super.key, required this.grievance});
+  const CombinedGrievanceCard({super.key, required this.grievance, this.onTap});
 
   // Helper to get localized stage labels
   String _getLocalizedStageLabel(String key, AppLocalizations l10n) {
@@ -17943,12 +18021,7 @@ class CombinedGrievanceCard extends StatelessWidget {
   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
   color: const Color(0xFFECF2FE),
   child: InkWell(
-    borderRadius: BorderRadius.circular(16),
-    onTap: () => Navigator.pushNamed(
-      context,
-      '/citizen/detail',
-      arguments: grievance.id,
-    ),
+    borderRadius: BorderRadius.circular(16),    onTap: onTap,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

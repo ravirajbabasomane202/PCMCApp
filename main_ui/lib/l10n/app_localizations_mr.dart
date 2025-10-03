@@ -48,6 +48,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get googleLoginFailed => 'गूगल लॉगिन अयशस्वी';
 
   @override
+  String get loginFailed => 'लॉगिन अयशस्वी';
+
+  @override
+  String get registrationFailed => 'नोंदणी अयशस्वी';
+
+  @override
+  String get ok => 'ठीक आहे';
+
+  @override
   String get settings => 'सेटिंग्ज';
 
   @override

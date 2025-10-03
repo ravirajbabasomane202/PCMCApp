@@ -48,6 +48,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleLoginFailed => 'Google login failed';
 
   @override
+  String get loginFailed => 'Login Failed';
+
+  @override
+  String get registrationFailed => 'Registration Failed';
+
+  @override
+  String get ok => 'OK';
+
+  @override
   String get settings => 'Settings';
 
   @override

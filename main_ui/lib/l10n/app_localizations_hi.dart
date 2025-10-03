@@ -48,6 +48,15 @@ class AppLocalizationsHi extends AppLocalizations {
   String get googleLoginFailed => 'गूगल लॉगिन विफल';
 
   @override
+  String get loginFailed => 'लॉगिन विफल';
+
+  @override
+  String get registrationFailed => 'पंजीकरण विफल';
+
+  @override
+  String get ok => 'ठीक है';
+
+  @override
   String get settings => 'सेटिंग्स';
 
   @override
