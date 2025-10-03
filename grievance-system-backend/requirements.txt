@@ -20,3 +20,5 @@ flask-cors
 authlib
 flask-admin
 flask-security-too
+flask_cors
+authlib
