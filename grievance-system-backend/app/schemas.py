@@ -1,6 +1,7 @@
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from marshmallow_enum import EnumField
-from .models import Role, GrievanceStatus, Priority
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from .models import Role, GrievanceStatus, Priority, NearbyPlace
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -161,3 +162,9 @@ class UserPreferenceSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     user = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)
+
+# schemas.py
+class NearbyPlaceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NearbyPlace
+        include_fk = True

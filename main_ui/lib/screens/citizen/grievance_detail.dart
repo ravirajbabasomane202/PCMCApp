@@ -37,6 +37,14 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
   List<PlatformFile> _selectedFiles = [];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(grievanceProvider(widget.id));
+    });
+  }
+
+  @override
   void dispose() {
     _feedbackController.dispose();
     _commentController.dispose();

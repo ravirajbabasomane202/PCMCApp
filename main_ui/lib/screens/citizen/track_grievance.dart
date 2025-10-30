@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/providers/grievance_provider.dart';
-// import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
-// import 'package:main_ui/widgets/track_grievance_progress.dart';
+import 'package:main_ui/providers/ad_provider.dart';
+import 'package:main_ui/widgets/ad_card.dart';
 import 'package:main_ui/widgets/CombinedGrievanceCard.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
 
-// Assuming a provider for the authenticated user's ID (e.g., from JWT)
 final userIdProvider = Provider<int?>((ref) {
-  // Replace with actual logic to get user ID from JWT or auth service
-  return 1; // Placeholder: Replace with actual user ID from auth
+  return 1; 
 });
 
 class TrackGrievance extends ConsumerStatefulWidget {
@@ -26,47 +24,50 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController(viewportFraction: 0.9);
   int _currentPage = 0;
+  final PageController _adsPageController = PageController(viewportFraction: 0.9);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
       _startAutoScroll();
+      _startAdsAutoScroll(); // ✅ Start ads scroll
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Fetch grievances when the screen loads
-    final userId = ref.read(userIdProvider);
-    if (userId != null) {
-      ref.invalidate(citizenHistoryProvider(userId));
-    }
   }
 
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted) {
-        final nextPage = _currentPage + 1;
-        if (nextPage < 3) {
-          if (_pageController.hasClients) {
-            _pageController.animateToPage(
-              nextPage,
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.easeInOut,
-            );
-          }
-          
-        } else {
-          _pageController.animateToPage(
-            0,
-            duration: const Duration(milliseconds: 800),
+      if (mounted && _pageController.hasClients) {
+        final nextPage = (_currentPage + 1) % 3; // Use modulo for infinite loop
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+        _startAutoScroll();
+      }
+    });
+  }
+
+  void _startAdsAutoScroll() {
+    Future.delayed(const Duration(seconds: 4), () {
+      if (!mounted || !_adsPageController.hasClients) return;
+      final adsState = ref.read(adProvider);
+      adsState.whenData((ads) {
+        if (ads.isNotEmpty && _adsPageController.hasClients) {
+          final nextPage = (_adsPageController.page!.round() + 1) % ads.length;
+          _adsPageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 600),
             curve: Curves.easeInOut,
           );
         }
-        _startAutoScroll();
-      }
+      });
+      _startAdsAutoScroll();
     });
   }
 
@@ -80,13 +81,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == 1) { // Submit      _navigateToSubmit();    } else if (index == 0) { // Track (current screen)
-      // Do nothing or refresh
+    if (index == 1) { 
       final userId = ref.read(userIdProvider);
       if (userId != null) {
         ref.invalidate(citizenHistoryProvider(userId));
       }
-    } else if (index == 2) { // Profile
+    } else if (index == 2) {
       Navigator.pushNamed(context, '/profile');
     }
   }
@@ -135,136 +135,173 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
             await ref.read(citizenHistoryProvider(userId).future);
           }
         },
-        child: ref
-            .watch(citizenHistoryProvider(userId))
-            .when(
-              data: (grievances) {
-                if (grievances.isEmpty) {
-                  return EmptyState(
-                    icon: Icons.inbox_rounded,
-                    title: localizations.noGrievances,
-                    message: localizations.noGrievancesMessage,
-                    actionButton: ElevatedButton( // Changed to call _navigateToSubmit
-                      onPressed: _navigateToSubmit,
-                      child: Text(localizations.submitGrievance),
-                    ),
-                  );
-                }
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Promotional Banner Carousel
-                      SizedBox(
-                        height: 180,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                          },
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            final List<Map<String, dynamic>> banners = [
-                              {
-                                'title': localizations.submitGrievance,
-                                'subtitle': localizations.submitGrievanceSubtitle,
-                                'color': theme.colorScheme.primaryContainer,
-                                'icon': Icons.add_task_rounded,
-                              },
-                              {
-                                'title': localizations.track_grievances,
-                                'subtitle':
-                                    localizations.trackGrievancesSubtitle,
-                                'color': theme.colorScheme.secondaryContainer,
-                                'icon': Icons.track_changes_rounded,
-                              },
-                              {
-                                'title': localizations.quickResolutionsTitle,
-                                'subtitle': localizations.quickResolutionsSubtitle,
-                                'color': theme.colorScheme.tertiaryContainer,
-                                'icon': Icons.verified_user_rounded,
-                              },
-                            ];
-                            return _buildBannerItem(banners[index], theme);
-                          },
-                        ),
-                      ),
-                      // Page indicators
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(3, (index) {
-                            return Container(
-                              width: 8.0,
-                              height: 8.0,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 4.0,
+        child: ref.watch(citizenHistoryProvider(userId)).when(
+          data: (grievances) {
+            if (grievances.isEmpty) {
+              return EmptyState(
+                icon: Icons.inbox_rounded,
+                title: localizations.noGrievances,
+                message: localizations.noGrievancesMessage,
+                actionButton: ElevatedButton( 
+                  onPressed: _navigateToSubmit,
+                  child: Text(localizations.submitGrievance),
+                ),
+              );
+            }
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Ads Section - Fixed
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final adsAsync = ref.watch(adProvider);
+                      return adsAsync.when(
+                        data: (ads) {
+                          if (ads.isEmpty) {
+                            return const SizedBox.shrink(); // Return empty space if no ads
+                          }                          
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 250,
+                                child: PageView.builder(
+                                  controller: _adsPageController, // ✅ use the class-level controller
+                                  itemCount: ads.length,
+                                  onPageChanged: (index) {
+                                    setState(() => _currentPage = index);
+                                  },
+                                  itemBuilder: (context, index) {
+                                    final ad = ads[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: AdCard(ad: ad),
+                                    );
+                                  },
+                                ),
                               ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _currentPage == index
-                                    ? theme.colorScheme.primary
-                                    : Colors.grey[300],
-                              ),
-                            );
-                          }),
+                              const SizedBox(height: 8),
+                              if (ads.length > 1) // Only show indicators if multiple ads
+                                Center(
+                                  child: _buildPageIndicator(ads.length, _currentPage, theme),
+                                ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                        loading: () => const SizedBox(
+                          height: 150, 
+                          child: LoadingIndicator()
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
-                          localizations.grievanceDetails,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        error: (err, stack) => Container(
+                          height: 150,
+                          padding: const EdgeInsets.all(16),
+                          child: Center(
+                            child: Text(
+                              'Failed to load ads',
+                              style: TextStyle(
+                                color: theme.colorScheme.error,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Grievances List with Progress
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: grievances.length,
-                        itemBuilder: (context, index) {
-                          final grievance = grievances[index];
-                          
-                          return Padding(
-  padding: const EdgeInsets.symmetric(
-    horizontal: 16.0,
-    vertical: 8.0,
-  ),
-  child: CombinedGrievanceCard(
-    grievance: grievance,
-    onTap: () async {
-      await _navigateToDetail(grievance.id);
-    },
-  ),
-);
-                        },
-                      ),
-                    ],
+                      );
+                    }
                   ),
-                );
-              },
-              loading: () => const LoadingIndicator(),
-              error: (error, _) => EmptyState(
-                icon: Icons.error_outline,
-                title: localizations.error,
-                message: error.toString(),
-                actionButton: ElevatedButton(
-                  onPressed: () => ref.refresh(citizenHistoryProvider(userId)),
-                  child: Text(localizations.retry),
-                ),
+                 
+                  // Banner Section
+                  SizedBox(
+                    height: 180,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        final List<Map<String, dynamic>> banners = [
+                          {
+                            'title': localizations.submitGrievance,
+                            'subtitle': localizations.submitGrievanceSubtitle,
+                            'color': theme.colorScheme.primaryContainer,
+                            'icon': Icons.add_task_rounded,
+                          },
+                          {
+                            'title': localizations.track_grievances,
+                            'subtitle': localizations.trackGrievancesSubtitle,
+                            'color': theme.colorScheme.secondaryContainer,
+                            'icon': Icons.track_changes_rounded,
+                          },
+                          {
+                            'title': localizations.quickResolutionsTitle,
+                            'subtitle': localizations.quickResolutionsSubtitle,
+                            'color': theme.colorScheme.tertiaryContainer,
+                            'icon': Icons.verified_user_rounded,
+                          },
+                        ];
+                        return _buildBannerItem(banners[index], theme);
+                      },
+                    ),
+                  ),
+                  
+                  // Page indicators
+                  const SizedBox(height: 8),
+                  Center(child: _buildPageIndicator(3, _currentPage, theme)),
+                  
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      localizations.grievanceDetails,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Grievances List
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: grievances.length,
+                    itemBuilder: (context, index) {
+                      final grievance = grievances[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: CombinedGrievanceCard(
+                          grievance: grievance,
+                          onTap: () async {
+                            await _navigateToDetail(grievance.id);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
+            );
+          },
+          loading: () => const LoadingIndicator(),
+          error: (error, _) => EmptyState(
+            icon: Icons.error_outline,
+            title: localizations.error,
+            message: error.toString(),
+            actionButton: ElevatedButton(
+              onPressed: () => ref.refresh(citizenHistoryProvider(userId)),
+              child: Text(localizations.retry),
             ),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToSubmit, // Changed to call _navigateToSubmit
+        onPressed: _navigateToSubmit,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add_rounded),
@@ -293,6 +330,27 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
+    );
+  }
+
+  Widget _buildPageIndicator(int count, int currentIndex, ThemeData theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(count, (index) {
+        return Container(
+          width: 8.0,
+          height: 8.0,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 4.0,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: currentIndex == index
+                ? theme.colorScheme.primary
+                : Colors.grey[300],
+          ),
+        );
+      }),
     );
   }
 
@@ -329,8 +387,9 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   const SizedBox(height: 4),
                   Text(
                     banner['subtitle'],
-                    style:
-                        TextStyle(color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)),
+                    style: TextStyle(
+                      color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)
+                    ),
                   ),
                 ],
               ),
@@ -341,7 +400,6 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     );
   }
 
-  // Helper method to navigate and refresh
   Future<void> _navigateToSubmit() async {
     final result = await Navigator.pushNamed(context, '/citizen/submit');
     if (result == true && mounted) {
@@ -352,9 +410,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     }
   }
 
-  // Helper method to navigate to detail and refresh
   Future<void> _navigateToDetail(int grievanceId) async {
-    final result = await Navigator.pushNamed(context, '/citizen/detail', arguments: grievanceId);
+    final result = await Navigator.pushNamed(
+      context, 
+      '/citizen/detail', 
+      arguments: grievanceId
+    );
     if (result == true && mounted) {
       final userId = ref.read(userIdProvider);
       if (userId != null) {

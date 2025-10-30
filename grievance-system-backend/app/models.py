@@ -299,3 +299,39 @@ class UserPreference(db.Model):
 
 
     user = db.relationship('User', backref='preferences')
+
+# models.py (add near bottom)
+class NearbyPlace(db.Model):
+    __tablename__ = "nearby_places"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(100), nullable=False)  # hospital, school, etc.
+    name = db.Column(db.String(150), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    contact_no = db.Column(db.String(20), nullable=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+
+class Advertisement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    image_url = db.Column(db.String(500), nullable=True)
+    link_url = db.Column(db.String(500), nullable=True)
+    expires_at = db.Column(db.DateTime, nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'image_url': self.image_url,
+            'link_url': self.link_url,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'expires_at': self.expires_at.isoformat() if self.expires_at else None,
+        }

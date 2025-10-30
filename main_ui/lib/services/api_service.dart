@@ -4,6 +4,7 @@ import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/utils/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:main_ui/models/ad_model.dart';
 import 'package:file_picker/file_picker.dart';
 
 final Logger _logger = Logger('ApiService');
@@ -114,6 +115,34 @@ static Future<Response> postMultipart(
     rethrow;
   }
 }
+
+  // Generic PUT method for multipart data (file uploads)
+  static Future<Response> putMultipart(
+    String path, {
+    required Map<String, dynamic> data,
+    PlatformFile? file,
+    String fileField = 'image_file',
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        ...data,
+        if (file != null)
+          fileField: kIsWeb
+              ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+              : await MultipartFile.fromFile(file.path!, filename: file.name),
+      });
+
+      return await _dio.put(
+        path,
+        data: formData,
+        options: Options(
+            headers: {'Content-Type': 'multipart/form-data'}), // Important for PUT
+      );
+    } on DioException catch (e) {
+      _logger.severe('Multipart PUT request failed: $path, Error: ${e.message}');
+      rethrow;
+    }
+  }
 
   // Generic PUT method
   static Future<Response> put(
@@ -300,4 +329,33 @@ static Future<User> updateProfile({
   }
 
   static Dio get dio => _dio;
+
+  static Future<List<Advertisement>> fetchAds() async {
+    try {
+      final response = await _dio.get('/advertisements');
+
+      if (response.statusCode == 200) {
+        final dynamic data = response.data;
+
+        List<dynamic> adsList;
+        if (data is List) {
+          adsList = data;
+        } else if (data is Map<String, dynamic>) {
+          adsList = data['data'] ?? data['advertisements'] ?? [];
+          if (adsList.isEmpty && data.isNotEmpty) {
+            _logger.warning('No ads found in response map: $data');
+          }
+        } else {
+          throw Exception('Unexpected response format: ${data.runtimeType}');
+        }
+
+        return adsList.map((json) => Advertisement.fromJson(json as Map<String, dynamic>)).toList();
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      _logger.severe('Error fetching ads: $e');
+      rethrow;
+    }
+  }
 }

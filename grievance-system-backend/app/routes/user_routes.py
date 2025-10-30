@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required, citizen_required, get_jwt_identity
 from ..services.user_service import add_update_user
-from ..models import User,Role, Grievance, MasterAreas
-from ..schemas import GrievanceSchema
+from ..models import User,Role, Grievance, MasterAreas, NearbyPlace
+from ..schemas import GrievanceSchema, NearbyPlaceSchema
 from ..schemas import UserSchema
 from .. import db
 
@@ -142,4 +142,12 @@ def get_area(area_id):
         return jsonify({'id': area.id, 'name': area.name, 'description': area.description}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+nearby_places_schema = NearbyPlaceSchema(many=True)
+
+@user_bp.route('/nearby/<string:category>', methods=['GET'])
+@jwt_required()
+def get_nearby_by_category(category):
+    category = category.lower()
+    places = NearbyPlace.query.filter(NearbyPlace.category.ilike(category)).all()
+    return jsonify(nearby_places_schema.dump(places))

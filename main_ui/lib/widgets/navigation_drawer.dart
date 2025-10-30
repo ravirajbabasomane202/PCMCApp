@@ -81,6 +81,19 @@ class CustomNavigationDrawer extends ConsumerWidget {
               title: localizations.manageAreas ?? 'Manage Areas',
               route: '/admin/areas',
             ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.map,
+              title: 'Manage Nearby Places',
+              route: '/admin/nearby',
+            ),
+
+             _buildDrawerItem(
+              context: context,
+              icon: Icons.campaign,
+              title: 'Manage Advertisements',
+              route: '/admin/ads',
+            ),
 
           ],
           if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
@@ -89,6 +102,17 @@ class CustomNavigationDrawer extends ConsumerWidget {
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
           
+          ],
+          if (user?.role?.toUpperCase() == 'CITIZEN') ...[
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.location_on,
+              title: 'Nearby Me',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/citizen/nearby');
+              },
+            ),
           ],
           _buildDrawerItem(
             context: context,

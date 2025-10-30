@@ -878,10 +878,46 @@ class UserPreference(db.Model):
 
 
     user = db.relationship('User', backref='preferences')
+
+# models.py (add near bottom)
+class NearbyPlace(db.Model):
+    __tablename__ = "nearby_places"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(100), nullable=False)  # hospital, school, etc.
+    name = db.Column(db.String(150), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    contact_no = db.Column(db.String(20), nullable=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+
+class Advertisement(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    image_url = db.Column(db.String(500), nullable=True)
+    link_url = db.Column(db.String(500), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'image_url': self.image_url,
+            'link_url': self.link_url,
+            'is_active': self.is_active,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\schemas.py ---
 from marshmallow import Schema, fields, validate, validates, ValidationError
 from marshmallow_enum import EnumField
-from .models import Role, GrievanceStatus, Priority
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from .models import Role, GrievanceStatus, Priority, NearbyPlace
 
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
@@ -1042,6 +1078,13 @@ class UserPreferenceSchema(Schema):
     created_at = fields.DateTime(dump_only=True)
     updated_at = fields.DateTime(dump_only=True)
     user = fields.Nested(UserSchema(only=("id", "name")), dump_only=True)
+
+# schemas.py
+class NearbyPlaceSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = NearbyPlace
+        include_fk = True
+
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\__init__.py ---
 # app/__init__.py
 
@@ -1053,8 +1096,18 @@ from flask_mail import Mail
 from .config import Config
 from flask_cors import CORS
 from .extensions import oauth
+from sqlalchemy import MetaData
 
-db = SQLAlchemy()
+convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+
+metadata = MetaData(naming_convention=convention)
+db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
@@ -1108,11 +1161,13 @@ def create_app():
     from .routes.admin_routes import admin_bp
     # from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
+ 
     from .routes.settings_routes import settings_bp
     from .routes.field_routes import fieldStaff
     app.register_blueprint(fieldStaff)
     app.register_blueprint(public_bp)
     # app.register_blueprint(notification_bp, url_prefix='/notifications')
+ 
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(grievance_bp, url_prefix='/grievances')
@@ -1127,14 +1182,14 @@ def create_app():
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required
 from ..utils.kpi_utils import calculate_resolution_rate, calculate_pending_aging, calculate_sla_compliance
-from ..models import AuditLog,MasterConfig, MasterSubjects, MasterAreas, Grievance, User, Role, Announcement
+from ..models import AuditLog,MasterConfig, MasterSubjects, MasterAreas, Grievance, User, Role, Announcement, NearbyPlace, Advertisement
 from ..services.report_service import generate_report,get_staff_performance, get_location_reports
 
 from ..services.report_service import get_citizen_history
 from ..services.report_service import escalate_grievance
 from ..services.report_service import get_advanced_kpis
 from datetime import datetime
-from ..schemas import GrievanceSchema, UserSchema, AnnouncementSchema
+from ..schemas import GrievanceSchema, UserSchema, AnnouncementSchema, NearbyPlaceSchema
 from flask import Response
 from ..schemas import AuditLogSchema, MasterSubjectsSchema, MasterAreasSchema
 from .. import db
@@ -1146,6 +1201,9 @@ import logging
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
+import os
+from werkzeug.utils import secure_filename
+from flask import current_app
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -1654,6 +1712,154 @@ def get_advanced_kpis_route():
             return jsonify({"error": str(e)}), 500
 
     return actual_route()
+
+nearby_place_schema = NearbyPlaceSchema()
+nearby_places_schema = NearbyPlaceSchema(many=True)
+
+# CREATE
+@admin_bp.route('/nearby', methods=['POST'])
+@admin_required
+def add_nearby_place(user):
+    data = request.get_json()
+    place = NearbyPlace(**data)
+    db.session.add(place)
+    db.session.commit()
+    return jsonify({"message": "Added successfully", "data": nearby_place_schema.dump(place)}), 201
+
+# READ ALL
+@admin_bp.route('/nearby', methods=['GET'])
+@admin_required
+def get_all_nearby(user):
+    places = NearbyPlace.query.all()
+    return jsonify(nearby_places_schema.dump(places))
+
+# UPDATE
+@admin_bp.route('/nearby/<int:id>', methods=['PUT'])
+@admin_required
+def update_nearby(user, id):
+    place = NearbyPlace.query.get_or_404(id)
+    data = request.get_json()
+    for key, value in data.items():
+        setattr(place, key, value)
+    db.session.commit()
+    return jsonify({"message": "Updated successfully", "data": nearby_place_schema.dump(place)})
+
+# DELETE
+@admin_bp.route('/nearby/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_nearby(user, id):
+    place = NearbyPlace.query.get_or_404(id)
+    db.session.delete(place)
+    db.session.commit()
+    return jsonify({"message": "Deleted successfully"})
+
+
+
+
+
+
+
+
+
+
+
+@admin_bp.route('/ads', methods=['GET'])
+@admin_required  # This ensures only ADMIN role can access
+@jwt_required()  # Basic JWT check
+def get_ads(user):
+    try:
+        ads = Advertisement.query.filter_by(is_active=True).all()  # Or all() if no filter
+        return jsonify([ad.to_dict() for ad in ads])  # Implement to_dict() in model if needed
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/ads', methods=['POST'])
+@admin_required
+@jwt_required()
+def create_ad(user):
+    try:
+        if 'title' not in request.form:
+            return jsonify({'error': 'Title is required'}), 400
+
+        title = request.form.get('title')
+        description = request.form.get('description')
+        link_url = request.form.get('link_url')
+        is_active = request.form.get('is_active', 'true').lower() == 'true'
+        image_url = None
+
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                # Create a specific folder for ad uploads if it doesn't exist
+                ads_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'ads')
+                os.makedirs(ads_upload_folder, exist_ok=True)
+                
+                file_path = os.path.join(ads_upload_folder, filename)
+                file.save(file_path)
+                image_url = f'ads/{filename}' # Store relative path
+
+        ad = Advertisement(
+            title=title,
+            description=description,
+            image_url=image_url,
+            link_url=link_url,
+            is_active=is_active,
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc)
+        )
+        db.session.add(ad)
+        db.session.commit()
+        return jsonify({
+            'message': 'Advertisement created successfully',
+            'data': ad.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+
+@admin_bp.route('/ads/<int:ad_id>', methods=['PUT'])
+@admin_required
+def update_ad(user, ad_id):
+    ad = Advertisement.query.get_or_404(ad_id)
+    
+    ad.title = request.form.get('title', ad.title)
+    ad.description = request.form.get('description', ad.description)
+    ad.link_url = request.form.get('link_url', ad.link_url)
+    is_active_str = request.form.get('is_active')
+    if is_active_str is not None:
+        ad.is_active = is_active_str.lower() in ['true', '1']
+
+    if 'image_file' in request.files:
+        file = request.files['image_file']
+        if file and file.filename != '':
+            # Optionally, delete the old file
+            if ad.image_url:
+                old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], ad.image_url)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+
+            filename = secure_filename(file.filename)
+            ads_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'ads')
+            os.makedirs(ads_upload_folder, exist_ok=True)
+            file_path = os.path.join(ads_upload_folder, filename)
+            file.save(file_path)
+            ad.image_url = f'ads/{filename}'
+
+    db.session.commit()
+    return jsonify({"message": "Advertisement updated"}), 200
+
+
+@admin_bp.route('/ads/<int:ad_id>', methods=['DELETE'])
+@admin_required
+def delete_ad(user, ad_id):
+    ad = Advertisement.query.get_or_404(ad_id)
+    db.session.delete(ad)
+    db.session.commit()
+    return jsonify({"message": "Advertisement deleted"}), 200
 
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\auth_routes.py ---
 # app/routes/auth_routes.py
@@ -2324,7 +2530,7 @@ def delete_grievance(user, grievance_id):
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\public.py ---
 # app/routes/public.py (create if it doesn't exist)
 from flask import Blueprint, jsonify
-from ..models import MasterSubjects, MasterAreas
+from ..models import MasterSubjects, MasterAreas, Advertisement
 from .. import db
 
 public_bp = Blueprint('public', __name__)
@@ -2338,6 +2544,28 @@ def get_subjects():
 def get_areas():
     areas = MasterAreas.query.all()
     return jsonify([{'id': a.id, 'name': a.name, 'description': a.description} for a in areas])
+
+
+@public_bp.route('/advertisements', methods=['GET'])
+def get_advertisements():
+    """
+    Public endpoint to fetch active advertisements for citizens.
+    No auth required - returns list of active ads.
+    """
+    try:
+        ads = Advertisement.query.filter_by(is_active=True).order_by(Advertisement.created_at.desc()).all()
+        ads_data = [ad.to_dict() for ad in ads]
+        return jsonify({
+            'success': True,
+            'data': ads_data,
+            'count': len(ads_data)
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
 --- File: D:\Company_Data\PCMCApp\grievance-system-backend\app\routes\settings_routes.py ---
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -2412,8 +2640,8 @@ def get_user():
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required, citizen_required, get_jwt_identity
 from ..services.user_service import add_update_user
-from ..models import User,Role, Grievance, MasterAreas
-from ..schemas import GrievanceSchema
+from ..models import User,Role, Grievance, MasterAreas, NearbyPlace
+from ..schemas import GrievanceSchema, NearbyPlaceSchema
 from ..schemas import UserSchema
 from .. import db
 
@@ -2553,7 +2781,15 @@ def get_area(area_id):
         return jsonify({'id': area.id, 'name': area.name, 'description': area.description}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+nearby_places_schema = NearbyPlaceSchema(many=True)
+
+@user_bp.route('/nearby/<string:category>', methods=['GET'])
+@jwt_required()
+def get_nearby_by_category(category):
+    category = category.lower()
+    places = NearbyPlace.query.filter(NearbyPlace.category.ilike(category)).all()
+    return jsonify(nearby_places_schema.dump(places))
 
 
 === Folder: app\routes\__pycache__ ===
@@ -3676,6 +3912,227 @@ def downgrade():
     )
     # ### end Alembic commands ###
 
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\versions\ae28e487fe6a_added_nearby_places.py ---
+"""Added nearby places
+
+Revision ID: ae28e487fe6a
+Revises: 9d23c6a63ac6
+Create Date: 2025-10-29 10:13:21.138317
+
+"""
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = 'ae28e487fe6a'
+down_revision = '9d23c6a63ac6'
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    op.create_table('nearby_places',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('category', sa.String(length=100), nullable=False),
+    sa.Column('name', sa.String(length=150), nullable=False),
+    sa.Column('address', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('contact_no', sa.String(length=20), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.drop_table('_alembic_tmp_user')
+    with op.batch_alter_table('user', schema=None) as batch_op:
+       batch_op.create_unique_constraint('uq_user_voter_id', ['voter_id'])
+
+
+    with op.batch_alter_table('workproof', schema=None) as batch_op:
+        batch_op.alter_column('file_type',
+               existing_type=sa.VARCHAR(length=10),
+               nullable=False)
+        batch_op.alter_column('file_size',
+               existing_type=sa.INTEGER(),
+               nullable=False)
+        batch_op.alter_column('notes',
+               existing_type=sa.TEXT(),
+               nullable=False)
+
+    # ### end Alembic commands ###
+
+
+def downgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    with op.batch_alter_table('workproof', schema=None) as batch_op:
+        batch_op.alter_column('notes',
+               existing_type=sa.TEXT(),
+               nullable=True)
+        batch_op.alter_column('file_size',
+               existing_type=sa.INTEGER(),
+               nullable=True)
+        batch_op.alter_column('file_type',
+               existing_type=sa.VARCHAR(length=10),
+               nullable=True)
+
+    with op.batch_alter_table('user', schema=None) as batch_op:
+        batch_op.drop_constraint(None, type_='unique')
+
+    op.create_table('_alembic_tmp_user',
+    sa.Column('id', sa.INTEGER(), nullable=False),
+    sa.Column('name', sa.VARCHAR(length=128), nullable=False),
+    sa.Column('email', sa.VARCHAR(length=128), nullable=True),
+    sa.Column('phone_number', sa.VARCHAR(length=15), nullable=True),
+    sa.Column('password_hash', sa.VARCHAR(length=256), nullable=True),
+    sa.Column('role', sa.VARCHAR(length=11), nullable=False),
+    sa.Column('department_id', sa.INTEGER(), nullable=True),
+    sa.Column('created_at', sa.DATETIME(), nullable=True),
+    sa.Column('updated_at', sa.DATETIME(), nullable=True),
+    sa.Column('address', sa.VARCHAR(length=256), nullable=True),
+    sa.Column('profile_picture', sa.VARCHAR(length=256), nullable=True),
+    sa.Column('last_login', sa.DATETIME(), nullable=True),
+    sa.Column('two_factor_enabled', sa.BOOLEAN(), nullable=True),
+    sa.Column('is_active', sa.BOOLEAN(), nullable=True),
+    sa.Column('voter_id', sa.VARCHAR(length=50), nullable=True),
+    sa.ForeignKeyConstraint(['department_id'], ['master_areas.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('phone_number'),
+    sa.UniqueConstraint('voter_id', name=op.f('uq_user_voter_id'))
+    )
+    op.drop_table('nearby_places')
+    # ### end Alembic commands ###
+
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\versions\c506e19ae4d4_added_advertisements_table_with_naming_.py ---
+"""Added advertisements table with naming convention
+
+Revision ID: c506e19ae4d4
+Revises: dac5036ff377
+Create Date: 2025-10-29 12:35:48.233551
+
+"""
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = 'c506e19ae4d4'
+down_revision = 'dac5036ff377'
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    with op.batch_alter_table('grievance', schema=None) as batch_op:
+        batch_op.create_unique_constraint(batch_op.f('uq_grievance_complaint_id'), ['complaint_id'])
+
+    with op.batch_alter_table('master_config', schema=None) as batch_op:
+        batch_op.create_unique_constraint(batch_op.f('uq_master_config_key'), ['key'])
+
+    with op.batch_alter_table('user', schema=None) as batch_op:
+        batch_op.create_unique_constraint(batch_op.f('uq_user_email'), ['email'])
+        batch_op.create_unique_constraint(batch_op.f('uq_user_phone_number'), ['phone_number'])
+        batch_op.create_unique_constraint(batch_op.f('uq_user_voter_id'), ['voter_id'])
+
+    from sqlalchemy.sql import table, column
+    import sqlalchemy as sa
+
+    workproof_table = table('workproof',
+        column('file_type', sa.String)
+    )
+
+    op.execute(workproof_table.update().where(workproof_table.c.file_type == None).values(file_type='unknown'))
+    
+    with op.batch_alter_table('workproof', schema=None) as batch_op:
+        batch_op.alter_column('file_type',
+               existing_type=sa.VARCHAR(length=10),
+               nullable=False)
+        batch_op.alter_column('file_size',
+               existing_type=sa.INTEGER(),
+               nullable=False)
+        batch_op.alter_column('notes',
+               existing_type=sa.TEXT(),
+               nullable=False)
+
+    # ### end Alembic commands ###
+
+
+def downgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    with op.batch_alter_table('workproof', schema=None) as batch_op:
+        batch_op.alter_column('notes',
+               existing_type=sa.TEXT(),
+               nullable=True)
+        batch_op.alter_column('file_size',
+               existing_type=sa.INTEGER(),
+               nullable=True)
+        batch_op.alter_column('file_type',
+               existing_type=sa.VARCHAR(length=10),
+               nullable=True)
+
+    with op.batch_alter_table('user', schema=None) as batch_op:
+        batch_op.drop_constraint(batch_op.f('uq_user_voter_id'), type_='unique')
+        batch_op.drop_constraint(batch_op.f('uq_user_phone_number'), type_='unique')
+        batch_op.drop_constraint(batch_op.f('uq_user_email'), type_='unique')
+
+    with op.batch_alter_table('master_config', schema=None) as batch_op:
+        batch_op.drop_constraint(batch_op.f('uq_master_config_key'), type_='unique')
+
+    with op.batch_alter_table('grievance', schema=None) as batch_op:
+        batch_op.drop_constraint(batch_op.f('uq_grievance_complaint_id'), type_='unique')
+
+    # ### end Alembic commands ###
+
+--- File: D:\Company_Data\PCMCApp\grievance-system-backend\migrations\versions\dac5036ff377_added_advertisements_table.py ---
+"""Added advertisements table
+
+Revision ID: dac5036ff377
+Revises: ae28e487fe6a
+Create Date: 2025-10-29 10:46:21.209585
+
+"""
+from alembic import op
+import sqlalchemy as sa
+
+
+# revision identifiers, used by Alembic.
+revision = 'dac5036ff377'
+down_revision = 'ae28e487fe6a'
+branch_labels = None
+depends_on = None
+
+
+def upgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    from sqlalchemy import inspect
+    conn = op.get_bind()
+    inspector = inspect(conn)
+    if 'advertisement' not in inspector.get_table_names():
+        op.create_table('advertisement',
+        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('title', sa.String(length=200), nullable=False),
+        sa.Column('image_url', sa.String(length=500), nullable=True),
+        sa.Column('link_url', sa.String(length=500), nullable=True),
+        sa.Column('is_active', sa.Boolean(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), nullable=True),
+        sa.Column('updated_at', sa.DateTime(), nullable=True),
+        sa.PrimaryKeyConstraint('id')
+        )
+
+    # ### end Alembic commands ###
+
+
+def downgrade():
+    # ### commands auto generated by Alembic - please adjust! ###
+    from sqlalchemy import inspect
+    conn = op.get_bind()
+    inspector = inspect(conn)
+    if 'advertisement' in inspector.get_table_names():
+        op.drop_table('advertisement')
+    # ### end Alembic commands ###
+
 
 === Folder: migrations\versions\__pycache__ ===
 
@@ -3693,6 +4150,9 @@ def downgrade():
 
 
 === Folder: uploads\4 ===
+
+
+=== Folder: uploads\ads ===
 
 
 === Folder: uploads\grievance_10 ===

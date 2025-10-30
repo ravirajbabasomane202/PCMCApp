@@ -183,13 +183,15 @@ import 'screens/common/faqs_screen.dart';
 import 'screens/common/contact_support_screen.dart';
 import 'screens/common/app_version_screen.dart';
 import 'screens/citizen/edit_grievance.dart';
-
-
+import 'screens/citizen/nearby_me_screen.dart';
+import 'screens/admin/manage_nearby_screen.dart';
+import 'screens/admin/manage_ads.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
   '/login/callback': (context) => const LoginCallbackScreen(),
   '/admin/configs': (context) => const ManageConfigs(),
+  '/citizen/nearby': (context) => const NearbyMeScreen(),
   '/citizen/track': (context) => const TrackGrievance(),
   '/citizen/submit': (context) => const SubmitGrievance(),
   '/citizen/detail': (context) {
@@ -218,10 +220,13 @@ Map<String, WidgetBuilder> appRoutes = {
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
   '/field_staff/home': (context) => const AssignedList(), 
+  '/admin/ads': (context) => const ManageAdsScreen(),
+
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
   '/admin/reports': (context) => const ReportsScreen(),
+  '/admin/nearby': (context) => const ManageNearbyScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
   '/privacy-policy': (context) => const PrivacyPolicyScreen(),
@@ -416,6 +421,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Google login failed'**
   String get googleLoginFailed;
+
+  /// Title for login failure dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get loginFailed;
+
+  /// Title for registration failure dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Failed'**
+  String get registrationFailed;
+
+  /// Label for OK button in dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
 
   /// Label for settings screen
   ///
@@ -2209,6 +2232,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get googleLoginFailed => 'Google login failed';
 
   @override
+  String get loginFailed => 'Login Failed';
+
+  @override
+  String get registrationFailed => 'Registration Failed';
+
+  @override
+  String get ok => 'OK';
+
+  @override
   String get settings => 'Settings';
 
   @override
@@ -3156,6 +3188,15 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get googleLoginFailed => 'गूगल लॉगिन विफल';
+
+  @override
+  String get loginFailed => 'लॉगिन विफल';
+
+  @override
+  String get registrationFailed => 'पंजीकरण विफल';
+
+  @override
+  String get ok => 'ठीक है';
 
   @override
   String get settings => 'सेटिंग्स';
@@ -4112,6 +4153,15 @@ class AppLocalizationsMr extends AppLocalizations {
   String get googleLoginFailed => 'गूगल लॉगिन अयशस्वी';
 
   @override
+  String get loginFailed => 'लॉगिन अयशस्वी';
+
+  @override
+  String get registrationFailed => 'नोंदणी अयशस्वी';
+
+  @override
+  String get ok => 'ठीक आहे';
+
+  @override
   String get settings => 'सेटिंग्ज';
 
   @override
@@ -5015,6 +5065,53 @@ class AppLocalizationsMr extends AppLocalizations {
 
 === Folder: models ===
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\models\ad_model.dart ---
+// lib/models/ad_model.dart
+
+class Advertisement {
+  final int id;
+  final String title;
+  final String? description;
+  final String? imageUrl;
+  final String? linkUrl;
+  final bool isActive;
+  final DateTime? createdAt;
+
+  Advertisement({
+    required this.id,
+    required this.title,
+    this.description,
+    this.imageUrl,
+    this.linkUrl,
+    required this.isActive,
+    this.createdAt,
+  });
+
+  factory Advertisement.fromJson(Map<String, dynamic> json) {
+    // Helper to safely parse boolean values which might come as strings
+    bool _parseBool(dynamic value) {
+      if (value is bool) return value;
+      if (value is String) return value.toLowerCase() == 'true';
+      if (value is int) return value == 1;
+      return false; // Default to false if format is unknown
+    }
+
+    return Advertisement(
+      id: json['id'] as int? ?? 0,
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String?,
+      imageUrl: json['image_url'] != null ? 'https://pcmcapp.onrender.com/uploads/${json['image_url']}' : null,
+      linkUrl: json['link_url'] as String?,
+      isActive: _parseBool(json['is_active'] ?? false),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+      };
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\models\announcement_model.dart ---
 // D:\Company_Data\PCMCApp\main_ui\lib\models\announcement_model.dart
 class Announcement {
@@ -5750,6 +5847,39 @@ final adminProvider = StateNotifierProvider<AdminNotifier, AdminState>((ref) {
   final apiService = ref.watch(apiServiceProvider);
   return AdminNotifier(apiService);
 });
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\ad_provider.dart ---
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/models/ad_model.dart';
+import 'package:main_ui/services/api_service.dart';
+
+final adProvider = FutureProvider<List<Advertisement>>((ref) async {
+  try {
+    final ads = await ApiService.fetchAds();
+    return ads.where((ad) => ad.isActive).toList();
+  } catch (e) {
+    print('Error fetching ads: $e');
+    return []; // Graceful fallback
+  }
+});
+
+final adNotifierProvider = StateNotifierProvider<AdNotifier, List<Advertisement>>((ref) {
+  return AdNotifier(ref);
+});
+
+class AdNotifier extends StateNotifier<List<Advertisement>> {
+  final Ref ref;
+  AdNotifier(this.ref) : super([]);
+
+  Future<void> fetchAds() async {
+    try {
+      state = await ref.read(adProvider.future);
+    } catch (e) {
+      state = [];
+    }
+  }
+
+  // Add methods for create/update/delete if needed for ManageAdsScreen
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\providers\api_provider.dart ---
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/api_service.dart';
@@ -6831,7 +6961,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       _errorMessage = null;
     });
     try {
-      final grievances = await ref.read(adminProvider.notifier).getAllGrievances(
+      final grievances = await ref
+          .read(adminProvider.notifier)
+          .getAllGrievances(
             status: _selectedStatus,
             priority: _selectedPriority,
             areaId: _selectedAreaId,
@@ -6842,7 +6974,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
       final subjects = await MasterDataService.getSubjects();
       setState(() {
         _grievances = grievances;
-        _assignees = assignees.where((u) => u.role?.toLowerCase() == 'field_staff').toList();
+        _assignees = assignees
+            .where((u) => u.role?.toLowerCase() == 'field_staff')
+            .toList();
         _areas = areas;
         _subjects = subjects;
         _isLoading = false;
@@ -6870,9 +7004,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
           foregroundColor: theme.colorScheme.onPrimary,
           elevation: 2,
         ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -6955,7 +7087,9 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                     runSpacing: 12.0,
                     children: [
                       FilterChip(
-                        label: Text(_selectedStatus?.capitalize() ?? l10n.filterByStatus),
+                        label: Text(
+                          _selectedStatus?.capitalize() ?? l10n.filterByStatus,
+                        ),
                         selected: _selectedStatus != null,
                         onSelected: (selected) {
                           if (!selected) {
@@ -6964,15 +7098,20 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           }
                         },
                         backgroundColor: Colors.white,
-                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        selectedColor: theme.colorScheme.primary.withOpacity(
+                          0.2,
+                        ),
                         labelStyle: TextStyle(
-                          color: _selectedStatus != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.onSurface,
+                          color: _selectedStatus != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       FilterChip(
-                        label: Text(_selectedPriority?.capitalize() ?? l10n.filterByPriority),
+                        label: Text(
+                          _selectedPriority?.capitalize() ??
+                              l10n.filterByPriority,
+                        ),
                         selected: _selectedPriority != null,
                         onSelected: (selected) {
                           if (!selected) {
@@ -6981,18 +7120,26 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           }
                         },
                         backgroundColor: Colors.white,
-                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        selectedColor: theme.colorScheme.primary.withOpacity(
+                          0.2,
+                        ),
                         labelStyle: TextStyle(
-                          color: _selectedPriority != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.onSurface,
+                          color: _selectedPriority != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       FilterChip(
                         label: Text(
-                          _selectedAreaId != null 
-                            ? _areas.firstWhere((a) => a.id == _selectedAreaId, orElse: () => MasterArea(id: 0, name: 'Unknown')).name
-                            : l10n.filterByArea
+                          _selectedAreaId != null
+                              ? _areas
+                                    .firstWhere(
+                                      (a) => a.id == _selectedAreaId,
+                                      orElse: () =>
+                                          MasterArea(id: 0, name: 'Unknown'),
+                                    )
+                                    .name
+                              : l10n.filterByArea,
                         ),
                         selected: _selectedAreaId != null,
                         onSelected: (selected) {
@@ -7002,18 +7149,26 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           }
                         },
                         backgroundColor: Colors.white,
-                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        selectedColor: theme.colorScheme.primary.withOpacity(
+                          0.2,
+                        ),
                         labelStyle: TextStyle(
-                          color: _selectedAreaId != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.onSurface,
+                          color: _selectedAreaId != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       FilterChip(
                         label: Text(
-                          _selectedSubjectId != null 
-                            ? _subjects.firstWhere((s) => s.id == _selectedSubjectId, orElse: () => MasterSubject(id: 0, name: 'Unknown')).name
-                            : l10n.filterBySubject
+                          _selectedSubjectId != null
+                              ? _subjects
+                                    .firstWhere(
+                                      (s) => s.id == _selectedSubjectId,
+                                      orElse: () =>
+                                          MasterSubject(id: 0, name: 'Unknown'),
+                                    )
+                                    .name
+                              : l10n.filterBySubject,
                         ),
                         selected: _selectedSubjectId != null,
                         onSelected: (selected) {
@@ -7023,11 +7178,13 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           }
                         },
                         backgroundColor: Colors.white,
-                        selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                        selectedColor: theme.colorScheme.primary.withOpacity(
+                          0.2,
+                        ),
                         labelStyle: TextStyle(
-                          color: _selectedSubjectId != null 
-                            ? theme.colorScheme.primary 
-                            : theme.colorScheme.onSurface,
+                          color: _selectedSubjectId != null
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface,
                         ),
                       ),
                       ActionChip(
@@ -7042,8 +7199,14 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           _fetchData();
                         },
                         backgroundColor: theme.colorScheme.primary,
-                        labelStyle: TextStyle(color: theme.colorScheme.onPrimary),
-                        avatar: Icon(Icons.clear, size: 18, color: theme.colorScheme.onPrimary),
+                        labelStyle: TextStyle(
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                        avatar: Icon(
+                          Icons.clear,
+                          size: 18,
+                          color: theme.colorScheme.onPrimary,
+                        ),
                       ),
                     ],
                   ),
@@ -7055,7 +7218,10 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
             child: RefreshIndicator(
               onRefresh: _fetchData,
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 itemCount: _grievances.length,
                 itemBuilder: (ctx, idx) {
                   final grievance = _grievances[idx];
@@ -7072,44 +7238,42 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                           Column(
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: CustomButton2(
-                                      text: l10n.reassignComplaint,
-                                      onPressed: grievance.assignedTo != null
-                                          ? null : () => _showReassignDialog(grievance.id),
-                                      icon: Icons.person_add,                                      
+                                      text: grievance.assignedTo == 0
+                                          ? "Assign Complaint"
+                                          : l10n.reassignComplaint,
+                                      onPressed: grievance.status != 'New' &&
+                                              grievance.assignedTo == 0
+                                          ? () => _showReassignDialog(
+                                              grievance.id,
+                                            )
+                                          : null,
+                                      icon: Icons.person_add,
                                       size: ButtonSize.small,
-                                      backgroundColor: theme.colorScheme.primary,
-                                      foregroundColor: Colors.white,
                                     ),
                                   ),
-                                  // const SizedBox(width: 8),
-                                  // Expanded(
-                                  //   child: CustomButton2(
-                                  //     text: l10n.escalateComplaint,
-                                  //     onPressed: () => _showEscalateDialog(grievance.id),
-                                  //     icon: Icons.arrow_upward,
-                                  //     variant: ButtonVariant.outlined,
-                                  //     size: ButtonSize.small,
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 8),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Expanded(
                                     child: CustomButton2(
-                                      text: l10n.updateStatus, // Changed from updateStatus
+                                      text: l10n.updateStatus,
                                       onPressed: grievance.status == 'resolved'
                                           ? null
-                                          : () => _showStatusDialog(grievance.id),
-                                      icon: Icons.update,                                      
+                                          : () =>
+                                                _showStatusDialog(grievance.id),
+                                      icon: Icons.update,
                                       size: ButtonSize.small,
-                                      backgroundColor: theme.colorScheme.primary,
+                                      backgroundColor:
+                                          theme.colorScheme.primary,
                                       foregroundColor: Colors.white,
                                     ),
                                   ),
@@ -7117,7 +7281,8 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                   Expanded(
                                     child: CustomButton2(
                                       text: l10n.viewDetails,
-                                      onPressed: () { // Changed from viewDetails
+                                      onPressed: () {
+                                        // Changed from viewDetails
                                         if (grievance.id > 0) {
                                           Navigator.pushNamed(
                                             context,
@@ -7125,17 +7290,23 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                                             arguments: grievance.id,
                                           );
                                         } else {
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
-                                              content: const Text("Invalid grievance ID"),
-                                              backgroundColor: theme.colorScheme.error,
+                                              content: const Text(
+                                                "Invalid grievance ID",
+                                              ),
+                                              backgroundColor:
+                                                  theme.colorScheme.error,
                                             ),
                                           );
                                         }
                                       },
-                                      icon: Icons.info,                                      
+                                      icon: Icons.info,
                                       size: ButtonSize.small,
-                                      backgroundColor: theme.colorScheme.primary,
+                                      backgroundColor:
+                                          theme.colorScheme.primary,
                                       foregroundColor: Colors.white,
                                     ),
                                   ),
@@ -7165,12 +7336,12 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
   void _showFilterDialog() {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    
+
     String? tempStatus = _selectedStatus;
     String? tempPriority = _selectedPriority;
     int? tempAreaId = _selectedAreaId;
     int? tempSubjectId = _selectedSubjectId;
-    
+
     showDialog(
       context: context,
       builder: (ctx) {
@@ -7192,10 +7363,23 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                       value: tempStatus,
                       isExpanded: true,
                       items: [
-                        DropdownMenuItem(value: null, child: Text(l10n.filterByStatus)),
-                        ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                            .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                            ,
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(l10n.filterByStatus),
+                        ),
+                        ...[
+                          'new',
+                          'in_progress',
+                          'on_hold',
+                          'resolved',
+                          'closed',
+                          'rejected',
+                        ].map(
+                          (s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(s.capitalize()),
+                          ),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() => tempStatus = value);
@@ -7212,10 +7396,16 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                       value: tempPriority,
                       isExpanded: true,
                       items: [
-                        DropdownMenuItem(value: null, child: Text(l10n.filterByPriority)),
-                        ...['low', 'medium', 'high', 'urgent']
-                            .map((p) => DropdownMenuItem(value: p, child: Text(p.capitalize())))
-                            ,
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(l10n.filterByPriority),
+                        ),
+                        ...['low', 'medium', 'high', 'urgent'].map(
+                          (p) => DropdownMenuItem(
+                            value: p,
+                            child: Text(p.capitalize()),
+                          ),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() => tempPriority = value);
@@ -7232,10 +7422,16 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                       value: tempAreaId,
                       isExpanded: true,
                       items: [
-                        DropdownMenuItem(value: null, child: Text(l10n.filterByArea)),
-                        ..._areas
-                            .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
-                            ,
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(l10n.filterByArea),
+                        ),
+                        ..._areas.map(
+                          (a) => DropdownMenuItem(
+                            value: a.id,
+                            child: Text(a.name),
+                          ),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() => tempAreaId = value);
@@ -7252,10 +7448,16 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                       value: tempSubjectId,
                       isExpanded: true,
                       items: [
-                        DropdownMenuItem(value: null, child: Text(l10n.filterBySubject)),
-                        ..._subjects
-                            .map((s) => DropdownMenuItem(value: s.id, child: Text(s.name)))
-                            ,
+                        DropdownMenuItem(
+                          value: null,
+                          child: Text(l10n.filterBySubject),
+                        ),
+                        ..._subjects.map(
+                          (s) => DropdownMenuItem(
+                            value: s.id,
+                            child: Text(s.name),
+                          ),
+                        ),
                       ],
                       onChanged: (value) {
                         setState(() => tempSubjectId = value);
@@ -7290,82 +7492,21 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
     );
   }
 
-  // void _showEscalateDialog(int grievanceId) {
-  //   final l10n = AppLocalizations.of(context)!;
-  //   final theme = Theme.of(context);
-  //   int? selectedAssigneeId;
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (ctx) {
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           return AlertDialog(
-  //             title: Text(l10n.escalateComplaint, style: theme.textTheme.titleLarge),
-  //             content: _assignees.isEmpty
-  //                 ? Text('No field staff available for escalation.')
-  //                 : DropdownButtonFormField<int>(
-  //                     decoration: InputDecoration(
-  //                       labelText: l10n.selectAssignee,
-  //                       border: OutlineInputBorder(
-  //                         borderRadius: BorderRadius.circular(8),
-  //                       ),
-  //                     ),
-  //                     value: selectedAssigneeId,
-  //                     isExpanded: true,
-  //                     items: _assignees
-  //                         .map((u) => DropdownMenuItem(
-  //                               value: u.id,
-  //                               child: Text(u.name ?? "Unknown User"),
-  //                             ))
-  //                         .toList(),
-  //                     onChanged: (value) {
-  //                       setState(() => selectedAssigneeId = value);
-  //                     },
-  //                   ),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () => Navigator.pop(ctx),
-  //                 child: Text(l10n.cancel),
-  //               ),
-  //               ElevatedButton(
-  //                 onPressed: () async {
-  //                   if (selectedAssigneeId != null) {
-  //                     try {
-  //                       // Assuming the current user is an admin with a static ID for now.
-  //                       // This should be replaced with the actual logged-in admin's ID.
-  //                       int adminId = 4;
-  //                       await ref.read(adminProvider.notifier).escalateGrievance(grievanceId, selectedAssigneeId!, adminId);
-  //                       Navigator.pop(ctx);
-  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Grievance escalated successfully')));
-  //                       _fetchData();
-  //                     } catch (e) {
-  //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Escalation failed: $e')));
-  //                     }
-  //                   }
-  //                 },
-  //                 child: Text(l10n.escalate),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
   void _showReassignDialog(int grievanceId) {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     int? selectedAssigneeId;
-    
+
     showDialog(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: Text(l10n.reassignComplaint, style: theme.textTheme.titleLarge),
+              title: Text(
+                l10n.reassignComplaint,
+                style: theme.textTheme.titleLarge,
+              ),
               content: _assignees.isEmpty
                   ? Text('No field staff available')
                   : DropdownButtonFormField<int>(
@@ -7378,10 +7519,12 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                       value: selectedAssigneeId,
                       isExpanded: true,
                       items: _assignees
-                          .map((u) => DropdownMenuItem(
-                                value: u.id,
-                                child: Text(u.name ?? "Unknown User"),
-                              ))
+                          .map(
+                            (u) => DropdownMenuItem(
+                              value: u.id,
+                              child: Text(u.name ?? "Unknown User"),
+                            ),
+                          )
                           .toList(),
                       onChanged: (value) {
                         setState(() => selectedAssigneeId = value);
@@ -7396,11 +7539,18 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   onPressed: () async {
                     if (selectedAssigneeId != null) {
                       try {
-                        await ref.read(adminProvider.notifier).reassignGrievance(grievanceId, selectedAssigneeId!);
+                        await ref
+                            .read(adminProvider.notifier)
+                            .reassignGrievance(
+                              grievanceId,
+                              selectedAssigneeId!,
+                            );
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('${l10n.reassignComplaint} Successful'),
+                            content: Text(
+                              '${l10n.reassignComplaint} Successful',
+                            ),
                             backgroundColor: theme.colorScheme.primary,
                           ),
                         );
@@ -7436,7 +7586,7 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     String? selectedStatus;
-    
+
     showDialog(
       context: context,
       builder: (ctx) {
@@ -7455,9 +7605,17 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                 isExpanded: true,
                 items: [
                   DropdownMenuItem(value: null, child: Text(l10n.selectStatus)),
-                  ...['new', 'in_progress', 'on_hold', 'resolved', 'closed', 'rejected']
-                      .map((s) => DropdownMenuItem(value: s, child: Text(s.capitalize())))
-                      ,
+                  ...[
+                    'new',
+                    'in_progress',
+                    'on_hold',
+                    'resolved',
+                    'closed',
+                    'rejected',
+                  ].map(
+                    (s) =>
+                        DropdownMenuItem(value: s, child: Text(s.capitalize())),
+                  ),
                 ],
                 onChanged: (value) {
                   setState(() => selectedStatus = value);
@@ -7472,7 +7630,12 @@ class _ComplaintManagementState extends ConsumerState<ComplaintManagement> {
                   onPressed: () async {
                     if (selectedStatus != null) {
                       try {
-                        await ref.read(adminProvider.notifier).updateGrievanceStatus(grievanceId, selectedStatus!);
+                        await ref
+                            .read(adminProvider.notifier)
+                            .updateGrievanceStatus(
+                              grievanceId,
+                              selectedStatus!,
+                            );
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -7515,6 +7678,7 @@ extension StringExtension on String {
     return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\dashboard.dart ---
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8707,6 +8871,304 @@ class _AreaFormDialogState extends State<AreaFormDialog> {
   }
 }
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_ads.dart ---
+// In screens/admin/manage_ads.dart
+import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:main_ui/utils/constants.dart';
+import 'package:main_ui/services/api_service.dart'; // Assuming this handles auth headers
+
+class ManageAdsScreen extends ConsumerStatefulWidget {
+  const ManageAdsScreen({super.key});
+
+  @override
+  ConsumerState<ManageAdsScreen> createState() => _ManageAdsScreenState();
+}
+
+class _ManageAdsScreenState extends ConsumerState<ManageAdsScreen> {
+  List<dynamic> ads = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAds();
+  }
+
+  Future<void> _loadAds() async {
+    try {
+      final response = await ApiService.get(
+          '/admins/ads'); // Ensure ApiService adds 'Authorization: Bearer <token>'
+      if (mounted) {
+        setState(() {
+          ads = response.data ?? [];
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Handle 401 specifically
+      if (e.toString().contains('401')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unauthorized: Please log in again')),
+        );
+        // Redirect to login
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+      setState(() => isLoading = false);
+    }
+  }
+
+  Future<void> _createAd(
+      Map<String, String> adData, PlatformFile? imageFile) async {
+    try {
+      await ApiService.postMultipart(
+        '/admins/ads',
+        data: adData,
+        files: imageFile != null ? [imageFile] : [],
+        fieldName: 'image_file',
+      );
+      _loadAds(); // Refresh list
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ad created successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to create ad: $e')),
+      );
+    }
+  }
+
+  Future<void> _updateAd(
+      int adId, Map<String, String> adData, PlatformFile? imageFile) async {
+    try {
+      await ApiService.putMultipart(
+        '/admins/ads/$adId',
+        data: adData,
+        file: imageFile,
+        fileField: 'image_file',
+      );
+      _loadAds(); // Refresh list
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ad updated successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update ad: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteAd(int adId) async {
+    try {
+      await ApiService.delete('/admins/ads/$adId');
+      _loadAds(); // Refresh list
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Ad deleted successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete ad: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Manage Ads')),
+      body: ListView.builder(
+        itemCount: ads.length,
+        itemBuilder: (context, index) {
+          final ad = ads[index];
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            elevation: 3,
+            child: ListTile(
+              leading: ad['image_url'] != null &&
+                      ad['image_url'].toString().isNotEmpty
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        '${Constants.baseUrl}/uploads/${ad['image_url']}',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.image_not_supported),
+                      ),
+                    )
+                  : const Icon(Icons.image, size: 40),
+              title: Text(ad['title'] ?? 'No Title',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (ad['description'] != null &&
+                      ad['description'].toString().isNotEmpty)
+                    Text(ad['description'],
+                        maxLines: 2, overflow: TextOverflow.ellipsis),
+                  if (ad['link_url'] != null &&
+                      ad['link_url'].toString().isNotEmpty)
+                    Text(
+                      ad['link_url'],
+                      style: const TextStyle(color: Colors.blueAccent),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () => _showAdDialog(ad: ad),
+                    tooltip: 'Edit Ad',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                title: const Text('Delete Ad'),
+                                content: const Text(
+                                    'Are you sure you want to delete this ad?'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel')),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        _deleteAd(ad['id']);
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('Delete')),
+                                ],
+                              ));
+                    },
+                    tooltip: 'Delete Ad',
+                  ),
+                ],
+              ),
+              onTap: () async {
+                final url = ad['link_url'];
+                if (url != null && await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url),
+                      mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAdDialog(), // Implement dialog for form
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+
+  void _showAdDialog({Map<String, dynamic>? ad}) {
+    final bool isEditing = ad != null;
+    PlatformFile? _selectedImageFile;
+    final titleController = TextEditingController(text: ad?['title']);
+    final descriptionController =
+        TextEditingController(text: ad?['description']);
+    final linkUrlController = TextEditingController(text: ad?['link_url']);
+    bool isActive = ad?['is_active'] ?? true;
+
+    showDialog( barrierDismissible: false,
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(isEditing ? 'Edit Ad' : 'Create Ad'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+                // --- Image Picker ---
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.upload_file),
+                      label: const Text('Select Image'),
+                      onPressed: () async {
+                        FilePickerResult? result =
+                            await FilePicker.platform.pickFiles(
+                          type: FileType.image,
+                        );
+                        if (result != null) {
+                          setState(() {
+                            _selectedImageFile = result.files.first;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(child: Text(_selectedImageFile?.name ?? (isEditing ? 'Keep current image' : 'No file selected'), overflow: TextOverflow.ellipsis,))
+                  ],
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: linkUrlController,
+                  decoration: const InputDecoration(labelText: 'Link URL'),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  title: const Text('Active'),
+                  value: isActive,
+                  onChanged: (val) => setState(() => isActive = val),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                final adData = <String, String>{
+                  'title': titleController.text.trim(),
+                  'description': descriptionController.text.trim(),
+                  'link_url': linkUrlController.text.trim(),
+                  'is_active': isActive.toString(),
+                };
+
+                if (adData['title']!.isNotEmpty) {
+                  if (isEditing) {
+                    _updateAd(ad!['id'], adData, _selectedImageFile);
+                  } else {
+                    _createAd(adData, _selectedImageFile);
+                  }
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(isEditing ? 'Update' : 'Create'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_configs.dart ---
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -8965,6 +9427,176 @@ class _ManageConfigsState extends ConsumerState<ManageConfigs> {
     );
   }
 }
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_nearby_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:main_ui/services/api_service.dart';
+
+class ManageNearbyScreen extends StatefulWidget {
+  const ManageNearbyScreen({super.key});
+
+  @override
+  State<ManageNearbyScreen> createState() => _ManageNearbyScreenState();
+}
+
+class _ManageNearbyScreenState extends State<ManageNearbyScreen> {
+  List<dynamic> nearbyList = [];
+  bool loading = false;
+
+  final TextEditingController nameCtrl = TextEditingController();
+  final TextEditingController addressCtrl = TextEditingController();
+  final TextEditingController descriptionCtrl = TextEditingController();
+  final TextEditingController contactCtrl = TextEditingController();
+  String selectedCategory = "Hospital";
+
+  final List<String> categories = [
+    "Hospital",
+    "School",
+    "Fire Station",
+    "Post Office",
+    "Ambulance",
+    "Vaccination Center",
+    "Voting Booth",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchNearbyPlaces();
+  }
+
+  Future<void> fetchNearbyPlaces() async {
+    setState(() => loading = true);
+    final response = await ApiService.get('/admins/nearby');
+    setState(() {
+      nearbyList = response.data as List<dynamic>? ?? [];
+      loading = false;
+    });
+  }
+
+  Future<void> addOrUpdateNearby({int? id}) async {
+    final payload = {
+      "category": selectedCategory.toLowerCase(),
+      "name": nameCtrl.text,
+      "address": addressCtrl.text,
+      "description": descriptionCtrl.text,
+      "contact_no": contactCtrl.text,
+    };
+
+    if (id == null) {
+      await ApiService.post('/admins/nearby', payload);
+    } else {
+      await ApiService.put('/admins/nearby/$id', payload);
+    }
+    Navigator.pop(context);
+    await fetchNearbyPlaces();
+  }
+
+  Future<void> deleteNearby(int id) async {
+    await ApiService.delete('/admins/nearby/$id');
+    await fetchNearbyPlaces();
+  }
+
+  void showNearbyDialog({Map<String, dynamic>? data}) {
+    if (data != null) {
+      String categoryFromApi = data['category'].toString();
+      // Find the matching category from the list to handle casing differences
+      selectedCategory = categories.firstWhere(
+          (c) => c.toLowerCase() == categoryFromApi.toLowerCase(),
+          orElse: () => categories.first);
+      nameCtrl.text = data['name'] ?? '';
+      addressCtrl.text = data['address'] ?? '';
+      descriptionCtrl.text = data['description'] ?? '';
+      contactCtrl.text = data['contact_no'] ?? '';
+    } else {
+      selectedCategory = "Hospital";
+      nameCtrl.clear();
+      addressCtrl.clear();
+      descriptionCtrl.clear();
+      contactCtrl.clear();
+    }
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(data == null ? 'Add Nearby Place' : 'Edit Nearby Place'),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  DropdownButtonFormField<String>(
+                    value: selectedCategory,
+                    items: categories
+                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .toList(),
+                    onChanged: (val) => setState(() => selectedCategory = val!),
+                    decoration: const InputDecoration(labelText: 'Category'),
+                  ),
+                  TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: 'Name')),
+                  TextField(controller: addressCtrl, decoration: const InputDecoration(labelText: 'Address')),
+                  TextField(controller: descriptionCtrl, decoration: const InputDecoration(labelText: 'Description')),
+                  TextField(controller: contactCtrl, decoration: const InputDecoration(labelText: 'Contact No')),
+                ],
+              ),
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => addOrUpdateNearby(id: data?['id']),
+            child: Text(data == null ? 'Add' : 'Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Manage Nearby Places')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => showNearbyDialog(),
+        child: const Icon(Icons.add),
+      ),
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : nearbyList.isEmpty
+              ? const Center(child: Text('No nearby places found'))
+              : ListView.builder(
+                  itemCount: nearbyList.length,
+                  itemBuilder: (context, index) {
+                    final place = nearbyList[index];
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      child: ListTile(
+                        title: Text('${place['name']} (${place['category']})'),
+                        subtitle: Text(place['address'] ?? ''),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () => showNearbyDialog(data: place),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => deleteNearby(place['id']),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+    );
+  }
+}
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\admin\manage_subjects.dart ---
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10376,9 +11008,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: $e')),
-        );
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text(_isLogin ? AppLocalizations.of(context)!.loginFailed : AppLocalizations.of(context)!.registrationFailed),
+              content: Text("username and password is incorrect"),
+              actions: <Widget>[TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(AppLocalizations.of(context)!.ok))],
+            ),
+          );
+        }
       } finally {
         setState(() => _isLoading = false);
       }
@@ -11217,6 +11856,14 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
   List<PlatformFile> _selectedFiles = [];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(grievanceProvider(widget.id));
+    });
+  }
+
+  @override
   void dispose() {
     _feedbackController.dispose();
     _commentController.dispose();
@@ -11888,6 +12535,83 @@ class _GrievanceDetailState extends ConsumerState<GrievanceDetail> {
     );
   }
 }
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\citizen\nearby_me_screen.dart ---
+import 'package:flutter/material.dart';
+import 'package:main_ui/services/api_service.dart';
+
+class NearbyMeScreen extends StatefulWidget {
+  const NearbyMeScreen({super.key});
+
+  @override
+  State<NearbyMeScreen> createState() => _NearbyMeScreenState();
+}
+
+class _NearbyMeScreenState extends State<NearbyMeScreen> {
+  final List<Map<String, String>> categories = [
+    {"label": "Hospital", "key": "hospital"},
+    {"label": "School", "key": "school"},
+    {"label": "Fire Station", "key": "fire station"},
+    {"label": "Post Office", "key": "post office"},
+    {"label": "Ambulance", "key": "ambulance"},
+    {"label": "Vaccination Center", "key": "vaccination center"},
+    {"label": "Voting Booth", "key": "voting booth"},
+  ];
+
+  List<dynamic> records = [];
+  bool loading = false;
+
+  Future<void> fetchData(String category) async {
+    setState(() => loading = true);
+    final response = await ApiService.get('/users/nearby/$category');
+    setState(() {
+      records = response.data as List<dynamic>? ?? [];
+      loading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Nearby Me')),
+      body: Column(
+        children: [
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: categories.map((cat) {
+              return ElevatedButton(
+                onPressed: () => fetchData(cat["key"]!),
+                child: Text(cat["label"]!),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: loading
+                ? const Center(child: CircularProgressIndicator())
+                : records.isEmpty
+                    ? const Center(child: Text('No records found'))
+                    : ListView.builder(
+                        itemCount: records.length,
+                        itemBuilder: (context, index) {
+                          final item = records[index];
+                          return Card(
+                            margin: const EdgeInsets.all(8),
+                            child: ListTile(
+                              title: Text(item["name"]),
+                              subtitle: Text(item["address"] ?? ''),
+                              trailing: Text(item["contact_no"] ?? ''),
+                            ),
+                          );
+                        },
+                      ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\screens\citizen\submit_grievance.dart ---
 // lib/screens/citizen/submit_grievance.dart
 import 'dart:io';
@@ -12279,18 +13003,16 @@ class _SubmitGrievanceState extends ConsumerState<SubmitGrievance> {
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:main_ui/providers/grievance_provider.dart';
-// import 'package:main_ui/widgets/grievance_card.dart';
 import 'package:main_ui/widgets/empty_state.dart';
 import 'package:main_ui/widgets/loading_indicator.dart';
-// import 'package:main_ui/widgets/track_grievance_progress.dart';
+import 'package:main_ui/providers/ad_provider.dart';
+import 'package:main_ui/widgets/ad_card.dart';
 import 'package:main_ui/widgets/CombinedGrievanceCard.dart';
 import 'package:main_ui/l10n/app_localizations.dart';
 import 'package:main_ui/widgets/navigation_drawer.dart';
 
-// Assuming a provider for the authenticated user's ID (e.g., from JWT)
 final userIdProvider = Provider<int?>((ref) {
-  // Replace with actual logic to get user ID from JWT or auth service
-  return 1; // Placeholder: Replace with actual user ID from auth
+  return 1; 
 });
 
 class TrackGrievance extends ConsumerStatefulWidget {
@@ -12304,47 +13026,50 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController(viewportFraction: 0.9);
   int _currentPage = 0;
+  final PageController _adsPageController = PageController(viewportFraction: 0.9);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final userId = ref.read(userIdProvider);
+      if (userId != null) {
+        ref.invalidate(citizenHistoryProvider(userId));
+      }
       _startAutoScroll();
+      _startAdsAutoScroll(); // ✅ Start ads scroll
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Fetch grievances when the screen loads
-    final userId = ref.read(userIdProvider);
-    if (userId != null) {
-      ref.invalidate(citizenHistoryProvider(userId));
-    }
   }
 
   void _startAutoScroll() {
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted) {
-        final nextPage = _currentPage + 1;
-        if (nextPage < 3) {
-          if (_pageController.hasClients) {
-            _pageController.animateToPage(
-              nextPage,
-              duration: const Duration(milliseconds: 800),
-              curve: Curves.easeInOut,
-            );
-          }
-          
-        } else {
-          _pageController.animateToPage(
-            0,
-            duration: const Duration(milliseconds: 800),
+      if (mounted && _pageController.hasClients) {
+        final nextPage = (_currentPage + 1) % 3; // Use modulo for infinite loop
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+        _startAutoScroll();
+      }
+    });
+  }
+
+  void _startAdsAutoScroll() {
+    Future.delayed(const Duration(seconds: 4), () {
+      if (!mounted || !_adsPageController.hasClients) return;
+      final adsState = ref.read(adProvider);
+      adsState.whenData((ads) {
+        if (ads.isNotEmpty && _adsPageController.hasClients) {
+          final nextPage = (_adsPageController.page!.round() + 1) % ads.length;
+          _adsPageController.animateToPage(
+            nextPage,
+            duration: const Duration(milliseconds: 600),
             curve: Curves.easeInOut,
           );
         }
-        _startAutoScroll();
-      }
+      });
+      _startAdsAutoScroll();
     });
   }
 
@@ -12358,13 +13083,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     setState(() {
       _selectedIndex = index;
     });
-    if (index == 1) { // Submit      _navigateToSubmit();    } else if (index == 0) { // Track (current screen)
-      // Do nothing or refresh
+    if (index == 1) { 
       final userId = ref.read(userIdProvider);
       if (userId != null) {
         ref.invalidate(citizenHistoryProvider(userId));
       }
-    } else if (index == 2) { // Profile
+    } else if (index == 2) {
       Navigator.pushNamed(context, '/profile');
     }
   }
@@ -12413,136 +13137,173 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
             await ref.read(citizenHistoryProvider(userId).future);
           }
         },
-        child: ref
-            .watch(citizenHistoryProvider(userId))
-            .when(
-              data: (grievances) {
-                if (grievances.isEmpty) {
-                  return EmptyState(
-                    icon: Icons.inbox_rounded,
-                    title: localizations.noGrievances,
-                    message: localizations.noGrievancesMessage,
-                    actionButton: ElevatedButton( // Changed to call _navigateToSubmit
-                      onPressed: _navigateToSubmit,
-                      child: Text(localizations.submitGrievance),
-                    ),
-                  );
-                }
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Promotional Banner Carousel
-                      SizedBox(
-                        height: 180,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          onPageChanged: (index) {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                          },
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            final List<Map<String, dynamic>> banners = [
-                              {
-                                'title': localizations.submitGrievance,
-                                'subtitle': localizations.submitGrievanceSubtitle,
-                                'color': theme.colorScheme.primaryContainer,
-                                'icon': Icons.add_task_rounded,
-                              },
-                              {
-                                'title': localizations.track_grievances,
-                                'subtitle':
-                                    localizations.trackGrievancesSubtitle,
-                                'color': theme.colorScheme.secondaryContainer,
-                                'icon': Icons.track_changes_rounded,
-                              },
-                              {
-                                'title': localizations.quickResolutionsTitle,
-                                'subtitle': localizations.quickResolutionsSubtitle,
-                                'color': theme.colorScheme.tertiaryContainer,
-                                'icon': Icons.verified_user_rounded,
-                              },
-                            ];
-                            return _buildBannerItem(banners[index], theme);
-                          },
-                        ),
-                      ),
-                      // Page indicators
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(3, (index) {
-                            return Container(
-                              width: 8.0,
-                              height: 8.0,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 4.0,
+        child: ref.watch(citizenHistoryProvider(userId)).when(
+          data: (grievances) {
+            if (grievances.isEmpty) {
+              return EmptyState(
+                icon: Icons.inbox_rounded,
+                title: localizations.noGrievances,
+                message: localizations.noGrievancesMessage,
+                actionButton: ElevatedButton( 
+                  onPressed: _navigateToSubmit,
+                  child: Text(localizations.submitGrievance),
+                ),
+              );
+            }
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Ads Section - Fixed
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final adsAsync = ref.watch(adProvider);
+                      return adsAsync.when(
+                        data: (ads) {
+                          if (ads.isEmpty) {
+                            return const SizedBox.shrink(); // Return empty space if no ads
+                          }                          
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 250,
+                                child: PageView.builder(
+                                  controller: _adsPageController, // ✅ use the class-level controller
+                                  itemCount: ads.length,
+                                  onPageChanged: (index) {
+                                    setState(() => _currentPage = index);
+                                  },
+                                  itemBuilder: (context, index) {
+                                    final ad = ads[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: AdCard(ad: ad),
+                                    );
+                                  },
+                                ),
                               ),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _currentPage == index
-                                    ? theme.colorScheme.primary
-                                    : Colors.grey[300],
-                              ),
-                            );
-                          }),
+                              const SizedBox(height: 8),
+                              if (ads.length > 1) // Only show indicators if multiple ads
+                                Center(
+                                  child: _buildPageIndicator(ads.length, _currentPage, theme),
+                                ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                        loading: () => const SizedBox(
+                          height: 150, 
+                          child: LoadingIndicator()
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Text(
-                          localizations.grievanceDetails,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                        error: (err, stack) => Container(
+                          height: 150,
+                          padding: const EdgeInsets.all(16),
+                          child: Center(
+                            child: Text(
+                              'Failed to load ads',
+                              style: TextStyle(
+                                color: theme.colorScheme.error,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Grievances List with Progress
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: grievances.length,
-                        itemBuilder: (context, index) {
-                          final grievance = grievances[index];
-                          
-                          return Padding(
-  padding: const EdgeInsets.symmetric(
-    horizontal: 16.0,
-    vertical: 8.0,
-  ),
-  child: CombinedGrievanceCard(
-    grievance: grievance,
-    onTap: () async {
-      await _navigateToDetail(grievance.id);
-    },
-  ),
-);
-                        },
-                      ),
-                    ],
+                      );
+                    }
                   ),
-                );
-              },
-              loading: () => const LoadingIndicator(),
-              error: (error, _) => EmptyState(
-                icon: Icons.error_outline,
-                title: localizations.error,
-                message: error.toString(),
-                actionButton: ElevatedButton(
-                  onPressed: () => ref.refresh(citizenHistoryProvider(userId)),
-                  child: Text(localizations.retry),
-                ),
+                 
+                  // Banner Section
+                  SizedBox(
+                    height: 180,
+                    child: PageView.builder(
+                      controller: _pageController,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        final List<Map<String, dynamic>> banners = [
+                          {
+                            'title': localizations.submitGrievance,
+                            'subtitle': localizations.submitGrievanceSubtitle,
+                            'color': theme.colorScheme.primaryContainer,
+                            'icon': Icons.add_task_rounded,
+                          },
+                          {
+                            'title': localizations.track_grievances,
+                            'subtitle': localizations.trackGrievancesSubtitle,
+                            'color': theme.colorScheme.secondaryContainer,
+                            'icon': Icons.track_changes_rounded,
+                          },
+                          {
+                            'title': localizations.quickResolutionsTitle,
+                            'subtitle': localizations.quickResolutionsSubtitle,
+                            'color': theme.colorScheme.tertiaryContainer,
+                            'icon': Icons.verified_user_rounded,
+                          },
+                        ];
+                        return _buildBannerItem(banners[index], theme);
+                      },
+                    ),
+                  ),
+                  
+                  // Page indicators
+                  const SizedBox(height: 8),
+                  Center(child: _buildPageIndicator(3, _currentPage, theme)),
+                  
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      localizations.grievanceDetails,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Grievances List
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: grievances.length,
+                    itemBuilder: (context, index) {
+                      final grievance = grievances[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 8.0,
+                        ),
+                        child: CombinedGrievanceCard(
+                          grievance: grievance,
+                          onTap: () async {
+                            await _navigateToDetail(grievance.id);
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
+            );
+          },
+          loading: () => const LoadingIndicator(),
+          error: (error, _) => EmptyState(
+            icon: Icons.error_outline,
+            title: localizations.error,
+            message: error.toString(),
+            actionButton: ElevatedButton(
+              onPressed: () => ref.refresh(citizenHistoryProvider(userId)),
+              child: Text(localizations.retry),
             ),
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToSubmit, // Changed to call _navigateToSubmit
+        onPressed: _navigateToSubmit,
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.add_rounded),
@@ -12571,6 +13332,27 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
         showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
+    );
+  }
+
+  Widget _buildPageIndicator(int count, int currentIndex, ThemeData theme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(count, (index) {
+        return Container(
+          width: 8.0,
+          height: 8.0,
+          margin: const EdgeInsets.symmetric(
+            horizontal: 4.0,
+          ),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: currentIndex == index
+                ? theme.colorScheme.primary
+                : Colors.grey[300],
+          ),
+        );
+      }),
     );
   }
 
@@ -12607,8 +13389,9 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
                   const SizedBox(height: 4),
                   Text(
                     banner['subtitle'],
-                    style:
-                        TextStyle(color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)),
+                    style: TextStyle(
+                      color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8)
+                    ),
                   ),
                 ],
               ),
@@ -12619,7 +13402,6 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     );
   }
 
-  // Helper method to navigate and refresh
   Future<void> _navigateToSubmit() async {
     final result = await Navigator.pushNamed(context, '/citizen/submit');
     if (result == true && mounted) {
@@ -12630,9 +13412,12 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     }
   }
 
-  // Helper method to navigate to detail and refresh
   Future<void> _navigateToDetail(int grievanceId) async {
-    final result = await Navigator.pushNamed(context, '/citizen/detail', arguments: grievanceId);
+    final result = await Navigator.pushNamed(
+      context, 
+      '/citizen/detail', 
+      arguments: grievanceId
+    );
     if (result == true && mounted) {
       final userId = ref.read(userIdProvider);
       if (userId != null) {
@@ -12641,7 +13426,6 @@ class _TrackGrievanceState extends ConsumerState<TrackGrievance> {
     }
   }
 }
-
 
 === Folder: screens\common ===
 
@@ -16438,6 +17222,7 @@ import 'package:main_ui/models/user_model.dart';
 import 'package:main_ui/services/auth_service.dart';
 import 'package:main_ui/utils/constants.dart';
 import 'package:logging/logging.dart';
+import 'package:main_ui/models/ad_model.dart';
 import 'package:file_picker/file_picker.dart';
 
 final Logger _logger = Logger('ApiService');
@@ -16548,6 +17333,34 @@ static Future<Response> postMultipart(
     rethrow;
   }
 }
+
+  // Generic PUT method for multipart data (file uploads)
+  static Future<Response> putMultipart(
+    String path, {
+    required Map<String, dynamic> data,
+    PlatformFile? file,
+    String fileField = 'image_file',
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        ...data,
+        if (file != null)
+          fileField: kIsWeb
+              ? MultipartFile.fromBytes(file.bytes!, filename: file.name)
+              : await MultipartFile.fromFile(file.path!, filename: file.name),
+      });
+
+      return await _dio.put(
+        path,
+        data: formData,
+        options: Options(
+            headers: {'Content-Type': 'multipart/form-data'}), // Important for PUT
+      );
+    } on DioException catch (e) {
+      _logger.severe('Multipart PUT request failed: $path, Error: ${e.message}');
+      rethrow;
+    }
+  }
 
   // Generic PUT method
   static Future<Response> put(
@@ -16734,6 +17547,35 @@ static Future<User> updateProfile({
   }
 
   static Dio get dio => _dio;
+
+  static Future<List<Advertisement>> fetchAds() async {
+    try {
+      final response = await _dio.get('/advertisements');
+
+      if (response.statusCode == 200) {
+        final dynamic data = response.data;
+
+        List<dynamic> adsList;
+        if (data is List) {
+          adsList = data;
+        } else if (data is Map<String, dynamic>) {
+          adsList = data['data'] ?? data['advertisements'] ?? [];
+          if (adsList.isEmpty && data.isNotEmpty) {
+            _logger.warning('No ads found in response map: $data');
+          }
+        } else {
+          throw Exception('Unexpected response format: ${data.runtimeType}');
+        }
+
+        return adsList.map((json) => Advertisement.fromJson(json as Map<String, dynamic>)).toList();
+      } else {
+        throw Exception('Server error: ${response.statusCode}');
+      }
+    } catch (e) {
+      _logger.severe('Error fetching ads: $e');
+      rethrow;
+    }
+  }
 }
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\services\auth_service.dart ---
 import 'dart:async';
@@ -17972,6 +18814,119 @@ String? validateEmail(String? value) {
 
 === Folder: widgets ===
 
+--- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\ad_card.dart ---
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:main_ui/providers/ad_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../models/ad_model.dart';
+import 'package:main_ui/l10n/app_localizations.dart';
+
+class AdCard extends StatelessWidget {
+  final Advertisement ad;
+  final bool showAdminControls;
+
+  const AdCard({
+    super.key,
+    required this.ad,
+    this.showAdminControls = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias, // Ensures content respects the border radius
+      child: InkWell(
+        onTap: () => _launchUrl(context, ad.linkUrl),
+        borderRadius: BorderRadius.circular(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Use Expanded to allow the image to fill available vertical space
+            Expanded(
+              child: SizedBox(
+                width: double.infinity,
+                child: ad.imageUrl != null
+                    ? Image.network(
+                        ad.imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: theme.colorScheme.surfaceVariant,
+                          child: const Icon(Icons.image_not_supported, size: 50),
+                        ),
+                      )
+                    : Container( // Placeholder for when there's no image
+                        color: theme.colorScheme.surfaceVariant,
+                        child: const Icon(Icons.image, size: 50),
+                      ),
+              ),
+            ),
+            // Details Padding
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(
+                ad.title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
+                ),
+                maxLines: 2, // Allow up to 2 lines for the title
+                overflow: TextOverflow.ellipsis,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _launchUrl(BuildContext context, String? url) async {
+    if (url != null && await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open link: $url')),
+      );
+    }
+  }
+
+  void _showEditDialog(BuildContext context, Advertisement ad) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Ad'),
+        content: Text("Editing for '${ad.title}' would be implemented here."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Save')),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteDialog(BuildContext context, Advertisement ad) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Ad?'),
+        content: Text('Are you sure you want to delete "${ad.title}"?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+}
 --- File: D:\Company_Data\PCMCApp\main_ui\lib\widgets\CombinedGrievanceCard.dart ---
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18544,6 +19499,7 @@ class CustomButton extends StatelessWidget {
 import 'package:flutter/material.dart';
 
 enum ButtonVariant { filled, outlined, text }
+
 enum ButtonSize { small, medium, large }
 
 class CustomButton2 extends StatelessWidget {
@@ -18627,7 +19583,10 @@ class CustomButton2 extends StatelessWidget {
       case ButtonVariant.filled:
       default:
         style = ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? theme.colorScheme.primary,
+          backgroundColor: onPressed == null
+              ? Colors
+                    .grey // Disabled color
+              : backgroundColor ?? theme.colorScheme.primary,
           foregroundColor: foregroundColor ?? theme.colorScheme.onPrimary,
           padding: _padding,
           shape: RoundedRectangleBorder(
@@ -18635,6 +19594,7 @@ class CustomButton2 extends StatelessWidget {
           ),
           minimumSize: fullWidth ? const Size(double.infinity, 0) : null,
         );
+
         break;
     }
 
@@ -18664,12 +19624,24 @@ class CustomButton2 extends StatelessWidget {
 
     switch (variant) {
       case ButtonVariant.outlined:
-        return OutlinedButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return OutlinedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
       case ButtonVariant.text:
-        return TextButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return TextButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
       case ButtonVariant.filled:
       default:
-        return ElevatedButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
     }
   }
 }
@@ -19048,6 +20020,19 @@ class CustomNavigationDrawer extends ConsumerWidget {
               title: localizations.manageAreas ?? 'Manage Areas',
               route: '/admin/areas',
             ),
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.map,
+              title: 'Manage Nearby Places',
+              route: '/admin/nearby',
+            ),
+
+             _buildDrawerItem(
+              context: context,
+              icon: Icons.campaign,
+              title: 'Manage Advertisements',
+              route: '/admin/ads',
+            ),
 
           ],
           if (user?.role?.toUpperCase() == 'MEMBER_HEAD') ...[
@@ -19056,6 +20041,17 @@ class CustomNavigationDrawer extends ConsumerWidget {
           if (user?.role?.toUpperCase() == 'FIELD_STAFF') ...[
             
           
+          ],
+          if (user?.role?.toUpperCase() == 'CITIZEN') ...[
+            _buildDrawerItem(
+              context: context,
+              icon: Icons.location_on,
+              title: 'Nearby Me',
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/citizen/nearby');
+              },
+            ),
           ],
           _buildDrawerItem(
             context: context,

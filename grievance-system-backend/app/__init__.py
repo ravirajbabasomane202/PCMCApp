@@ -8,8 +8,18 @@ from flask_mail import Mail
 from .config import Config
 from flask_cors import CORS
 from .extensions import oauth
+from sqlalchemy import MetaData
 
-db = SQLAlchemy()
+convention = {
+    "ix": "ix_%(column_0_label)s",
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+
+metadata = MetaData(naming_convention=convention)
+db = SQLAlchemy(metadata=metadata)
 migrate = Migrate()
 jwt = JWTManager()
 mail = Mail()
@@ -63,11 +73,13 @@ def create_app():
     from .routes.admin_routes import admin_bp
     # from .routes.notification_routes import notification_bp
     from .routes.public import public_bp
+ 
     from .routes.settings_routes import settings_bp
     from .routes.field_routes import fieldStaff
     app.register_blueprint(fieldStaff)
     app.register_blueprint(public_bp)
     # app.register_blueprint(notification_bp, url_prefix='/notifications')
+ 
 
     app.register_blueprint(auth_bp, url_prefix='/auth')
     app.register_blueprint(grievance_bp, url_prefix='/grievances')

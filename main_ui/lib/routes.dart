@@ -26,13 +26,15 @@ import 'screens/common/faqs_screen.dart';
 import 'screens/common/contact_support_screen.dart';
 import 'screens/common/app_version_screen.dart';
 import 'screens/citizen/edit_grievance.dart';
-
-
+import 'screens/citizen/nearby_me_screen.dart';
+import 'screens/admin/manage_nearby_screen.dart';
+import 'screens/admin/manage_ads.dart';
 
 Map<String, WidgetBuilder> appRoutes = {
   '/login': (context) => const LoginScreen(),
   '/login/callback': (context) => const LoginCallbackScreen(),
   '/admin/configs': (context) => const ManageConfigs(),
+  '/citizen/nearby': (context) => const NearbyMeScreen(),
   '/citizen/track': (context) => const TrackGrievance(),
   '/citizen/submit': (context) => const SubmitGrievance(),
   '/citizen/detail': (context) {
@@ -61,10 +63,13 @@ Map<String, WidgetBuilder> appRoutes = {
   '/citizen/home': (context) => const TrackGrievance(),
   '/member_head/home': (context) => const ViewGrievances(),
   '/field_staff/home': (context) => const AssignedList(), 
+  '/admin/ads': (context) => const ManageAdsScreen(),
+
   '/admin/home': (context) => const Dashboard(),
   '/admin/areas': (context) => const ManageAreasScreen(),
   '/announcements': (context) => const AnnouncementsScreen(),
   '/admin/reports': (context) => const ReportsScreen(),
+  '/admin/nearby': (context) => const ManageNearbyScreen(),
   '/notifications': (context) => const NotificationsScreen(),
   '/auth/otp': (context) => const OtpVerificationScreen(),
   '/privacy-policy': (context) => const PrivacyPolicyScreen(),

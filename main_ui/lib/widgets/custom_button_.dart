@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 enum ButtonVariant { filled, outlined, text }
+
 enum ButtonSize { small, medium, large }
 
 class CustomButton2 extends StatelessWidget {
@@ -85,7 +86,10 @@ class CustomButton2 extends StatelessWidget {
       case ButtonVariant.filled:
       default:
         style = ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? theme.colorScheme.primary,
+          backgroundColor: onPressed == null
+              ? Colors
+                    .grey // Disabled color
+              : backgroundColor ?? theme.colorScheme.primary,
           foregroundColor: foregroundColor ?? theme.colorScheme.onPrimary,
           padding: _padding,
           shape: RoundedRectangleBorder(
@@ -93,6 +97,7 @@ class CustomButton2 extends StatelessWidget {
           ),
           minimumSize: fullWidth ? const Size(double.infinity, 0) : null,
         );
+
         break;
     }
 
@@ -122,12 +127,24 @@ class CustomButton2 extends StatelessWidget {
 
     switch (variant) {
       case ButtonVariant.outlined:
-        return OutlinedButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return OutlinedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
       case ButtonVariant.text:
-        return TextButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return TextButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
       case ButtonVariant.filled:
       default:
-        return ElevatedButton(onPressed: isLoading ? null : onPressed, style: style, child: child);
+        return ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: style,
+          child: child,
+        );
     }
   }
 }

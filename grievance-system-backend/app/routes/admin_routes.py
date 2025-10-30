@@ -1,14 +1,14 @@
 from flask import Blueprint, request, jsonify
 from ..utils.auth_utils import admin_required
 from ..utils.kpi_utils import calculate_resolution_rate, calculate_pending_aging, calculate_sla_compliance
-from ..models import AuditLog,MasterConfig, MasterSubjects, MasterAreas, Grievance, User, Role, Announcement
+from ..models import AuditLog,MasterConfig, MasterSubjects, MasterAreas, Grievance, User, Role, Announcement, NearbyPlace, Advertisement
 from ..services.report_service import generate_report,get_staff_performance, get_location_reports
 
 from ..services.report_service import get_citizen_history
 from ..services.report_service import escalate_grievance
 from ..services.report_service import get_advanced_kpis
 from datetime import datetime
-from ..schemas import GrievanceSchema, UserSchema, AnnouncementSchema
+from ..schemas import GrievanceSchema, UserSchema, AnnouncementSchema, NearbyPlaceSchema
 from flask import Response
 from ..schemas import AuditLogSchema, MasterSubjectsSchema, MasterAreasSchema
 from .. import db
@@ -20,6 +20,9 @@ import logging
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
+import os
+from werkzeug.utils import secure_filename
+from flask import current_app
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
@@ -528,3 +531,169 @@ def get_advanced_kpis_route():
             return jsonify({"error": str(e)}), 500
 
     return actual_route()
+
+nearby_place_schema = NearbyPlaceSchema()
+nearby_places_schema = NearbyPlaceSchema(many=True)
+
+# CREATE
+@admin_bp.route('/nearby', methods=['POST'])
+@admin_required
+def add_nearby_place(user):
+    data = request.get_json()
+    place = NearbyPlace(**data)
+    db.session.add(place)
+    db.session.commit()
+    return jsonify({"message": "Added successfully", "data": nearby_place_schema.dump(place)}), 201
+
+# READ ALL
+@admin_bp.route('/nearby', methods=['GET'])
+@admin_required
+def get_all_nearby(user):
+    places = NearbyPlace.query.all()
+    return jsonify(nearby_places_schema.dump(places))
+
+# UPDATE
+@admin_bp.route('/nearby/<int:id>', methods=['PUT'])
+@admin_required
+def update_nearby(user, id):
+    place = NearbyPlace.query.get_or_404(id)
+    data = request.get_json()
+    for key, value in data.items():
+        setattr(place, key, value)
+    db.session.commit()
+    return jsonify({"message": "Updated successfully", "data": nearby_place_schema.dump(place)})
+
+# DELETE
+@admin_bp.route('/nearby/<int:id>', methods=['DELETE'])
+@admin_required
+def delete_nearby(user, id):
+    place = NearbyPlace.query.get_or_404(id)
+    db.session.delete(place)
+    db.session.commit()
+    return jsonify({"message": "Deleted successfully"})
+
+
+
+
+
+
+
+
+
+
+
+@admin_bp.route('/ads', methods=['GET'])
+@admin_required  # This ensures only ADMIN role can access
+@jwt_required()  # Basic JWT check
+def get_ads(user):
+    try:
+        # Deactivate expired ads
+        now = datetime.now(timezone.utc)
+        expired_ads = Advertisement.query.filter(Advertisement.is_active == True, Advertisement.expires_at != None, Advertisement.expires_at <= now).all()
+        for ad in expired_ads:
+            ad.is_active = False
+        db.session.commit()
+
+        ads = Advertisement.query.order_by(Advertisement.created_at.desc()).all()
+        return jsonify([ad.to_dict() for ad in ads])
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/ads', methods=['POST'])
+@admin_required
+@jwt_required()
+def create_ad(user):
+    try:
+        if 'title' not in request.form:
+            return jsonify({'error': 'Title is required'}), 400
+
+        title = request.form.get('title')
+        description = request.form.get('description')
+        link_url = request.form.get('link_url')
+        is_active = request.form.get('is_active', 'true').lower() == 'true'
+        expires_at_str = request.form.get('expires_at')
+        expires_at = None
+        if expires_at_str:
+            expires_at = datetime.fromisoformat(expires_at_str.replace('Z', '+00:00'))
+
+        image_url = None
+
+        if 'image_file' in request.files:
+            file = request.files['image_file']
+            if file.filename != '':
+                filename = secure_filename(file.filename)
+                # Create a specific folder for ad uploads if it doesn't exist
+                ads_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'ads')
+                os.makedirs(ads_upload_folder, exist_ok=True)
+                
+                file_path = os.path.join(ads_upload_folder, filename)
+                file.save(file_path)
+                image_url = f'ads/{filename}' # Store relative path
+
+        ad = Advertisement(
+            title=title,
+            description=description,
+            image_url=image_url,
+            link_url=link_url,
+            expires_at=expires_at,
+            is_active=is_active,
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc)
+        )
+        db.session.add(ad)
+        db.session.commit()
+        return jsonify({
+            'message': 'Advertisement created successfully',
+            'data': ad.to_dict()
+        }), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
+
+@admin_bp.route('/ads/<int:ad_id>', methods=['PUT'])
+@admin_required
+def update_ad(user, ad_id):
+    ad = Advertisement.query.get_or_404(ad_id)
+    
+    ad.title = request.form.get('title', ad.title)
+    ad.description = request.form.get('description', ad.description)
+    ad.link_url = request.form.get('link_url', ad.link_url)
+    is_active_str = request.form.get('is_active')
+    if is_active_str is not None:
+        ad.is_active = is_active_str.lower() in ['true', '1']
+
+    expires_at_str = request.form.get('expires_at')
+    if expires_at_str:
+        ad.expires_at = datetime.fromisoformat(expires_at_str.replace('Z', '+00:00'))
+
+
+    if 'image_file' in request.files:
+        file = request.files['image_file']
+        if file and file.filename != '':
+            # Optionally, delete the old file
+            if ad.image_url:
+                old_path = os.path.join(current_app.config['UPLOAD_FOLDER'], ad.image_url)
+                if os.path.exists(old_path):
+                    os.remove(old_path)
+
+            filename = secure_filename(file.filename)
+            ads_upload_folder = os.path.join(current_app.config['UPLOAD_FOLDER'], 'ads')
+            os.makedirs(ads_upload_folder, exist_ok=True)
+            file_path = os.path.join(ads_upload_folder, filename)
+            file.save(file_path)
+            ad.image_url = f'ads/{filename}'
+
+    db.session.commit()
+    return jsonify({"message": "Advertisement updated"}), 200
+
+
+@admin_bp.route('/ads/<int:ad_id>', methods=['DELETE'])
+@admin_required
+def delete_ad(user, ad_id):
+    ad = Advertisement.query.get_or_404(ad_id)
+    db.session.delete(ad)
+    db.session.commit()
+    return jsonify({"message": "Advertisement deleted"}), 200
